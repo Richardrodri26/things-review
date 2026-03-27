@@ -18,9 +18,11 @@ El sistema de puntuación es de **1 a 5 estrellas**, y las reviews se pueden agr
 | [architecture.md](./architecture.md) | Arquitectura de software recomendada y decisiones técnicas |
 | [tech-stack.md](./tech-stack.md) | Stack tecnológico completo con justificación de cada elección |
 | [data-models.md](./data-models.md) | Modelos de datos, campos y relaciones |
+| [data-sources.md](./data-sources.md) | Sistema de providers para precargar info desde fuentes externas |
 | [roadmap.md](./roadmap.md) | Roadmap del producto por fases |
 | [folder-structure.md](./folder-structure.md) | Estructura de carpetas del proyecto (Atomic Design) |
 | [i18n.md](./i18n.md) | Estrategia de internacionalización (EN / ES) |
+| [skills.md](./skills.md) | Qué skill cargar según el contexto de desarrollo |
 
 ---
 
