@@ -6,7 +6,7 @@
 
 **Architecture:** Feature-Sliced Design. El shell vive en `src/app/(app)/layout.tsx` (route group). Las features de reviews viven en `src/features/reviews/`. Los componentes atómicos compartidos van en `src/shared/ui/`. El sidebar usa el componente `sidebar-07` de shadcn adaptado con la navegación real de la app.
 
-**Tech Stack:** Next.js 16 App Router, shadcn/ui sidebar-07 (Base UI / base-mira), Zustand 5 + Immer, TanStack Query v5, Zod 4, TypeScript strict, Tailwind 4. Todos los comandos de package manager usan `bun`.
+**Tech Stack:** Next.js 16 App Router, shadcn/ui sidebar-07 (Base UI / base-mira), Zustand 5 + Immer, TanStack Query v5, TanStack Form v1, Zod 4, TypeScript strict, Tailwind 4. Todos los comandos de package manager usan `bun`.
 
 ---
 
@@ -822,42 +822,36 @@ git commit -m "feat: add shared atomic UI components - RatingStars, ContentTypeB
 
 ## Task 7: Formulario de creación/edición de review (ReviewForm)
 
-El formulario de review usa react-hook-form + Zod 4 para validación. Es el corazón del CRUD.
+El formulario usa **TanStack Form v1** con validación Zod via Standard Schema. La API es headless — `useForm` + `form.Field` como render prop — sin wrapper de shadcn. No instalar react-hook-form ni @hookform/resolvers.
 
 **Files:**
-- Install: `react-hook-form`, `@hookform/resolvers`
-- Create: `src/features/reviews/components/ReviewForm.tsx`
+- Install: `@tanstack/react-form`
 - Create: `src/features/reviews/types.ts` — tipos locales de la feature
+- Create: `src/features/reviews/components/ReviewForm.tsx`
 
-**Step 1: Instalar react-hook-form y resolvers**
+**Step 1: Instalar TanStack Form**
 
 ```bash
-bun add react-hook-form @hookform/resolvers
+bun add @tanstack/react-form
 ```
 
 **Step 2: Verificar instalación**
 
 ```bash
-node -e "require('react-hook-form'); require('@hookform/resolvers/zod'); console.log('ok')"
+node -e "require('@tanstack/react-form'); console.log('ok')"
 ```
 
 Expected: `ok`
 
-**Step 3: Agregar shadcn form component**
+**Step 3: Agregar shadcn select, textarea, label**
 
-El componente `form` de shadcn envuelve react-hook-form con accesibilidad y estilos:
-
-```bash
-bunx shadcn@latest add form
-```
-
-**Step 4: Agregar shadcn select, textarea, label**
+El shadcn `form` component NO se instala — asume react-hook-form y no aplica acá. Solo los primitivos:
 
 ```bash
 bunx shadcn@latest add select textarea label
 ```
 
-**Step 5: Crear `src/features/reviews/types.ts`**
+**Step 4: Crear `src/features/reviews/types.ts`**
 
 ```typescript
 // src/features/reviews/types.ts
@@ -887,26 +881,23 @@ export interface ReviewFormProps {
 }
 ```
 
-**Step 6: Crear `src/features/reviews/components/ReviewForm.tsx`**
+**Step 5: Crear `src/features/reviews/components/ReviewForm.tsx`**
+
+TanStack Form es headless. El patrón es:
+- `useForm({ defaultValues, validators: { onChange: zodSchema }, onSubmit })` — configura el form
+- `form.Field` con `children` como render prop — accede a `field.state.value`, `field.handleChange`, `field.state.meta.errors`
+- `form.Subscribe` para leer `canSubmit` / `isSubmitting` sin re-renderizar todo
 
 ```tsx
 // src/features/reviews/components/ReviewForm.tsx
 'use client'
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
+import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
 import {
   Select,
   SelectContent,
@@ -936,7 +927,6 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
   const updateReview = useUpdateReview()
 
   const form = useForm<ReviewFormValues>({
-    resolver: zodResolver(reviewFormSchema),
     defaultValues: {
       contentId:        initialValues?.contentId ?? review?.contentId ?? '',
       contentType:      initialValues?.contentType ?? review?.contentType ?? 'movie',
@@ -946,166 +936,174 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
       containsSpoilers: initialValues?.containsSpoilers ?? review?.containsSpoilers ?? false,
       status:           initialValues?.status ?? review?.status ?? 'consumed',
     },
+    validators: {
+      onChange: reviewFormSchema,
+    },
+    onSubmit: async ({ value }) => {
+      if (!user) return
+
+      if (mode === 'create') {
+        const result = await createReview.mutateAsync({ ...value, userId: user.id })
+        onSuccess?.(result)
+      } else if (mode === 'edit' && review) {
+        const result = await updateReview.mutateAsync({ id: review.id, data: value })
+        onSuccess?.(result)
+      }
+    },
   })
 
-  const isLoading = createReview.isPending || updateReview.isPending
-
-  async function onSubmit(values: ReviewFormValues) {
-    if (!user) return
-
-    if (mode === 'create') {
-      const result = await createReview.mutateAsync({
-        ...values,
-        userId: user.id,
-      })
-      onSuccess?.(result)
-    } else if (mode === 'edit' && review) {
-      const result = await updateReview.mutateAsync({
-        id: review.id,
-        data: values,
-      })
-      onSuccess?.(result)
-    }
-  }
-
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        form.handleSubmit()
+      }}
+      className="space-y-4"
+    >
+      {/* Content Type */}
+      <form.Field name="contentType">
+        {(field) => (
+          <div className="space-y-1.5">
+            <Label htmlFor={field.name}>Type</Label>
+            <Select
+              value={field.state.value}
+              onValueChange={(v) => field.handleChange(v as ReviewFormValues['contentType'])}
+            >
+              <SelectTrigger id={field.name}>
+                <SelectValue placeholder="Select content type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="movie">🎬 Movie</SelectItem>
+                <SelectItem value="series">📺 Series</SelectItem>
+                <SelectItem value="music">🎵 Music</SelectItem>
+                <SelectItem value="game">🎮 Game</SelectItem>
+                <SelectItem value="book">📚 Book</SelectItem>
+                <SelectItem value="podcast">🎙️ Podcast</SelectItem>
+              </SelectContent>
+            </Select>
+            {field.state.meta.errors.length > 0 && (
+              <p className="text-xs text-destructive">{field.state.meta.errors[0]?.message}</p>
+            )}
+          </div>
+        )}
+      </form.Field>
 
-        {/* Content Type */}
-        <FormField
-          control={form.control}
-          name="contentType"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select content type" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="movie">🎬 Movie</SelectItem>
-                  <SelectItem value="series">📺 Series</SelectItem>
-                  <SelectItem value="music">🎵 Music</SelectItem>
-                  <SelectItem value="game">🎮 Game</SelectItem>
-                  <SelectItem value="book">📚 Book</SelectItem>
-                  <SelectItem value="podcast">🎙️ Podcast</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      {/* Status */}
+      <form.Field name="status">
+        {(field) => (
+          <div className="space-y-1.5">
+            <Label htmlFor={field.name}>Status</Label>
+            <Select
+              value={field.state.value}
+              onValueChange={(v) => field.handleChange(v as ReviewFormValues['status'])}
+            >
+              <SelectTrigger id={field.name}>
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="consumed">Consumed</SelectItem>
+                <SelectItem value="want_to_consume">Want to consume</SelectItem>
+                <SelectItem value="consuming">Currently consuming</SelectItem>
+                <SelectItem value="dropped">Dropped</SelectItem>
+              </SelectContent>
+            </Select>
+            {field.state.meta.errors.length > 0 && (
+              <p className="text-xs text-destructive">{field.state.meta.errors[0]?.message}</p>
+            )}
+          </div>
+        )}
+      </form.Field>
 
-        {/* Status */}
-        <FormField
-          control={form.control}
-          name="status"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Status</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  <SelectItem value="consumed">Consumed</SelectItem>
-                  <SelectItem value="want_to_consume">Want to consume</SelectItem>
-                  <SelectItem value="consuming">Currently consuming</SelectItem>
-                  <SelectItem value="dropped">Dropped</SelectItem>
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      {/* Rating */}
+      <form.Field name="rating">
+        {(field) => (
+          <div className="space-y-1.5">
+            <Label>Rating</Label>
+            <RatingStars
+              value={field.state.value}
+              onChange={(r: Rating) => field.handleChange(r)}
+              size="lg"
+            />
+          </div>
+        )}
+      </form.Field>
 
-        {/* Rating */}
-        <FormField
-          control={form.control}
-          name="rating"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Rating</FormLabel>
-              <FormControl>
-                <RatingStars
-                  value={field.value}
-                  onChange={(r: Rating) => field.onChange(r)}
-                  size="lg"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      {/* Title */}
+      <form.Field name="title">
+        {(field) => (
+          <div className="space-y-1.5">
+            <Label htmlFor={field.name}>
+              Title <span className="text-muted-foreground">(optional)</span>
+            </Label>
+            <Input
+              id={field.name}
+              placeholder="Give your review a title..."
+              value={field.state.value ?? ''}
+              onChange={(e) => field.handleChange(e.target.value)}
+              onBlur={field.handleBlur}
+            />
+            {field.state.meta.errors.length > 0 && (
+              <p className="text-xs text-destructive">{field.state.meta.errors[0]?.message}</p>
+            )}
+          </div>
+        )}
+      </form.Field>
 
-        {/* Title */}
-        <FormField
-          control={form.control}
-          name="title"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Title <span className="text-muted-foreground">(optional)</span></FormLabel>
-              <FormControl>
-                <Input placeholder="Give your review a title..." {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+      {/* Body */}
+      <form.Field name="body">
+        {(field) => (
+          <div className="space-y-1.5">
+            <Label htmlFor={field.name}>
+              Review <span className="text-muted-foreground">(optional)</span>
+            </Label>
+            <Textarea
+              id={field.name}
+              placeholder="Write your thoughts..."
+              className="resize-none"
+              rows={4}
+              value={field.state.value ?? ''}
+              onChange={(e) => field.handleChange(e.target.value)}
+              onBlur={field.handleBlur}
+            />
+            {field.state.meta.errors.length > 0 && (
+              <p className="text-xs text-destructive">{field.state.meta.errors[0]?.message}</p>
+            )}
+          </div>
+        )}
+      </form.Field>
 
-        {/* Body */}
-        <FormField
-          control={form.control}
-          name="body"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Review <span className="text-muted-foreground">(optional)</span></FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Write your thoughts..."
-                  className="resize-none"
-                  rows={4}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Actions */}
-        <div className="flex items-center justify-end gap-2 pt-2">
-          {onCancel && (
-            <Button type="button" variant="ghost" onClick={onCancel} disabled={isLoading}>
-              Cancel
+      {/* Actions */}
+      <form.Subscribe selector={(state) => [state.canSubmit, state.isSubmitting]}>
+        {([canSubmit, isSubmitting]) => (
+          <div className="flex items-center justify-end gap-2 pt-2">
+            {onCancel && (
+              <Button type="button" variant="ghost" onClick={onCancel} disabled={isSubmitting}>
+                Cancel
+              </Button>
+            )}
+            <Button type="submit" disabled={!canSubmit || isSubmitting}>
+              {isSubmitting ? 'Saving...' : mode === 'create' ? 'Add Review' : 'Save Changes'}
             </Button>
-          )}
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? 'Saving...' : mode === 'create' ? 'Add Review' : 'Save Changes'}
-          </Button>
-        </div>
-      </form>
-    </Form>
+          </div>
+        )}
+      </form.Subscribe>
+    </form>
   )
 }
 ```
 
-**Step 7: Verificar TypeScript**
+**Step 6: Verificar TypeScript**
 
 ```bash
 npx tsc --noEmit 2>&1
 ```
 
-**Step 8: Commit**
+**Step 7: Commit**
 
 ```bash
-git add src/features/reviews/ src/components/ui/form.tsx src/components/ui/select.tsx src/components/ui/textarea.tsx src/components/ui/label.tsx
-git commit -m "feat: add ReviewForm with react-hook-form and zod validation"
+git add src/features/reviews/ src/components/ui/select.tsx src/components/ui/textarea.tsx src/components/ui/label.tsx
+git commit -m "feat: add ReviewForm with TanStack Form and zod validation"
 ```
 
 ---
