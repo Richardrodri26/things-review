@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import { DirectionProvider } from "@/components/ui/direction";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { Providers } from "./providers";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'});
@@ -32,7 +33,7 @@ export default function RootLayout({
       lang="en"
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
-      <body className="min-h-full flex flex-col"><DirectionProvider direction="ltr"><Providers>{children}</Providers></DirectionProvider></body>
+      <body className="min-h-full flex flex-col"><DirectionProvider direction="ltr"><Providers><TooltipProvider>{children}</TooltipProvider></Providers></DirectionProvider></body>
     </html>
   );
 }
