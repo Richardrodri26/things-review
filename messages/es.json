@@ -1,0 +1,65 @@
+{
+  "app": {
+    "name": "Things Review",
+    "tagline": "Reviewá las cosas que amás, en grupo."
+  },
+  "nav": {
+    "movies": "Películas",
+    "series": "Series",
+    "reviews": "Mis Reviews",
+    "groups": "Grupos",
+    "profile": "Perfil"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "loading": "Cargando...",
+    "error": "Algo salió mal",
+    "noResults": "No se encontraron resultados",
+    "required": "Este campo es requerido"
+  },
+  "contentType": {
+    "movie": "Película",
+    "series": "Serie",
+    "music": "Música",
+    "game": "Videojuego",
+    "book": "Libro",
+    "podcast": "Podcast"
+  },
+  "status": {
+    "consumed": {
+      "movie": "Vista",
+      "series": "Vista",
+      "music": "Escuchado",
+      "game": "Jugado",
+      "book": "Leído",
+      "podcast": "Escuchado"
+    },
+    "want_to_consume": {
+      "movie": "Quiero verla",
+      "series": "Quiero verla",
+      "music": "Quiero escucharlo",
+      "game": "Quiero jugarlo",
+      "book": "Quiero leerlo",
+      "podcast": "Quiero escucharlo"
+    },
+    "consuming": {
+      "movie": "Viendo",
+      "series": "Viendo",
+      "music": "Escuchando",
+      "game": "Jugando",
+      "book": "Leyendo",
+      "podcast": "Escuchando"
+    },
+    "dropped": {
+      "movie": "Abandonada",
+      "series": "Abandonada",
+      "music": "Abandonado",
+      "game": "Abandonado",
+      "book": "Abandonado",
+      "podcast": "Abandonado"
+    }
+  }
+}

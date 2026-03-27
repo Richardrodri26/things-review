@@ -1,0 +1,65 @@
+{
+  "app": {
+    "name": "Things Review",
+    "tagline": "Review the things you love, together."
+  },
+  "nav": {
+    "movies": "Movies",
+    "series": "Series",
+    "reviews": "My Reviews",
+    "groups": "Groups",
+    "profile": "Profile"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "noResults": "No results found",
+    "required": "This field is required"
+  },
+  "contentType": {
+    "movie": "Movie",
+    "series": "Series",
+    "music": "Music",
+    "game": "Game",
+    "book": "Book",
+    "podcast": "Podcast"
+  },
+  "status": {
+    "consumed": {
+      "movie": "Watched",
+      "series": "Watched",
+      "music": "Listened",
+      "game": "Played",
+      "book": "Read",
+      "podcast": "Listened"
+    },
+    "want_to_consume": {
+      "movie": "Want to Watch",
+      "series": "Want to Watch",
+      "music": "Want to Listen",
+      "game": "Want to Play",
+      "book": "Want to Read",
+      "podcast": "Want to Listen"
+    },
+    "consuming": {
+      "movie": "Watching",
+      "series": "Watching",
+      "music": "Listening",
+      "game": "Playing",
+      "book": "Reading",
+      "podcast": "Listening"
+    },
+    "dropped": {
+      "movie": "Dropped",
+      "series": "Dropped",
+      "music": "Dropped",
+      "game": "Dropped",
+      "book": "Dropped",
+      "podcast": "Dropped"
+    }
+  }
+}
