@@ -3,6 +3,7 @@
 // Routes de la app
 export const ROUTES = {
   HOME: '/',
+  ONBOARDING: '/onboarding',
   MOVIES: '/movies',
   MOVIE_DETAIL: (id: string) => `/movies/${id}`,
   SERIES: '/series',
