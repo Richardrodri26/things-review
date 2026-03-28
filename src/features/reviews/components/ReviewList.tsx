@@ -1,6 +1,7 @@
+// src/features/reviews/components/ReviewList.tsx
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { PlusIcon, StarIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,8 +13,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { EmptyState } from '@/shared/ui/atoms'
+import type { ContentType, ConsumptionStatus } from '@/shared/types'
 import { ReviewCard } from './ReviewCard'
 import { ReviewForm } from './ReviewForm'
+import { ReviewFilters } from './ReviewFilters'
 import { useReviews, useDeleteReview } from '../hooks'
 import type { Review } from '@/entities/review/types'
 
@@ -27,6 +30,38 @@ export function ReviewList() {
   const { data: reviews = [], isLoading } = useReviews()
   const deleteReview = useDeleteReview()
   const [mode, setMode] = useState<UIMode>({ type: 'idle' })
+
+  // Filter state — local UI state, no store
+  const [selectedContentTypes, setSelectedContentTypes] = useState<ContentType[]>([])
+  const [selectedStatuses, setSelectedStatuses] = useState<ConsumptionStatus[]>([])
+
+  // Filtered reviews
+  const filteredReviews = useMemo(() => {
+    return reviews.filter((review) => {
+      const matchesType = selectedContentTypes.length === 0
+        || selectedContentTypes.includes(review.contentType)
+      const matchesStatus = selectedStatuses.length === 0
+        || selectedStatuses.includes(review.status)
+      return matchesType && matchesStatus
+    })
+  }, [reviews, selectedContentTypes, selectedStatuses])
+
+  function toggleContentType(ct: ContentType) {
+    setSelectedContentTypes((prev) =>
+      prev.includes(ct) ? prev.filter((c) => c !== ct) : [...prev, ct]
+    )
+  }
+
+  function toggleStatus(status: ConsumptionStatus) {
+    setSelectedStatuses((prev) =>
+      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
+    )
+  }
+
+  function clearFilters() {
+    setSelectedContentTypes([])
+    setSelectedStatuses([])
+  }
 
   function handleEdit(review: Review) {
     setMode({ type: 'edit', review })
@@ -55,6 +90,19 @@ export function ReviewList() {
         </Button>
       </div>
 
+      {/* Filters — only show if there's something to filter */}
+      {reviews.length > 0 && (
+        <ReviewFilters
+          selectedContentTypes={selectedContentTypes}
+          selectedStatuses={selectedStatuses}
+          onContentTypeToggle={toggleContentType}
+          onStatusToggle={toggleStatus}
+          onClearAll={clearFilters}
+          totalResults={filteredReviews.length}
+          totalReviews={reviews.length}
+        />
+      )}
+
       {/* List */}
       {isLoading ? (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -74,9 +122,20 @@ export function ReviewList() {
             </Button>
           }
         />
+      ) : filteredReviews.length === 0 ? (
+        <EmptyState
+          icon={<StarIcon className="size-6" />}
+          title="No reviews match your filters"
+          description="Try adjusting or clearing the filters."
+          action={
+            <Button variant="outline" size="sm" onClick={clearFilters}>
+              Clear filters
+            </Button>
+          }
+        />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {reviews.map((review) => (
+          {filteredReviews.map((review) => (
             <ReviewCard
               key={review.id}
               review={review}
