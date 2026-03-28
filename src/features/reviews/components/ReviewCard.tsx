@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { RatingStars, ContentTypeBadge, StatusBadge } from '@/shared/ui/atoms'
 import { formatDate } from '@/shared/utils'
+import { useCatalogItemTitle } from '@/features/catalog/hooks'
 import type { Review } from '@/entities/review/types'
 
 interface ReviewCardProps {
@@ -14,6 +15,8 @@ interface ReviewCardProps {
 }
 
 export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
+  const itemTitle = useCatalogItemTitle(review.contentId)
+
   return (
     <div className="rounded-lg border border-border bg-card p-4 space-y-3">
       {/* Header */}
@@ -65,8 +68,8 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
       {/* Footer */}
       <Separator />
       <div className="flex items-center justify-between text-xs text-muted-foreground">
-        <span>ID: <code className="font-mono">{review.contentId}</code></span>
-        <span>{formatDate(review.createdAt)}</span>
+        <span className="truncate max-w-[60%]">{itemTitle ?? review.contentId}</span>
+        <span className="shrink-0">{formatDate(review.createdAt)}</span>
       </div>
     </div>
   )
