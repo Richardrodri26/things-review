@@ -9,6 +9,7 @@ export const ROUTES = {
   SERIES: '/series',
   SERIES_DETAIL: (id: string) => `/series/${id}`,
   REVIEWS: '/reviews',
+  WATCHLIST: '/watchlist',
   GROUPS: '/groups',
   GROUP_DETAIL: (id: string) => `/groups/${id}`,
   PROFILE: '/profile',

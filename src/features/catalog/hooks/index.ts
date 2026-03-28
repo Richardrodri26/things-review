@@ -5,6 +5,11 @@ export {
   useSeriesList,
   useSeriesItem,
   useCatalogItemTitle,
+  useAddCatalogItem,
   MOVIES_QUERY_KEY,
   SERIES_QUERY_KEY,
+  MUSIC_QUERY_KEY,
+  GAMES_QUERY_KEY,
+  BOOKS_QUERY_KEY,
+  PODCASTS_QUERY_KEY,
 } from './useCatalog'

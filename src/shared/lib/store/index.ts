@@ -6,8 +6,9 @@ import { createUserSlice, type UserSlice } from './user.slice'
 import { createReviewsSlice, type ReviewsSlice } from './reviews.slice'
 import { createGroupsSlice, type GroupsSlice } from './groups.slice'
 import { createUISlice, type UISlice } from './ui.slice'
+import { createWatchlistSlice, type WatchlistSlice } from './watchlist.slice'
 
-export type RootState = UserSlice & ReviewsSlice & GroupsSlice & UISlice
+export type RootState = UserSlice & ReviewsSlice & GroupsSlice & UISlice & WatchlistSlice
 
 export const useStore = create<RootState>()(
   devtools(
@@ -16,6 +17,7 @@ export const useStore = create<RootState>()(
       ...createReviewsSlice(...a),
       ...createGroupsSlice(...a),
       ...createUISlice(...a),
+      ...createWatchlistSlice(...a),
     })),
     { name: 'ThingsReviewStore' }
   )
@@ -25,3 +27,4 @@ export const useStore = create<RootState>()(
 export const useUser = () => useStore((s) => s.user)
 export const useReviews = () => useStore((s) => s.reviews)
 export const useGroups = () => useStore((s) => s.groups)
+export const useWatchlist = () => useStore((s) => s.watchlist)

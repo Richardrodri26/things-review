@@ -7,6 +7,7 @@ import {
   StarIcon,
   UsersIcon,
   UserCircleIcon,
+  BookmarkIcon,
 } from 'lucide-react'
 
 import { NavMain } from '@/components/nav-main'
@@ -24,11 +25,12 @@ import {
 import { ROUTES } from '@/shared/constants'
 
 const navItems = [
-  { title: 'Movies',  url: ROUTES.MOVIES,  icon: <FilmIcon /> },
-  { title: 'Series',  url: ROUTES.SERIES,  icon: <TvIcon /> },
-  { title: 'Reviews', url: ROUTES.REVIEWS, icon: <StarIcon /> },
-  { title: 'Groups',  url: ROUTES.GROUPS,  icon: <UsersIcon /> },
-  { title: 'Profile', url: ROUTES.PROFILE, icon: <UserCircleIcon /> },
+  { title: 'Movies',    url: ROUTES.MOVIES,    icon: <FilmIcon /> },
+  { title: 'Series',    url: ROUTES.SERIES,    icon: <TvIcon /> },
+  { title: 'Reviews',   url: ROUTES.REVIEWS,   icon: <StarIcon /> },
+  { title: 'Watchlist', url: ROUTES.WATCHLIST, icon: <BookmarkIcon /> },
+  { title: 'Groups',    url: ROUTES.GROUPS,    icon: <UsersIcon /> },
+  { title: 'Profile',   url: ROUTES.PROFILE,   icon: <UserCircleIcon /> },
 ]
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {

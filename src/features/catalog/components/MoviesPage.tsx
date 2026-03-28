@@ -6,6 +6,7 @@ import { EmptyState } from '@/shared/ui/atoms'
 import { useStore } from '@/shared/lib/store'
 import { useMovies } from '../hooks'
 import { CatalogItemCard } from './CatalogItemCard'
+import { AddContentDialog } from './AddContentDialog'
 
 export function MoviesPage() {
   const { data: movies = [], isLoading } = useMovies()
@@ -18,9 +19,12 @@ export function MoviesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Movies</h1>
-        {!isLoading && (
-          <span className="text-sm text-muted-foreground">{movies.length} titles</span>
-        )}
+        <div className="flex items-center gap-2">
+          {!isLoading && (
+            <span className="text-sm text-muted-foreground">{movies.length} titles</span>
+          )}
+          <AddContentDialog defaultContentType="movie" />
+        </div>
       </div>
 
       {/* Grid */}

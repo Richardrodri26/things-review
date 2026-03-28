@@ -6,6 +6,7 @@ import { EmptyState } from '@/shared/ui/atoms'
 import { useStore } from '@/shared/lib/store'
 import { useSeriesList } from '../hooks'
 import { CatalogItemCard } from './CatalogItemCard'
+import { AddContentDialog } from './AddContentDialog'
 
 export function SeriesPage() {
   const { data: seriesList = [], isLoading } = useSeriesList()
@@ -18,9 +19,12 @@ export function SeriesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Series</h1>
-        {!isLoading && (
-          <span className="text-sm text-muted-foreground">{seriesList.length} titles</span>
-        )}
+        <div className="flex items-center gap-2">
+          {!isLoading && (
+            <span className="text-sm text-muted-foreground">{seriesList.length} titles</span>
+          )}
+          <AddContentDialog defaultContentType="series" />
+        </div>
       </div>
 
       {/* Grid */}

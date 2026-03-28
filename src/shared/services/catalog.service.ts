@@ -1,11 +1,23 @@
 // src/shared/services/catalog.service.ts
 import type { Movie } from '@/entities/movie/types'
 import type { Series } from '@/entities/series/types'
+import type { MusicAlbum } from '@/entities/music/types'
+import type { Game } from '@/entities/game/types'
+import type { Book } from '@/entities/book/types'
+import type { Podcast } from '@/entities/podcast/types'
 import { STORAGE_KEYS } from '@/shared/constants'
 import { generateId } from '@/shared/utils'
 import { getFromStorage, setToStorage } from './localStorage.service'
 
-export type CatalogItem = Movie | Series
+export type CatalogItem = Movie | Series | MusicAlbum | Game | Book | Podcast
+
+export type AddItemDTO =
+  | Omit<Movie,       'id' | 'createdAt' | 'providerId' | 'externalId'>
+  | Omit<Series,      'id' | 'createdAt' | 'providerId' | 'externalId'>
+  | Omit<MusicAlbum,  'id' | 'createdAt' | 'providerId' | 'externalId'>
+  | Omit<Game,        'id' | 'createdAt' | 'providerId' | 'externalId'>
+  | Omit<Book,        'id' | 'createdAt' | 'providerId' | 'externalId'>
+  | Omit<Podcast,     'id' | 'createdAt' | 'providerId' | 'externalId'>
 
 export interface ICatalogService {
   getMovies(): Promise<Movie[]>
@@ -13,6 +25,7 @@ export interface ICatalogService {
   getSeries(): Promise<Series[]>
   getSeriesById(id: string): Promise<Series | null>
   search(query: string): Promise<CatalogItem[]>
+  addItem(data: AddItemDTO): Promise<CatalogItem>
 }
 
 const MOCK_MOVIES: Omit<Movie, 'id' | 'createdAt'>[] = [
@@ -290,6 +303,22 @@ export class LocalCatalogService implements ICatalogService {
     return getFromStorage<Series[]>(STORAGE_KEYS.CACHE_SERIES, [])
   }
 
+  private readMusic(): MusicAlbum[] {
+    return getFromStorage<MusicAlbum[]>(STORAGE_KEYS.CACHE_MUSIC, [])
+  }
+
+  private readGames(): Game[] {
+    return getFromStorage<Game[]>(STORAGE_KEYS.CACHE_GAMES, [])
+  }
+
+  private readBooks(): Book[] {
+    return getFromStorage<Book[]>(STORAGE_KEYS.CACHE_BOOKS, [])
+  }
+
+  private readPodcasts(): Podcast[] {
+    return getFromStorage<Podcast[]>(STORAGE_KEYS.CACHE_PODCASTS, [])
+  }
+
   private seed(): void {
     const movies = this.readMovies()
     if (movies.length === 0) {
@@ -342,5 +371,42 @@ export class LocalCatalogService implements ICatalogService {
       (s) => s.title.toLowerCase().includes(q) || s.originalTitle?.toLowerCase().includes(q)
     )
     return [...movies, ...series]
+  }
+
+  async addItem(data: AddItemDTO): Promise<CatalogItem> {
+    const base = { id: generateId(), providerId: 'manual' as const, createdAt: new Date() }
+
+    switch (data.contentType) {
+      case 'movie': {
+        const item: Movie = { ...data, ...base }
+        setToStorage(STORAGE_KEYS.CACHE_MOVIES, [...this.readMovies(), item])
+        return item
+      }
+      case 'series': {
+        const item: Series = { ...data, ...base }
+        setToStorage(STORAGE_KEYS.CACHE_SERIES, [...this.readSeries(), item])
+        return item
+      }
+      case 'music': {
+        const item: MusicAlbum = { ...data, ...base }
+        setToStorage(STORAGE_KEYS.CACHE_MUSIC, [...this.readMusic(), item])
+        return item
+      }
+      case 'game': {
+        const item: Game = { ...data, ...base }
+        setToStorage(STORAGE_KEYS.CACHE_GAMES, [...this.readGames(), item])
+        return item
+      }
+      case 'book': {
+        const item: Book = { ...data, ...base }
+        setToStorage(STORAGE_KEYS.CACHE_BOOKS, [...this.readBooks(), item])
+        return item
+      }
+      case 'podcast': {
+        const item: Podcast = { ...data, ...base }
+        setToStorage(STORAGE_KEYS.CACHE_PODCASTS, [...this.readPodcasts(), item])
+        return item
+      }
+    }
   }
 }

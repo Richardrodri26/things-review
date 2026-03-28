@@ -1,12 +1,25 @@
 // src/features/catalog/hooks/useCatalog.ts
-import { useQuery } from '@tanstack/react-query'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Movie } from '@/entities/movie/types'
 import type { Series } from '@/entities/series/types'
+import type { AddItemDTO } from '@/shared/services'
 import { services } from '@/shared/services'
 
-export const MOVIES_QUERY_KEY = ['catalog', 'movies'] as const
-export const SERIES_QUERY_KEY = ['catalog', 'series'] as const
+export const MOVIES_QUERY_KEY   = ['catalog', 'movies']   as const
+export const SERIES_QUERY_KEY   = ['catalog', 'series']   as const
+export const MUSIC_QUERY_KEY    = ['catalog', 'music']    as const
+export const GAMES_QUERY_KEY    = ['catalog', 'games']    as const
+export const BOOKS_QUERY_KEY    = ['catalog', 'books']    as const
+export const PODCASTS_QUERY_KEY = ['catalog', 'podcasts'] as const
+
+const CONTENT_TYPE_QUERY_KEY: Record<string, readonly string[]> = {
+  movie:   MOVIES_QUERY_KEY,
+  series:  SERIES_QUERY_KEY,
+  music:   MUSIC_QUERY_KEY,
+  game:    GAMES_QUERY_KEY,
+  book:    BOOKS_QUERY_KEY,
+  podcast: PODCASTS_QUERY_KEY,
+}
 
 export function useMovies() {
   return useQuery({
@@ -51,4 +64,18 @@ export function useCatalogItemTitle(contentId: string): string | undefined {
   if (series) return series.title
 
   return undefined
+}
+
+export function useAddCatalogItem() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (data: AddItemDTO) => services.catalog.addItem(data),
+    onSuccess: (item) => {
+      const key = CONTENT_TYPE_QUERY_KEY[item.contentType]
+      if (key) {
+        queryClient.invalidateQueries({ queryKey: key })
+      }
+    },
+  })
 }

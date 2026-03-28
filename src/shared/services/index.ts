@@ -3,6 +3,7 @@ import { LocalUserService } from './user.service'
 import { LocalReviewService } from './review.service'
 import { LocalGroupService } from './group.service'
 import { LocalCatalogService } from './catalog.service'
+import { LocalWatchlistService } from './watchlist.service'
 
 // Service Container — cambiar implementaciones aquí cuando llegue el backend
 export const services = {
@@ -10,6 +11,7 @@ export const services = {
   reviews: new LocalReviewService(),
   groups: new LocalGroupService(),
   catalog: new LocalCatalogService(),
+  watchlist: new LocalWatchlistService(),
 } as const
 
 export type Services = typeof services
@@ -18,4 +20,5 @@ export type Services = typeof services
 export type { IUserService } from './user.service'
 export type { IReviewService } from './review.service'
 export type { IGroupService } from './group.service'
-export type { ICatalogService, CatalogItem } from './catalog.service'
+export type { ICatalogService, CatalogItem, AddItemDTO } from './catalog.service'
+export type { IWatchlistService } from './watchlist.service'
