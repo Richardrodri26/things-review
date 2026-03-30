@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { services } from '@/shared/services'
 import { useStore } from '@/shared/lib/store'
+import { toast } from '@/shared/lib/toast'
 import type { CreateReviewDTO, UpdateReviewDTO } from '@/entities/review/types'
 import { REVIEWS_QUERY_KEY } from './useReviews'
 
@@ -14,6 +15,10 @@ export function useCreateReview() {
     onSuccess: (newReview) => {
       addReview(newReview)
       queryClient.invalidateQueries({ queryKey: REVIEWS_QUERY_KEY })
+      toast.success({ title: 'Review saved' })
+    },
+    onError: () => {
+      toast.error({ title: 'Could not save review', description: 'Please try again.' })
     },
   })
 }
@@ -28,6 +33,10 @@ export function useUpdateReview() {
     onSuccess: (updatedReview) => {
       updateReview(updatedReview.id, updatedReview)
       queryClient.invalidateQueries({ queryKey: REVIEWS_QUERY_KEY })
+      toast.success({ title: 'Review updated' })
+    },
+    onError: () => {
+      toast.error({ title: 'Could not update review', description: 'Please try again.' })
     },
   })
 }
@@ -41,6 +50,10 @@ export function useDeleteReview() {
     onSuccess: (_, id) => {
       removeReview(id)
       queryClient.invalidateQueries({ queryKey: REVIEWS_QUERY_KEY })
+      toast.success({ title: 'Review deleted' })
+    },
+    onError: () => {
+      toast.error({ title: 'Could not delete review', description: 'Please try again.' })
     },
   })
 }

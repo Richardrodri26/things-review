@@ -8,6 +8,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -21,10 +22,14 @@ import {
 } from '@/components/ui/sidebar'
 import { ChevronsUpDownIcon, UserCircleIcon, LogOutIcon } from 'lucide-react'
 import { useUser } from '@/shared/lib/store'
+import { ROUTES } from '@/shared/constants'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
   const user = useUser()
+  const router = useRouter()
 
   const displayName = user?.displayName ?? 'Guest'
   const username = user?.username ?? 'guest'
@@ -55,28 +60,34 @@ export function NavUser() {
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                <Avatar className="size-8 rounded-lg">
-                  <AvatarImage src={user?.avatarUrl} alt={displayName} />
-                  <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
-                </Avatar>
-                <div className="grid flex-1 text-start text-sm leading-tight">
-                  <span className="truncate font-medium">{displayName}</span>
-                  <span className="truncate text-xs text-muted-foreground">@{username}</span>
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="p-0 font-normal">
+                <div className="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
+                  <Avatar className="size-8 rounded-lg">
+                    <AvatarImage src={user?.avatarUrl} alt={displayName} />
+                    <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
+                  </Avatar>
+                  <div className="grid flex-1 text-start text-sm leading-tight">
+                    <span className="truncate font-medium">{displayName}</span>
+                    <span className="truncate text-xs text-muted-foreground">@{username}</span>
+                  </div>
                 </div>
-              </div>
-            </DropdownMenuLabel>
+              </DropdownMenuLabel>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <UserCircleIcon />
-              Profile
-            </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuItem render={<Link href={ROUTES.PROFILE} />}>
+                <UserCircleIcon />
+                Profile
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <LogOutIcon />
-              Log out
-            </DropdownMenuItem>
+            <DropdownMenuGroup>
+              <DropdownMenuItem onClick={() => router.push(ROUTES.ONBOARDING)}>
+                <LogOutIcon />
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

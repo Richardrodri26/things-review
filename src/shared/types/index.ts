@@ -21,8 +21,8 @@ export const CONTENT_TYPE_LABELS: Record<ContentType, { en: string; es: string; 
   podcast: { en: 'Podcast', es: 'Podcast',    icon: '🎙️' },
 }
 
-// Rating 1-5
-export type Rating = 1 | 2 | 3 | 4 | 5
+// Rating 1-5 (decimals allowed, e.g. 3.7)
+export type Rating = number
 
 // ConsumptionStatus — genérico, la UI muestra el label según contentType
 export const CONSUMPTION_STATUS = {

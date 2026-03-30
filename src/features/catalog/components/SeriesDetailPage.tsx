@@ -7,14 +7,8 @@ import Image from 'next/image'
 import { ArrowLeftIcon, PlusIcon, PencilIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
 import { ReviewCard } from '@/features/reviews/components/ReviewCard'
-import { ReviewForm } from '@/features/reviews/components/ReviewForm'
+import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage'
 import { useStore } from '@/shared/lib/store'
 import { useDeleteReview } from '@/features/reviews/hooks'
 import { useSeriesItem } from '../hooks'
@@ -160,23 +154,17 @@ export function SeriesDetailPage({ seriesId }: SeriesDetailPageProps) {
         </div>
       </div>
 
-      {/* Review Dialog */}
-      <Dialog open={dialog !== 'none'} onOpenChange={(open) => !open && setDialog('none')}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>{dialog === 'create' ? 'Add Review' : 'Edit Review'}</DialogTitle>
-          </DialogHeader>
-          {dialog !== 'none' && (
-            <ReviewForm
-              mode={dialog === 'create' ? 'create' : 'edit'}
-              review={dialog === 'edit' ? existingReview : undefined}
-              initialValues={dialog === 'create' ? { contentId: series.id, contentType: 'series' } : undefined}
-              onSuccess={() => setDialog('none')}
-              onCancel={() => setDialog('none')}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Review Editor — full-screen Notion-like */}
+      {dialog !== 'none' && (
+        <ReviewEditorPage
+          mode={dialog === 'create' ? 'create' : 'edit'}
+          review={dialog === 'edit' ? existingReview : undefined}
+          initialValues={dialog === 'create' ? { contentId: series.id, contentType: 'series' } : undefined}
+          contentTitle={series.title}
+          onSuccess={() => setDialog('none')}
+          onCancel={() => setDialog('none')}
+        />
+      )}
     </div>
   )
 }

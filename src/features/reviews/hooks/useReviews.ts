@@ -25,3 +25,11 @@ export function useReviewsByContent(contentId: string) {
     enabled: !!contentId,
   })
 }
+
+export function useReviewById(id: string) {
+  return useQuery({
+    queryKey: [...REVIEWS_QUERY_KEY, 'detail', id],
+    queryFn: () => services.reviews.getById(id),
+    enabled: !!id,
+  })
+}

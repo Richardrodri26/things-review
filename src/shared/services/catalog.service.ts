@@ -24,6 +24,11 @@ export interface ICatalogService {
   getMovieById(id: string): Promise<Movie | null>
   getSeries(): Promise<Series[]>
   getSeriesById(id: string): Promise<Series | null>
+  getMusic(): Promise<MusicAlbum[]>
+  getGames(): Promise<Game[]>
+  getBooks(): Promise<Book[]>
+  getPodcasts(): Promise<Podcast[]>
+  getByType(contentType: CatalogItem['contentType']): Promise<CatalogItem[]>
   search(query: string): Promise<CatalogItem[]>
   addItem(data: AddItemDTO): Promise<CatalogItem>
 }
@@ -148,6 +153,214 @@ const MOCK_MOVIES: Omit<Movie, 'id' | 'createdAt'>[] = [
     runtime: 155,
     originalLanguage: 'en',
     adult: false,
+  },
+]
+
+const MOCK_MUSIC: Omit<MusicAlbum, 'id' | 'createdAt'>[] = [
+  {
+    contentType: 'music',
+    providerId: 'mock',
+    title: 'To Pimp a Butterfly',
+    year: 2015,
+    genres: [{ id: 'g-hiphop', name: 'Hip-Hop', applicableTo: ['music'] }],
+    overview: 'Third studio album by Kendrick Lamar, exploring themes of race, culture, and identity.',
+    coverImageUrl: 'https://upload.wikimedia.org/wikipedia/en/f/f6/Kendrick_Lamar_-_To_Pimp_a_Butterfly.png',
+    artist: 'Kendrick Lamar',
+    albumType: 'album',
+    totalTracks: 16,
+    durationMs: 4537000,
+    label: 'Aftermath / Interscope',
+  },
+  {
+    contentType: 'music',
+    providerId: 'mock',
+    title: 'OK Computer',
+    year: 1997,
+    genres: [{ id: 'g-rock', name: 'Alternative Rock', applicableTo: ['music'] }],
+    overview: "Radiohead's third studio album, widely considered one of the greatest albums ever made.",
+    coverImageUrl: 'https://upload.wikimedia.org/wikipedia/en/b/ba/Radioheadokcomputer.png',
+    artist: 'Radiohead',
+    albumType: 'album',
+    totalTracks: 12,
+    durationMs: 3317000,
+    label: 'Parlophone / Capitol',
+  },
+  {
+    contentType: 'music',
+    providerId: 'mock',
+    title: 'Blonde',
+    year: 2016,
+    genres: [{ id: 'g-rnb', name: 'R&B', applicableTo: ['music'] }, { id: 'g-soul', name: 'Soul', applicableTo: ['music'] }],
+    overview: "Frank Ocean's second studio album, an experimental R&B record acclaimed for its introspective lyricism.",
+    coverImageUrl: 'https://upload.wikimedia.org/wikipedia/en/a/a0/Frank_Ocean_-_Blonde.png',
+    artist: 'Frank Ocean',
+    albumType: 'album',
+    totalTracks: 17,
+    durationMs: 3720000,
+    label: "Boys Don't Cry",
+  },
+  {
+    contentType: 'music',
+    providerId: 'mock',
+    title: 'Random Access Memories',
+    year: 2013,
+    genres: [{ id: 'g-disco', name: 'Disco', applicableTo: ['music'] }, { id: 'g-funk', name: 'Funk', applicableTo: ['music'] }],
+    overview: "Daft Punk's fourth studio album, a love letter to 70s and 80s music featuring live instrumentation.",
+    coverImageUrl: 'https://upload.wikimedia.org/wikipedia/en/a/a7/Random_Access_Memories.jpg',
+    artist: 'Daft Punk',
+    albumType: 'album',
+    totalTracks: 13,
+    durationMs: 4424000,
+    label: 'Columbia',
+  },
+]
+
+const MOCK_GAMES: Omit<Game, 'id' | 'createdAt'>[] = [
+  {
+    contentType: 'game',
+    providerId: 'mock',
+    title: 'The Last of Us Part I',
+    year: 2022,
+    genres: [{ id: 'g-action', name: 'Action-Adventure', applicableTo: ['game'] }, { id: 'g-survival', name: 'Survival', applicableTo: ['game'] }],
+    overview: 'A third-person action-adventure game set in a post-apocalyptic world where players follow Joel and Ellie.',
+    coverImageUrl: 'https://image.api.playstation.com/vulcan/ap/rnd/202207/1210/4xJ8XB3bi888QTLZYdl7Oi0s.png',
+    developer: 'Naughty Dog',
+    publisher: 'Sony Interactive Entertainment',
+    platforms: ['playstation_5', 'pc'],
+  },
+  {
+    contentType: 'game',
+    providerId: 'mock',
+    title: 'Elden Ring',
+    year: 2022,
+    genres: [{ id: 'g-rpg', name: 'RPG', applicableTo: ['game'] }, { id: 'g-action', name: 'Action', applicableTo: ['game'] }],
+    overview: "An action RPG set in a vast open world developed by FromSoftware and written by George R.R. Martin.",
+    coverImageUrl: 'https://image.api.playstation.com/vulcan/ap/rnd/202110/2000/phvVT0qZfcRms5qDAk0SI3CM.png',
+    developer: 'FromSoftware',
+    publisher: 'Bandai Namco',
+    platforms: ['playstation_5', 'xbox_series', 'pc'],
+  },
+  {
+    contentType: 'game',
+    providerId: 'mock',
+    title: 'Disco Elysium',
+    year: 2019,
+    genres: [{ id: 'g-rpg', name: 'RPG', applicableTo: ['game'] }],
+    overview: 'A groundbreaking open-world role playing game set in a unique city where morality is gone and all is uncharted.',
+    coverImageUrl: 'https://upload.wikimedia.org/wikipedia/en/7/7e/Disco_Elysium_cover_art.jpg',
+    developer: 'ZA/UM',
+    publisher: 'ZA/UM',
+    platforms: ['pc', 'playstation_4', 'nintendo_switch'],
+  },
+  {
+    contentType: 'game',
+    providerId: 'mock',
+    title: 'Hollow Knight',
+    year: 2017,
+    genres: [{ id: 'g-metroidvania', name: 'Metroidvania', applicableTo: ['game'] }, { id: 'g-platformer', name: 'Platformer', applicableTo: ['game'] }],
+    overview: 'A challenging 2D action-adventure game set in a vast, ancient kingdom beneath the surface.',
+    coverImageUrl: 'https://upload.wikimedia.org/wikipedia/en/3/3a/Hollow_Knight.png',
+    developer: 'Team Cherry',
+    publisher: 'Team Cherry',
+    platforms: ['pc', 'nintendo_switch', 'playstation_4'],
+  },
+]
+
+const MOCK_BOOKS: Omit<Book, 'id' | 'createdAt'>[] = [
+  {
+    contentType: 'book',
+    providerId: 'mock',
+    title: 'The Name of the Wind',
+    year: 2007,
+    genres: [{ id: 'g-fantasy', name: 'Fantasy', applicableTo: ['book'] }],
+    overview: 'The tale of Kvothe, from his childhood in a troupe of traveling players to his years as a notorious young arcanist.',
+    coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1270352123i/186074.jpg',
+    author: ['Patrick Rothfuss'],
+    isbn: '978-0-7564-0407-9',
+    pageCount: 662,
+    publisher: 'DAW Books',
+    language: 'en',
+  },
+  {
+    contentType: 'book',
+    providerId: 'mock',
+    title: 'Dune',
+    year: 1965,
+    genres: [{ id: 'g-scifi', name: 'Science Fiction', applicableTo: ['book'] }],
+    overview: 'Set in the distant future amid a feudal interstellar society, this is the story of Paul Atreides and his journey on the desert planet Arrakis.',
+    coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1555447414i/44767458.jpg',
+    author: ['Frank Herbert'],
+    isbn: '978-0-441-17271-9',
+    pageCount: 412,
+    publisher: 'Chilton Books',
+    language: 'en',
+  },
+  {
+    contentType: 'book',
+    providerId: 'mock',
+    title: 'The Pragmatic Programmer',
+    year: 1999,
+    genres: [{ id: 'g-tech', name: 'Technology', applicableTo: ['book'] }],
+    overview: 'A timeless classic on software craftsmanship, pragmatic techniques, and professional development.',
+    coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1401432508i/4099.jpg',
+    author: ['David Thomas', 'Andrew Hunt'],
+    isbn: '978-0-201-61622-4',
+    pageCount: 352,
+    publisher: 'Addison-Wesley',
+    language: 'en',
+  },
+  {
+    contentType: 'book',
+    providerId: 'mock',
+    title: '100 años de soledad',
+    year: 1967,
+    genres: [{ id: 'g-magical-realism', name: 'Magical Realism', applicableTo: ['book'] }],
+    overview: 'La historia de la familia Buendía a lo largo de siete generaciones en el pueblo imaginario de Macondo.',
+    coverImageUrl: 'https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1327881361i/320.jpg',
+    author: ['Gabriel García Márquez'],
+    isbn: '978-0-06-088328-7',
+    pageCount: 417,
+    publisher: 'Editorial Sudamericana',
+    language: 'es',
+  },
+]
+
+const MOCK_PODCASTS: Omit<Podcast, 'id' | 'createdAt'>[] = [
+  {
+    contentType: 'podcast',
+    providerId: 'mock',
+    title: 'Lex Fridman Podcast',
+    year: 2018,
+    genres: [{ id: 'g-tech', name: 'Technology', applicableTo: ['podcast'] }, { id: 'g-science', name: 'Science', applicableTo: ['podcast'] }],
+    overview: 'Conversations about science, technology, history, philosophy and the nature of intelligence, consciousness, love, and power.',
+    host: ['Lex Fridman'],
+    totalEpisodes: 450,
+    language: 'en',
+    isActive: true,
+  },
+  {
+    contentType: 'podcast',
+    providerId: 'mock',
+    title: 'Syntax',
+    year: 2017,
+    genres: [{ id: 'g-tech', name: 'Technology', applicableTo: ['podcast'] }],
+    overview: 'A Tasty Treats Podcast for Web Developers. Wes Bos and Scott Tolinski cover web development topics.',
+    host: ['Wes Bos', 'Scott Tolinski'],
+    totalEpisodes: 800,
+    language: 'en',
+    isActive: true,
+  },
+  {
+    contentType: 'podcast',
+    providerId: 'mock',
+    title: 'Darknet Diaries',
+    year: 2017,
+    genres: [{ id: 'g-tech', name: 'Technology', applicableTo: ['podcast'] }, { id: 'g-true-crime', name: 'True Crime', applicableTo: ['podcast'] }],
+    overview: 'True stories from the dark side of the internet. Hacking, cybersecurity, privacy, and more.',
+    host: ['Jack Rhysider'],
+    totalEpisodes: 150,
+    language: 'en',
+    isActive: true,
   },
 ]
 
@@ -339,6 +552,46 @@ export class LocalCatalogService implements ICatalogService {
       }))
       setToStorage(STORAGE_KEYS.CACHE_SERIES, seeded)
     }
+
+    const music = this.readMusic()
+    if (music.length === 0) {
+      const seeded: MusicAlbum[] = MOCK_MUSIC.map((m) => ({
+        ...m,
+        id: generateId(),
+        createdAt: new Date(),
+      }))
+      setToStorage(STORAGE_KEYS.CACHE_MUSIC, seeded)
+    }
+
+    const games = this.readGames()
+    if (games.length === 0) {
+      const seeded: Game[] = MOCK_GAMES.map((g) => ({
+        ...g,
+        id: generateId(),
+        createdAt: new Date(),
+      }))
+      setToStorage(STORAGE_KEYS.CACHE_GAMES, seeded)
+    }
+
+    const books = this.readBooks()
+    if (books.length === 0) {
+      const seeded: Book[] = MOCK_BOOKS.map((b) => ({
+        ...b,
+        id: generateId(),
+        createdAt: new Date(),
+      }))
+      setToStorage(STORAGE_KEYS.CACHE_BOOKS, seeded)
+    }
+
+    const podcasts = this.readPodcasts()
+    if (podcasts.length === 0) {
+      const seeded: Podcast[] = MOCK_PODCASTS.map((p) => ({
+        ...p,
+        id: generateId(),
+        createdAt: new Date(),
+      }))
+      setToStorage(STORAGE_KEYS.CACHE_PODCASTS, seeded)
+    }
   }
 
   async getMovies(): Promise<Movie[]> {
@@ -359,6 +612,38 @@ export class LocalCatalogService implements ICatalogService {
   async getSeriesById(id: string): Promise<Series | null> {
     this.seed()
     return this.readSeries().find((s) => s.id === id) ?? null
+  }
+
+  async getMusic(): Promise<MusicAlbum[]> {
+    this.seed()
+    return this.readMusic()
+  }
+
+  async getGames(): Promise<Game[]> {
+    this.seed()
+    return this.readGames()
+  }
+
+  async getBooks(): Promise<Book[]> {
+    this.seed()
+    return this.readBooks()
+  }
+
+  async getPodcasts(): Promise<Podcast[]> {
+    this.seed()
+    return this.readPodcasts()
+  }
+
+  async getByType(contentType: CatalogItem['contentType']): Promise<CatalogItem[]> {
+    this.seed()
+    switch (contentType) {
+      case 'movie':   return this.readMovies()
+      case 'series':  return this.readSeries()
+      case 'music':   return this.readMusic()
+      case 'game':    return this.readGames()
+      case 'book':    return this.readBooks()
+      case 'podcast': return this.readPodcasts()
+    }
   }
 
   async search(query: string): Promise<CatalogItem[]> {

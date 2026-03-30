@@ -1,11 +1,14 @@
 'use client'
 
-import { PencilIcon, TrashIcon } from 'lucide-react'
+import Link from 'next/link'
+import { PencilIcon, TrashIcon, ArrowRightIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { RatingStars, ContentTypeBadge, StatusBadge } from '@/shared/ui/atoms'
 import { formatDate } from '@/shared/utils'
 import { useCatalogItemTitle } from '@/features/catalog/hooks'
+import { ROUTES } from '@/shared/constants'
+import { extractPlainText } from '@/components/editor/editor-client'
 import type { Review } from '@/entities/review/types'
 
 interface ReviewCardProps {
@@ -16,6 +19,9 @@ interface ReviewCardProps {
 
 export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
   const itemTitle = useCatalogItemTitle(review.contentId)
+
+  // Extraer preview de texto plano del cuerpo EditorJS
+  const bodyPreview = review.body ? extractPlainText(review.body) : undefined
 
   return (
     <div className="rounded-lg border border-border bg-card p-4 space-y-3">
@@ -51,17 +57,17 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
       </div>
 
       {/* Rating */}
-      {review.rating && <RatingStars value={review.rating} readonly size="sm" />}
+      {review.rating && <RatingStars value={review.rating} readonly size="sm" showValue />}
 
       {/* Title */}
       {review.title && (
         <p className="font-medium text-sm leading-snug">{review.title}</p>
       )}
 
-      {/* Body */}
-      {review.body && (
+      {/* Body preview */}
+      {bodyPreview && (
         <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-          {review.body}
+          {bodyPreview}
         </p>
       )}
 
@@ -69,7 +75,16 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
       <Separator />
       <div className="flex items-center justify-between text-xs text-muted-foreground">
         <span className="truncate max-w-[60%]">{itemTitle ?? review.contentId}</span>
-        <span className="shrink-0">{formatDate(review.createdAt)}</span>
+        <div className="flex items-center gap-2 shrink-0">
+          <span>{formatDate(review.createdAt)}</span>
+          <Link
+            href={ROUTES.REVIEW_DETAIL(review.id)}
+            className="inline-flex items-center gap-0.5 text-foreground hover:text-primary transition-colors"
+            aria-label="View full review"
+          >
+            <ArrowRightIcon className="size-3" />
+          </Link>
+        </div>
       </div>
     </div>
   )

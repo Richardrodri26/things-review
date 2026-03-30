@@ -12,6 +12,7 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { ROUTES } from '@/shared/constants'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 const routeLabels: Record<string, string> = {
   [ROUTES.MOVIES]:  'Movies',
@@ -46,6 +47,9 @@ export function AppHeader() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
+      <div className="ms-auto">
+        <ThemeToggle />
+      </div>
     </header>
   )
 }

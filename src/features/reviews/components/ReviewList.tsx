@@ -15,7 +15,7 @@ import {
 import { EmptyState } from '@/shared/ui/atoms'
 import type { ContentType, ConsumptionStatus } from '@/shared/types'
 import { ReviewCard } from './ReviewCard'
-import { ReviewForm } from './ReviewForm'
+import { ReviewEditorPage } from './ReviewEditorPage'
 import { ReviewFilters } from './ReviewFilters'
 import { useReviews, useDeleteReview } from '../hooks'
 import type { Review } from '@/entities/review/types'
@@ -146,24 +146,15 @@ export function ReviewList() {
         </div>
       )}
 
-      {/* Create / Edit Form Dialog */}
-      <Dialog open={isFormOpen} onOpenChange={(open) => !open && setMode({ type: 'idle' })}>
-        <DialogContent className="max-w-lg">
-          <DialogHeader>
-            <DialogTitle>
-              {mode.type === 'create' ? 'Add Review' : 'Edit Review'}
-            </DialogTitle>
-          </DialogHeader>
-          {isFormOpen && (
-            <ReviewForm
-              mode={mode.type === 'create' ? 'create' : 'edit'}
-              review={mode.type === 'edit' ? mode.review : undefined}
-              onSuccess={() => setMode({ type: 'idle' })}
-              onCancel={() => setMode({ type: 'idle' })}
-            />
-          )}
-        </DialogContent>
-      </Dialog>
+      {/* Create / Edit — full-screen Notion-like editor */}
+      {isFormOpen && (
+        <ReviewEditorPage
+          mode={mode.type === 'create' ? 'create' : 'edit'}
+          review={mode.type === 'edit' ? mode.review : undefined}
+          onSuccess={() => setMode({ type: 'idle' })}
+          onCancel={() => setMode({ type: 'idle' })}
+        />
+      )}
 
       {/* Delete Confirmation Dialog */}
       <Dialog

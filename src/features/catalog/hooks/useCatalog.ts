@@ -2,8 +2,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import type { Movie } from '@/entities/movie/types'
 import type { Series } from '@/entities/series/types'
-import type { AddItemDTO } from '@/shared/services'
+import type { AddItemDTO, CatalogItem } from '@/shared/services'
 import { services } from '@/shared/services'
+import type { ContentType } from '@/shared/types'
 
 export const MOVIES_QUERY_KEY   = ['catalog', 'movies']   as const
 export const SERIES_QUERY_KEY   = ['catalog', 'series']   as const
@@ -51,6 +52,15 @@ export function useSeriesItem(id: string) {
   })
 }
 
+/** Retorna todos los items del catálogo para un tipo dado */
+export function useCatalogByType(contentType: ContentType | null) {
+  return useQuery({
+    queryKey: contentType ? CONTENT_TYPE_QUERY_KEY[contentType] : ['catalog', 'none'],
+    queryFn: () => (contentType ? services.catalog.getByType(contentType) : Promise.resolve([])),
+    enabled: !!contentType,
+  })
+}
+
 export function useCatalogItemTitle(contentId: string): string | undefined {
   const queryClient = useQueryClient()
 
@@ -64,6 +74,12 @@ export function useCatalogItemTitle(contentId: string): string | undefined {
   if (series) return series.title
 
   return undefined
+}
+
+export function useCatalogItem(contentType: ContentType | null, contentId: string): CatalogItem | undefined {
+  const { data } = useCatalogByType(contentType)
+  if (!data || !contentId) return undefined
+  return data.find((item) => item.id === contentId)
 }
 
 export function useAddCatalogItem() {

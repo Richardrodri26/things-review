@@ -1,6 +1,7 @@
 // src/features/comments/hooks/useComments.ts
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { services } from '@/shared/services'
+import { toast } from '@/shared/lib/toast'
 import type { CreateCommentDTO, UpdateCommentDTO } from '@/entities/comment/types'
 
 export const COMMENTS_QUERY_KEY = ['comments'] as const
@@ -21,6 +22,9 @@ export function useCreateComment(reviewId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...COMMENTS_QUERY_KEY, reviewId] })
     },
+    onError: () => {
+      toast.error({ title: 'Could not post comment', description: 'Please try again.' })
+    },
   })
 }
 
@@ -33,6 +37,9 @@ export function useUpdateComment(reviewId: string) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...COMMENTS_QUERY_KEY, reviewId] })
     },
+    onError: () => {
+      toast.error({ title: 'Could not update comment', description: 'Please try again.' })
+    },
   })
 }
 
@@ -43,6 +50,9 @@ export function useDeleteComment(reviewId: string) {
     mutationFn: (id: string) => services.comments.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [...COMMENTS_QUERY_KEY, reviewId] })
+    },
+    onError: () => {
+      toast.error({ title: 'Could not delete comment', description: 'Please try again.' })
     },
   })
 }

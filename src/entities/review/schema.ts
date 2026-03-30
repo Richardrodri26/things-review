@@ -40,6 +40,19 @@ export const reviewMetadataSchema = z.union([
   podcastReviewMetadataSchema,
 ]).nullable().optional()
 
+// EditorJS OutputData schema — guardamos el JSON completo
+const editorBlockSchema = z.object({
+  id: z.string().optional(),
+  type: z.string(),
+  data: z.record(z.string(), z.unknown()),
+})
+
+const editorOutputSchema = z.object({
+  time: z.number().optional(),
+  version: z.string().optional(),
+  blocks: z.array(editorBlockSchema),
+}).optional()
+
 export const reviewSchema = z.object({
   id: uuidSchema,
   userId: uuidSchema,
@@ -47,7 +60,7 @@ export const reviewSchema = z.object({
   contentType: contentTypeSchema,
   rating: ratingSchema.optional(),
   title: z.string().max(100).optional(),
-  body: z.string().max(2000).optional(),
+  body: editorOutputSchema,
   containsSpoilers: z.boolean(),
   status: consumptionStatusSchema,
   metadata: reviewMetadataSchema,

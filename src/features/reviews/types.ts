@@ -1,13 +1,15 @@
 // src/features/reviews/types.ts
 import type { Review } from '@/entities/review/types'
+import type { OutputData } from '@editorjs/editorjs'
+import type { Rating } from '@/shared/types'
 
 // Para el formulario — campos editables
 export interface ReviewFormValues {
   contentId: string
   contentType: 'movie' | 'series' | 'music' | 'game' | 'book' | 'podcast'
-  rating?: 1 | 2 | 3 | 4 | 5
+  rating?: Rating
   title?: string
-  body?: string
+  body?: OutputData
   containsSpoilers: boolean
   status: 'consumed' | 'want_to_consume' | 'consuming' | 'dropped'
 }

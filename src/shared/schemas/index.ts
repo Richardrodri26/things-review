@@ -10,14 +10,8 @@ export const isoDateSchema = z.string().datetime()
 // ContentType schema
 export const contentTypeSchema = z.enum(['movie', 'series', 'music', 'game', 'book', 'podcast'])
 
-// Rating 1-5
-export const ratingSchema = z.union([
-  z.literal(1),
-  z.literal(2),
-  z.literal(3),
-  z.literal(4),
-  z.literal(5),
-])
+// Rating 1-5 (decimals allowed, e.g. 3.7)
+export const ratingSchema = z.number().min(1).max(5)
 
 // ConsumptionStatus
 export const consumptionStatusSchema = z.enum([

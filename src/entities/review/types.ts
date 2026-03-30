@@ -6,6 +6,7 @@ import type {
 } from '@/shared/types'
 import type { User } from '@/entities/user/types'
 import type { GamePlatform } from '@/entities/game/types'
+import type { OutputData } from '@editorjs/editorjs'
 
 export interface SeriesReviewMetadata {
   contentType: 'series'
@@ -47,7 +48,7 @@ export interface Review {
   contentType: ContentType
   rating?: Rating
   title?: string
-  body?: string
+  body?: OutputData
   containsSpoilers: boolean
   status: ConsumptionStatus
   metadata?: ReviewMetadata

@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { services } from '@/shared/services'
 import { useStore } from '@/shared/lib/store'
 import { useUser } from '@/shared/lib/store'
+import { toast } from '@/shared/lib/toast'
 import type { CreateGroupDTO, UpdateGroupDTO } from '@/entities/group/types'
 import { GROUPS_QUERY_KEY } from './useGroups'
 
@@ -19,6 +20,10 @@ export function useCreateGroup() {
     onSuccess: (newGroup) => {
       addGroup(newGroup)
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
+      toast.success({ title: `Group "${newGroup.name}" created` })
+    },
+    onError: () => {
+      toast.error({ title: 'Could not create group', description: 'Please try again.' })
     },
   })
 }
@@ -33,6 +38,10 @@ export function useUpdateGroup() {
     onSuccess: (updatedGroup) => {
       updateGroup(updatedGroup.id, updatedGroup)
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
+      toast.success({ title: 'Group updated' })
+    },
+    onError: () => {
+      toast.error({ title: 'Could not update group', description: 'Please try again.' })
     },
   })
 }
@@ -46,6 +55,10 @@ export function useDeleteGroup() {
     onSuccess: (_, id) => {
       removeGroup(id)
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
+      toast.success({ title: 'Group deleted' })
+    },
+    onError: () => {
+      toast.error({ title: 'Could not delete group', description: 'Please try again.' })
     },
   })
 }
@@ -66,6 +79,15 @@ export function useJoinGroup() {
     onSuccess: (group) => {
       addGroup(group)
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
+      toast.success({ title: `Joined "${group.name}"` })
+    },
+    onError: (err) => {
+      const isInvalidCode =
+        err instanceof Error && err.message === 'Invalid invite code'
+      toast.error({
+        title: isInvalidCode ? 'Invalid invite code' : 'Could not join group',
+        description: isInvalidCode ? 'Check the code and try again.' : 'Please try again.',
+      })
     },
   })
 }
