@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import {
   ArrowLeftIcon,
   CopyIcon,
@@ -44,6 +45,10 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
   const deleteGroup = useDeleteGroup()
   const [copied, setCopied] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const t = useTranslations('groups.detail')
+  const tCard = useTranslations('groups.card')
+  const tCommon = useTranslations('common')
+  const tContentType = useTranslations('contentType')
 
   if (isLoading) {
     return (
@@ -58,9 +63,9 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
       <div className="flex flex-1 flex-col gap-4 p-4">
         <Button variant="ghost" size="sm" onClick={() => router.back()} className="w-fit">
           <ArrowLeftIcon />
-          Back
+          {tCommon('back')}
         </Button>
-        <p className="text-muted-foreground">Group not found.</p>
+        <p className="text-muted-foreground">{t('notFound')}</p>
       </div>
     )
   }
@@ -83,7 +88,7 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
       {/* Back */}
       <Button variant="ghost" size="sm" onClick={() => router.back()} className="w-fit -ml-2">
         <ArrowLeftIcon />
-        Groups
+        {t('back')}
       </Button>
 
       {/* Group Header */}
@@ -92,7 +97,7 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-xl font-semibold">{group.name}</h1>
             <div className="flex items-center gap-1.5">
-              {isOwner && <Badge variant="secondary">Owner</Badge>}
+              {isOwner && <Badge variant="secondary">{tCard('owner')}</Badge>}
               {group.visibility === 'private' ? (
                 <LockIcon className="size-4 text-muted-foreground" />
               ) : (
@@ -105,7 +110,7 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
           )}
           <div className="flex items-center gap-1 text-xs text-muted-foreground pt-1">
             <UsersIcon className="size-3.5" />
-            <span>{group.memberIds.length} {group.memberIds.length === 1 ? 'member' : 'members'}</span>
+            <span>{t('memberCount', { count: group.memberIds.length })}</span>
           </div>
         </div>
         {isOwner && (
@@ -114,7 +119,7 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
             size="icon-sm"
             onClick={() => setConfirmDelete(true)}
             className="text-destructive hover:text-destructive shrink-0"
-            aria-label="Delete group"
+            aria-label={t('deleteDialog.ariaLabel')}
           >
             <TrashIcon />
           </Button>
@@ -129,7 +134,7 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
               key={ct}
               className="flex items-center gap-1 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium"
             >
-              {CONTENT_TYPE_LABELS[ct].icon} {CONTENT_TYPE_LABELS[ct].en}
+              {CONTENT_TYPE_LABELS[ct].icon} {tContentType(ct)}
             </span>
           ))}
         </div>
@@ -140,14 +145,14 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
         <>
           <Separator />
           <div className="space-y-1.5">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Invite Code</p>
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('inviteCode')}</p>
             <div className="flex items-center gap-2">
               <code className="rounded-md bg-muted px-3 py-1.5 text-sm font-mono tracking-widest">
                 {group.inviteCode}
               </code>
               <Button variant="outline" size="sm" onClick={copyInviteCode}>
                 {copied ? <CheckIcon className="size-3.5" /> : <CopyIcon className="size-3.5" />}
-                {copied ? 'Copied!' : 'Copy'}
+                {copied ? tCommon('copied') : tCommon('copy')}
               </Button>
             </div>
           </div>
@@ -159,13 +164,13 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
       {/* Reviews Section */}
       <div>
         <h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">
-          My Reviews
+          {t('myReviews')}
         </h2>
         {reviews.length === 0 ? (
           <EmptyState
             icon={<StarIcon className="size-6" />}
-            title="No reviews yet"
-            description="Add reviews from the Reviews page to share with this group."
+            title={t('noReviews')}
+            description={t('noReviewsDescription')}
           />
         ) : (
           <div className="grid gap-3 sm:grid-cols-2">
@@ -180,21 +185,21 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
       <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Delete Group</DialogTitle>
+            <DialogTitle>{t('deleteDialog.title')}</DialogTitle>
             <DialogDescription>
-              This will permanently delete &ldquo;{group.name}&rdquo; and all its memberships. This cannot be undone.
+              {t('deleteDialog.description', { name: group.name })}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setConfirmDelete(false)}>
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={handleDelete}
               disabled={deleteGroup.isPending}
             >
-              {deleteGroup.isPending ? 'Deleting...' : 'Delete'}
+              {deleteGroup.isPending ? tCommon('deleting') : t('deleteDialog.confirm')}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -4,6 +4,7 @@
 import { useRouter } from 'next/navigation'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -45,6 +46,8 @@ function getError(errors: unknown[]): string | undefined {
 export function OnboardingForm() {
   const router = useRouter()
   const setUser = useStore((s) => s.setUser)
+  const t = useTranslations('onboarding')
+  const tCommon = useTranslations('common')
 
   const defaultValues: FormData = {
     username: '',
@@ -69,9 +72,9 @@ export function OnboardingForm() {
   return (
     <Card className="w-full max-w-md">
       <CardHeader>
-        <CardTitle>Welcome to Things Review</CardTitle>
+        <CardTitle>{t('title')}</CardTitle>
         <CardDescription>
-          Set up your profile to start tracking and reviewing movies, series, books, and more.
+          {t('description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -87,10 +90,10 @@ export function OnboardingForm() {
           <form.Field name="displayName">
             {(field) => (
               <div className="space-y-1.5">
-                <Label htmlFor={field.name}>Display Name</Label>
+                <Label htmlFor={field.name}>{t('form.displayName')}</Label>
                 <Input
                   id={field.name}
-                  placeholder="How should we call you?"
+                  placeholder={t('form.displayNamePlaceholder')}
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   onBlur={field.handleBlur}
@@ -109,12 +112,12 @@ export function OnboardingForm() {
           <form.Field name="username">
             {(field) => (
               <div className="space-y-1.5">
-                <Label htmlFor={field.name}>Username</Label>
+                <Label htmlFor={field.name}>{t('form.username')}</Label>
                 <div className="relative">
                   <span className="absolute inset-y-0 left-3 flex items-center text-sm text-muted-foreground">@</span>
                   <Input
                     id={field.name}
-                    placeholder="your_username"
+                    placeholder={t('form.usernamePlaceholder')}
                     className="pl-7"
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value.toLowerCase())}
@@ -135,11 +138,11 @@ export function OnboardingForm() {
             {(field) => (
               <div className="space-y-1.5">
                 <Label htmlFor={field.name}>
-                  Bio <span className="text-muted-foreground">(optional)</span>
+                  {t('form.bio')} <span className="text-muted-foreground">({tCommon('optional')})</span>
                 </Label>
                 <Textarea
                   id={field.name}
-                  placeholder="A short description about yourself..."
+                  placeholder={t('form.bioPlaceholder')}
                   className="resize-none"
                   rows={3}
                   value={field.state.value ?? ''}
@@ -163,7 +166,7 @@ export function OnboardingForm() {
                 className="w-full"
                 disabled={!canSubmit || isSubmitting}
               >
-                {isSubmitting ? 'Creating profile...' : 'Get Started'}
+                {isSubmitting ? t('form.submitting') : t('form.submit')}
               </Button>
             )}
           </form.Subscribe>

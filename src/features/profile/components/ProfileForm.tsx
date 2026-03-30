@@ -3,6 +3,7 @@
 
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -41,6 +42,8 @@ interface ProfileFormProps {
 
 export function ProfileForm({ user, onSuccess, onCancel }: ProfileFormProps) {
   const updateProfile = useUpdateProfile()
+  const t = useTranslations('profile.form')
+  const tCommon = useTranslations('common')
 
   const defaultValues: FormData = {
     displayName: user.displayName,
@@ -74,7 +77,7 @@ export function ProfileForm({ user, onSuccess, onCancel }: ProfileFormProps) {
       <form.Field name="displayName">
         {(field) => (
           <div className="space-y-1.5">
-            <Label htmlFor={field.name}>Display Name</Label>
+            <Label htmlFor={field.name}>{t('displayName')}</Label>
             <Input
               id={field.name}
               value={field.state.value}
@@ -95,7 +98,7 @@ export function ProfileForm({ user, onSuccess, onCancel }: ProfileFormProps) {
         {(field) => (
           <div className="space-y-1.5">
             <Label htmlFor={field.name}>
-              Avatar URL <span className="text-muted-foreground">(optional)</span>
+              {t('avatarUrl')} <span className="text-muted-foreground">({tCommon('optional')})</span>
             </Label>
             <Input
               id={field.name}
@@ -118,7 +121,7 @@ export function ProfileForm({ user, onSuccess, onCancel }: ProfileFormProps) {
         {(field) => (
           <div className="space-y-1.5">
             <Label htmlFor={field.name}>
-              Bio <span className="text-muted-foreground">(optional)</span>
+              {t('bio')} <span className="text-muted-foreground">({tCommon('optional')})</span>
             </Label>
             <Textarea
               id={field.name}
@@ -144,11 +147,11 @@ export function ProfileForm({ user, onSuccess, onCancel }: ProfileFormProps) {
           <div className="flex items-center justify-end gap-2 pt-2">
             {onCancel && (
               <Button type="button" variant="ghost" onClick={onCancel} disabled={isSubmitting}>
-                Cancel
+                {tCommon('cancel')}
               </Button>
             )}
             <Button type="submit" disabled={!canSubmit || isSubmitting}>
-              {isSubmitting ? 'Saving...' : 'Save Changes'}
+              {isSubmitting ? t('submitting') : t('submit')}
             </Button>
           </div>
         )}

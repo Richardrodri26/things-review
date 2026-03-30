@@ -4,6 +4,7 @@
 import Link from 'next/link'
 import { StarIcon, ArrowRightIcon, BookOpenIcon } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
+import { useTranslations } from 'next-intl'
 import { RatingStars, ContentTypeBadge, StatusBadge } from '@/shared/ui/atoms'
 import { useCatalogItemTitle } from '@/features/catalog/hooks'
 import { extractPlainText } from '@/components/editor/editor-client'
@@ -50,7 +51,7 @@ function RecentReviewCard({ review }: { review: Review }) {
         {/* Review title */}
         {review.title && (
           <p className="text-xs font-medium text-foreground/80 leading-snug">
-            "{review.title}"
+            &ldquo;{review.title}&rdquo;
           </p>
         )}
 
@@ -77,6 +78,8 @@ interface RecentReviewsSectionProps {
 }
 
 export function RecentReviewsSection({ reviews }: RecentReviewsSectionProps) {
+  const t = useTranslations('dashboard.recentReviews')
+  const tCommon = useTranslations('common')
   const sorted = [...reviews].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )
@@ -87,7 +90,7 @@ export function RecentReviewsSection({ reviews }: RecentReviewsSectionProps) {
       {/* Section header */}
       <div className="flex items-center gap-3">
         <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground">
-          Recent Reviews
+          {t('title')}
         </span>
         <div className="flex-1 h-px bg-border" />
         {reviews.length > 0 && (
@@ -98,7 +101,7 @@ export function RecentReviewsSection({ reviews }: RecentReviewsSectionProps) {
               'gap-1 h-6 px-2 text-xs text-muted-foreground hover:text-foreground'
             )}
           >
-            See all
+            {tCommon('seeAll')}
             <ArrowRightIcon className="size-3" />
           </Link>
         )}
@@ -112,14 +115,14 @@ export function RecentReviewsSection({ reviews }: RecentReviewsSectionProps) {
           </div>
           <div className="space-y-1">
             <p className="text-sm font-semibold" style={{ fontFamily: 'var(--font-display)' }}>
-              Your journal is empty
+              {t('empty')}
             </p>
             <p className="text-xs text-muted-foreground max-w-xs">
-              Start by reviewing a movie or series from the catalog.
+              {t('emptyDescription')}
             </p>
           </div>
           <Link href={ROUTES.MOVIES} className={buttonVariants({ size: 'sm', variant: 'outline' })}>
-            Browse Movies
+            {t('browseMovies')}
           </Link>
         </div>
       ) : (

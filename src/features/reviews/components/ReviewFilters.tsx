@@ -1,9 +1,10 @@
 // src/features/reviews/components/ReviewFilters.tsx
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { CONTENT_TYPE_LABELS, CONSUMPTION_STATUS_LABELS } from '@/shared/types'
+import { CONTENT_TYPE_LABELS } from '@/shared/types'
 import type { ContentType, ConsumptionStatus } from '@/shared/types'
 
 // Usamos 'movie' como proxy para los labels genéricos de status
@@ -29,6 +30,10 @@ export function ReviewFilters({
   totalResults,
   totalReviews,
 }: ReviewFiltersProps) {
+  const t = useTranslations('reviews.filters')
+  const tContentType = useTranslations('contentType')
+  const tStatusOptions = useTranslations('reviews.editor.statusOptions')
+  const tCommon = useTranslations('common')
   const hasFilters = selectedContentTypes.length > 0 || selectedStatuses.length > 0
   const isFiltered = hasFilters && totalResults < totalReviews
 
@@ -36,7 +41,7 @@ export function ReviewFilters({
     <div className="space-y-3">
       {/* Content Type filters */}
       <div className="flex flex-wrap items-center gap-1.5">
-        <span className="text-xs font-medium text-muted-foreground mr-1">Type:</span>
+        <span className="text-xs font-medium text-muted-foreground mr-1">{t('type')}</span>
         {CONTENT_TYPE_LIST.map((ct) => {
           const label = CONTENT_TYPE_LABELS[ct]
           const isActive = selectedContentTypes.includes(ct)
@@ -49,7 +54,7 @@ export function ReviewFilters({
               className={cn('gap-1', isActive && 'shadow-none')}
             >
               <span aria-hidden>{label.icon}</span>
-              {label.en}
+              {tContentType(ct)}
             </Button>
           )
         })}
@@ -57,10 +62,8 @@ export function ReviewFilters({
 
       {/* Status filters */}
       <div className="flex flex-wrap items-center gap-1.5">
-        <span className="text-xs font-medium text-muted-foreground mr-1">Status:</span>
+        <span className="text-xs font-medium text-muted-foreground mr-1">{t('status')}</span>
         {STATUS_LIST.map((status) => {
-          // Usamos 'movie' como proxy para el label genérico
-          const label = CONSUMPTION_STATUS_LABELS[status]['movie'].en
           const isActive = selectedStatuses.includes(status)
           return (
             <Button
@@ -70,7 +73,7 @@ export function ReviewFilters({
               onClick={() => onStatusToggle(status)}
               className={cn(isActive && 'shadow-none')}
             >
-              {label}
+              {tStatusOptions(status)}
             </Button>
           )
         })}
@@ -80,10 +83,12 @@ export function ReviewFilters({
       {hasFilters && (
         <div className="flex items-center gap-2">
           <span className="text-xs text-muted-foreground">
-            {isFiltered ? `${totalResults} of ${totalReviews} reviews` : `${totalReviews} reviews`}
+            {isFiltered
+              ? t('count', { filtered: totalResults, total: totalReviews })
+              : t('countAll', { count: totalReviews })}
           </span>
           <Button variant="ghost" size="xs" onClick={onClearAll}>
-            Clear filters
+            {tCommon('clearFilters')}
           </Button>
         </div>
       )}

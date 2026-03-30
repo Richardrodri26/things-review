@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import {
   BookmarkIcon,
   PlusIcon,
@@ -61,6 +62,8 @@ type FilterContentType = ContentType | 'all'
 type FilterPriority = WatchlistPriority | 'all'
 
 export function WatchlistPage() {
+  const t = useTranslations('watchlist')
+  const tCommon = useTranslations('common')
   const { data: items = [], isLoading } = useWatchlistItems()
   const { data: stats } = useWatchlistStats()
   const removeItem = useRemoveFromWatchlist()
@@ -121,16 +124,16 @@ export function WatchlistPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex flex-col gap-0.5">
-          <h1 className="text-xl font-semibold">Watchlist</h1>
+          <h1 className="text-xl font-semibold">{t('title')}</h1>
           {items.length > 0 && (
             <p className="text-sm text-muted-foreground">
-              {items.length} {items.length === 1 ? 'item' : 'items'} to consume
+              {t('count', { count: items.length })}
             </p>
           )}
         </div>
         <Button onClick={() => setMode({ type: 'add' })} size="sm">
           <PlusIcon data-icon="inline-start" />
-          Add Item
+          {t('addItem')}
         </Button>
       </div>
 
@@ -151,9 +154,9 @@ export function WatchlistPage() {
                 if (vals.length > 0) setSortBy(vals[vals.length - 1] as SortOption)
               }}
             >
-              <ToggleGroupItem value="priority">Priority</ToggleGroupItem>
-              <ToggleGroupItem value="date_added">Date Added</ToggleGroupItem>
-              <ToggleGroupItem value="target_date">Target Date</ToggleGroupItem>
+              <ToggleGroupItem value="priority">{t('sort.priority')}</ToggleGroupItem>
+              <ToggleGroupItem value="date_added">{t('sort.dateAdded')}</ToggleGroupItem>
+              <ToggleGroupItem value="target_date">{t('sort.targetDate')}</ToggleGroupItem>
             </ToggleGroup>
           </div>
 
@@ -168,10 +171,10 @@ export function WatchlistPage() {
                 if (vals.length > 0) setFilterPriority(vals[vals.length - 1] as FilterPriority)
               }}
             >
-              <ToggleGroupItem value="all">All</ToggleGroupItem>
-              <ToggleGroupItem value="high">High</ToggleGroupItem>
-              <ToggleGroupItem value="medium">Medium</ToggleGroupItem>
-              <ToggleGroupItem value="low">Low</ToggleGroupItem>
+              <ToggleGroupItem value="all">{t('filter.all')}</ToggleGroupItem>
+              <ToggleGroupItem value="high">{t('filter.high')}</ToggleGroupItem>
+              <ToggleGroupItem value="medium">{t('filter.medium')}</ToggleGroupItem>
+              <ToggleGroupItem value="low">{t('filter.low')}</ToggleGroupItem>
             </ToggleGroup>
           </div>
         </div>
@@ -190,15 +193,15 @@ export function WatchlistPage() {
             <EmptyMedia variant="icon">
               <BookmarkIcon />
             </EmptyMedia>
-            <EmptyTitle>Your watchlist is empty</EmptyTitle>
+            <EmptyTitle>{t('empty')}</EmptyTitle>
             <EmptyDescription>
-              Add movies, series, books and more that you want to consume.
+              {t('emptyDescription')}
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Button onClick={() => setMode({ type: 'add' })} size="sm">
               <PlusIcon data-icon="inline-start" />
-              Add your first item
+              {t('emptyAction')}
             </Button>
           </EmptyContent>
         </Empty>
@@ -208,9 +211,9 @@ export function WatchlistPage() {
             <EmptyMedia variant="icon">
               <TrendingUpIcon />
             </EmptyMedia>
-            <EmptyTitle>No items match your filters</EmptyTitle>
+            <EmptyTitle>{tCommon('noResults')}</EmptyTitle>
             <EmptyDescription>
-              Try changing or clearing the active filters.
+              {tCommon('clearFilters')}
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
@@ -223,7 +226,7 @@ export function WatchlistPage() {
               }}
             >
               <XIcon data-icon="inline-start" />
-              Clear Filters
+              {tCommon('clearFilters')}
             </Button>
           </EmptyContent>
         </Empty>
@@ -246,7 +249,7 @@ export function WatchlistPage() {
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>
-              {mode.type === 'add' ? 'Add to Watchlist' : 'Edit Watchlist Item'}
+              {mode.type === 'add' ? t('addItem') : tCommon('edit')}
             </DialogTitle>
           </DialogHeader>
           {isFormOpen && (
@@ -267,14 +270,16 @@ export function WatchlistPage() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove from Watchlist</AlertDialogTitle>
+            <AlertDialogTitle>{t('removeDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This item will be removed from your watchlist. You can always add it back later.
+              {mode.type === 'remove'
+                ? t('removeDialog.description', { title: '' })
+                : ''}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setMode({ type: 'idle' })}>
-              Cancel
+              {tCommon('cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
@@ -282,7 +287,7 @@ export function WatchlistPage() {
               disabled={removeItem.isPending}
             >
               {removeItem.isPending && <Spinner data-icon="inline-start" />}
-              Remove
+              {t('removeDialog.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -295,22 +300,23 @@ export function WatchlistPage() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Mark as Consumed</AlertDialogTitle>
+            <AlertDialogTitle>{t('consumeDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will remove the item from your watchlist and create a basic review for it.
-              You can edit the review afterwards to add your rating and thoughts.
+              {mode.type === 'consume'
+                ? t('consumeDialog.description', { title: '' })
+                : ''}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setMode({ type: 'idle' })}>
-              Cancel
+              {tCommon('cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={confirmConsume}
               disabled={convertToReview.isPending}
             >
               {convertToReview.isPending && <Spinner data-icon="inline-start" />}
-              Yes, I&apos;ve consumed it!
+              {t('consumeDialog.confirm')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

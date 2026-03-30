@@ -3,10 +3,12 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { ArrowLeftIcon, PlusIcon, PencilIcon } from 'lucide-react'
+import { CoverImage } from '@/shared/ui/atoms/CoverImage'
+import { BackdropImage } from '@/shared/ui/atoms/BackdropImage'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { useTranslations } from 'next-intl'
 import { ReviewCard } from '@/features/reviews/components/ReviewCard'
 import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage'
 import { useStore } from '@/shared/lib/store'
@@ -25,6 +27,9 @@ export function MovieDetailPage({ movieId }: MovieDetailPageProps) {
   const reviews = useStore((s) => s.reviews)
   const deleteReview = useDeleteReview()
   const [dialog, setDialog] = useState<DialogMode>('none')
+  const t = useTranslations('catalog.detail')
+  const tNav = useTranslations('nav')
+  const tCommon = useTranslations('common')
 
   const existingReview = reviews.find((r) => r.contentId === movieId)
 
@@ -41,9 +46,9 @@ export function MovieDetailPage({ movieId }: MovieDetailPageProps) {
       <div className="flex flex-1 flex-col gap-4 p-4">
         <Button variant="ghost" size="sm" onClick={() => router.back()} className="w-fit">
           <ArrowLeftIcon />
-          Back
+          {tCommon('back')}
         </Button>
-        <p className="text-muted-foreground">Movie not found.</p>
+        <p className="text-muted-foreground">{t('notFound')}</p>
       </div>
     )
   }
@@ -57,13 +62,10 @@ export function MovieDetailPage({ movieId }: MovieDetailPageProps) {
       {/* Backdrop */}
       {movie.backdropImageUrl && (
         <div className="relative h-48 w-full overflow-hidden sm:h-64">
-          <Image
+          <BackdropImage
             src={movie.backdropImageUrl}
             alt={movie.title}
-            fill
-            className="object-cover"
             priority
-            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         </div>
@@ -73,23 +75,23 @@ export function MovieDetailPage({ movieId }: MovieDetailPageProps) {
         {/* Back */}
         <Button variant="ghost" size="sm" onClick={() => router.back()} className="w-fit">
           <ArrowLeftIcon />
-          Movies
+          {tNav('movies')}
         </Button>
 
         {/* Header */}
         <div className="flex gap-4">
           {/* Poster */}
-          {movie.coverImageUrl && (
-            <div className="relative shrink-0 w-24 aspect-[2/3] rounded-lg overflow-hidden border border-border shadow-md sm:w-32">
-              <Image
-                src={movie.coverImageUrl}
-                alt={movie.title}
-                fill
-                className="object-cover"
-                sizes="128px"
-              />
-            </div>
-          )}
+          <div className="relative shrink-0 w-24 aspect-[2/3] rounded-lg overflow-hidden border border-border shadow-md sm:w-32">
+            <CoverImage
+              src={movie.coverImageUrl}
+              alt={movie.title}
+              contentType="movie"
+              sizes="128px"
+              className="object-cover"
+              iconSize="text-3xl"
+              title={movie.title}
+            />
+          </div>
 
           <div className="flex-1 space-y-2 min-w-0">
             <h1 className="text-xl font-bold leading-tight">{movie.title}</h1>
@@ -118,17 +120,17 @@ export function MovieDetailPage({ movieId }: MovieDetailPageProps) {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-              My Review
+              {t('myReview')}
             </h2>
             {!existingReview ? (
               <Button size="sm" onClick={() => setDialog('create')}>
                 <PlusIcon />
-                Add Review
+                {t('addReview')}
               </Button>
             ) : (
               <Button size="sm" variant="outline" onClick={() => setDialog('edit')}>
                 <PencilIcon />
-                Edit
+                {tCommon('edit')}
               </Button>
             )}
           </div>
@@ -141,7 +143,7 @@ export function MovieDetailPage({ movieId }: MovieDetailPageProps) {
               }}
             />
           ) : (
-            <p className="text-sm text-muted-foreground">You haven&apos;t reviewed this movie yet.</p>
+            <p className="text-sm text-muted-foreground">{t('noReview')}</p>
           )}
         </div>
       </div>

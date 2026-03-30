@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { PencilIcon, StarIcon, BookOpenIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -21,6 +22,8 @@ export function ProfilePage() {
   const { data: user } = useProfile()
   const stats = useUserStats()
   const [isEditing, setIsEditing] = useState(false)
+  const t = useTranslations('profile')
+  const tContentType = useTranslations('contentType')
 
   if (!user) return null
 
@@ -47,7 +50,7 @@ export function ProfilePage() {
           onClick={() => setIsEditing(true)}
         >
           <PencilIcon />
-          Edit Profile
+          {t('editProfile')}
         </Button>
       </div>
 
@@ -55,15 +58,15 @@ export function ProfilePage() {
 
       {/* Stats Overview */}
       <div>
-        <h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">Overview</h2>
+        <h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">{t('overview')}</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           <StatsCard
-            label="Total Reviews"
+            label={t('stats.totalReviews')}
             value={stats.totalReviews}
             icon={<BookOpenIcon className="size-4" />}
           />
           <StatsCard
-            label="Avg Rating"
+            label={t('stats.avgRating')}
             value={stats.averageRating !== null ? stats.averageRating : '—'}
             icon={<StarIcon className="size-4" />}
           />
@@ -75,7 +78,7 @@ export function ProfilePage() {
         <>
           <Separator />
           <div>
-            <h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">Rating Breakdown</h2>
+            <h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">{t('ratingBreakdown')}</h2>
             <div className="space-y-2">
               {([5, 4, 3, 2, 1] as const).map((rating) => {
                 const count = stats.ratingDistribution[rating]
@@ -105,7 +108,7 @@ export function ProfilePage() {
         <>
           <Separator />
           <div>
-            <h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">By Type</h2>
+            <h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">{t('byType')}</h2>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {(Object.entries(stats.reviewsByContentType) as [keyof typeof CONTENT_TYPE_LABELS, number][])
                 .filter(([, count]) => count > 0)
@@ -117,7 +120,7 @@ export function ProfilePage() {
                       <span className="text-lg" aria-hidden>{label.icon}</span>
                       <div>
                         <p className="text-sm font-medium">{count}</p>
-                        <p className="text-xs text-muted-foreground">{label.en}</p>
+                        <p className="text-xs text-muted-foreground">{tContentType(contentType)}</p>
                       </div>
                     </div>
                   )
@@ -131,7 +134,7 @@ export function ProfilePage() {
       <Dialog open={isEditing} onOpenChange={setIsEditing}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Edit Profile</DialogTitle>
+            <DialogTitle>{t('editDialog.title')}</DialogTitle>
           </DialogHeader>
           <ProfileForm
             user={user}

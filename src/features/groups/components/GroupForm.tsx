@@ -3,6 +3,7 @@
 
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -48,6 +49,9 @@ interface GroupFormProps {
 
 export function GroupForm({ onSuccess, onCancel }: GroupFormProps) {
   const createGroup = useCreateGroup()
+  const t = useTranslations('groups.form')
+  const tCommon = useTranslations('common')
+  const tContentType = useTranslations('contentType')
 
   const defaultValues: FormData = {
     name: '',
@@ -84,10 +88,10 @@ export function GroupForm({ onSuccess, onCancel }: GroupFormProps) {
       <form.Field name="name">
         {(field) => (
           <div className="space-y-1.5">
-            <Label htmlFor={field.name}>Group Name</Label>
+            <Label htmlFor={field.name}>{t('groupName')}</Label>
             <Input
               id={field.name}
-              placeholder="e.g. Weekend Movie Club"
+              placeholder={t('namePlaceholder')}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               onBlur={field.handleBlur}
@@ -105,11 +109,11 @@ export function GroupForm({ onSuccess, onCancel }: GroupFormProps) {
         {(field) => (
           <div className="space-y-1.5">
             <Label htmlFor={field.name}>
-              Description <span className="text-muted-foreground">(optional)</span>
+              {t('description')} <span className="text-muted-foreground">({tCommon('optional')})</span>
             </Label>
             <Textarea
               id={field.name}
-              placeholder="What's this group about?"
+              placeholder={t('descriptionPlaceholder')}
               className="resize-none"
               rows={2}
               value={field.state.value ?? ''}
@@ -127,7 +131,7 @@ export function GroupForm({ onSuccess, onCancel }: GroupFormProps) {
       <form.Field name="visibility">
         {(field) => (
           <div className="space-y-1.5">
-            <Label htmlFor={field.name}>Visibility</Label>
+            <Label htmlFor={field.name}>{t('visibility')}</Label>
             <Select
               value={field.state.value}
               onValueChange={(v) => field.handleChange(v as 'public' | 'private')}
@@ -136,8 +140,8 @@ export function GroupForm({ onSuccess, onCancel }: GroupFormProps) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="public">🌍 Public</SelectItem>
-                <SelectItem value="private">🔒 Private</SelectItem>
+                <SelectItem value="public">🌍 {t('visibilityPublic')}</SelectItem>
+                <SelectItem value="private">🔒 {t('visibilityPrivate')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -149,7 +153,7 @@ export function GroupForm({ onSuccess, onCancel }: GroupFormProps) {
         {(field) => (
           <div className="space-y-2">
             <Label>
-              Focus Types <span className="text-muted-foreground">(optional)</span>
+              {t('focusTypes')} <span className="text-muted-foreground">({tCommon('optional')})</span>
             </Label>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {CONTENT_TYPE_LIST.map((ct) => {
@@ -170,7 +174,7 @@ export function GroupForm({ onSuccess, onCancel }: GroupFormProps) {
                       }}
                     />
                     <span className="text-sm">
-                      {label.icon} {label.en}
+                      {label.icon} {tContentType(ct)}
                     </span>
                   </label>
                 )
@@ -186,11 +190,11 @@ export function GroupForm({ onSuccess, onCancel }: GroupFormProps) {
           <div className="flex items-center justify-end gap-2 pt-2">
             {onCancel && (
               <Button type="button" variant="ghost" onClick={onCancel} disabled={isSubmitting}>
-                Cancel
+                {tCommon('cancel')}
               </Button>
             )}
             <Button type="submit" disabled={!canSubmit || isSubmitting}>
-              {isSubmitting ? 'Creating...' : 'Create Group'}
+              {isSubmitting ? t('submitting') : t('submit')}
             </Button>
           </div>
         )}

@@ -2,6 +2,8 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useQueryState, parseAsArrayOf, parseAsString } from 'nuqs'
+import { useTranslations } from 'next-intl'
 import { PlusIcon, StarIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,13 +29,25 @@ type UIMode =
   | { type: 'delete'; review: Review }
 
 export function ReviewList() {
+  const t = useTranslations('reviews')
+  const tCommon = useTranslations('common')
   const { data: reviews = [], isLoading } = useReviews()
   const deleteReview = useDeleteReview()
   const [mode, setMode] = useState<UIMode>({ type: 'idle' })
 
-  // Filter state — local UI state, no store
-  const [selectedContentTypes, setSelectedContentTypes] = useState<ContentType[]>([])
-  const [selectedStatuses, setSelectedStatuses] = useState<ConsumptionStatus[]>([])
+  // Filter state — URL-persisted via nuqs
+  const [selectedContentTypesRaw, setSelectedContentTypes] = useQueryState(
+    'types',
+    parseAsArrayOf(parseAsString).withDefault([])
+  )
+  const [selectedStatusesRaw, setSelectedStatuses] = useQueryState(
+    'statuses',
+    parseAsArrayOf(parseAsString).withDefault([])
+  )
+
+  // Cast string[] to typed arrays
+  const selectedContentTypes = selectedContentTypesRaw as ContentType[]
+  const selectedStatuses = selectedStatusesRaw as ConsumptionStatus[]
 
   // Filtered reviews
   const filteredReviews = useMemo(() => {
@@ -47,20 +61,22 @@ export function ReviewList() {
   }, [reviews, selectedContentTypes, selectedStatuses])
 
   function toggleContentType(ct: ContentType) {
-    setSelectedContentTypes((prev) =>
-      prev.includes(ct) ? prev.filter((c) => c !== ct) : [...prev, ct]
-    )
+    setSelectedContentTypes((prev) => {
+      const typed = prev as ContentType[]
+      return typed.includes(ct) ? typed.filter((c) => c !== ct) : [...typed, ct]
+    })
   }
 
   function toggleStatus(status: ConsumptionStatus) {
-    setSelectedStatuses((prev) =>
-      prev.includes(status) ? prev.filter((s) => s !== status) : [...prev, status]
-    )
+    setSelectedStatuses((prev) => {
+      const typed = prev as ConsumptionStatus[]
+      return typed.includes(status) ? typed.filter((s) => s !== status) : [...typed, status]
+    })
   }
 
   function clearFilters() {
-    setSelectedContentTypes([])
-    setSelectedStatuses([])
+    setSelectedContentTypes(null)
+    setSelectedStatuses(null)
   }
 
   function handleEdit(review: Review) {
@@ -83,10 +99,10 @@ export function ReviewList() {
     <div className="flex flex-1 flex-col gap-4 p-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">My Reviews</h1>
+        <h1 className="text-xl font-semibold">{t('title')}</h1>
         <Button onClick={() => setMode({ type: 'create' })} size="sm">
           <PlusIcon />
-          Add Review
+          {t('addReview')}
         </Button>
       </div>
 
@@ -105,36 +121,36 @@ export function ReviewList() {
 
       {/* List */}
       {isLoading ? (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(180px,220px))]">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-40 rounded-lg bg-muted animate-pulse" />
+            <div key={i} className="rounded-xl bg-muted animate-pulse aspect-[3/4]" />
           ))}
         </div>
       ) : reviews.length === 0 ? (
         <EmptyState
           icon={<StarIcon className="size-6" />}
-          title="No reviews yet"
-          description="Start by adding your first review."
+          title={t('empty')}
+          description={t('emptyDescription')}
           action={
             <Button onClick={() => setMode({ type: 'create' })} size="sm">
               <PlusIcon />
-              Add your first review
+              {t('emptyAction')}
             </Button>
           }
         />
       ) : filteredReviews.length === 0 ? (
         <EmptyState
           icon={<StarIcon className="size-6" />}
-          title="No reviews match your filters"
-          description="Try adjusting or clearing the filters."
+          title={t('noMatch')}
+          description={t('noMatchDescription')}
           action={
             <Button variant="outline" size="sm" onClick={clearFilters}>
-              Clear filters
+              {tCommon('clearFilters')}
             </Button>
           }
         />
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(180px,220px))]">
           {filteredReviews.map((review) => (
             <ReviewCard
               key={review.id}
@@ -163,21 +179,21 @@ export function ReviewList() {
       >
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Delete Review</DialogTitle>
+            <DialogTitle>{t('deleteDialog.title')}</DialogTitle>
             <DialogDescription>
-              This action cannot be undone. The review will be permanently deleted.
+              {t('deleteDialog.description')}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="ghost" onClick={() => setMode({ type: 'idle' })}>
-              Cancel
+              {tCommon('cancel')}
             </Button>
             <Button
               variant="destructive"
               onClick={confirmDelete}
               disabled={deleteReview.isPending}
             >
-              {deleteReview.isPending ? 'Deleting...' : 'Delete'}
+              {deleteReview.isPending ? tCommon('deleting') : t('deleteDialog.confirm')}
             </Button>
           </DialogFooter>
         </DialogContent>

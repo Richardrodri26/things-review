@@ -1,6 +1,8 @@
 // src/shared/ui/atoms/StatusBadge.tsx
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
-import { CONSUMPTION_STATUS_LABELS } from '@/shared/types'
 import type { ConsumptionStatus, ContentType } from '@/shared/types'
 
 interface StatusBadgeProps {
@@ -17,7 +19,8 @@ const statusColors: Record<ConsumptionStatus, string> = {
 }
 
 export function StatusBadge({ status, contentType, className }: StatusBadgeProps) {
-  const label = CONSUMPTION_STATUS_LABELS[status][contentType].en
+  const tStatus = useTranslations('status')
+  const label = tStatus(`${status}.${contentType}`)
   return (
     <span
       className={cn(

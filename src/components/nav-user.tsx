@@ -25,13 +25,15 @@ import { useUser } from '@/shared/lib/store'
 import { ROUTES } from '@/shared/constants'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 export function NavUser() {
   const { isMobile } = useSidebar()
   const user = useUser()
   const router = useRouter()
+  const t = useTranslations('user')
 
-  const displayName = user?.displayName ?? 'Guest'
+  const displayName = user?.displayName ?? t('guest')
   const username = user?.username ?? 'guest'
   const initials = displayName.slice(0, 2).toUpperCase()
 
@@ -78,14 +80,14 @@ export function NavUser() {
             <DropdownMenuGroup>
               <DropdownMenuItem render={<Link href={ROUTES.PROFILE} />}>
                 <UserCircleIcon />
-                Profile
+                {t('profile')}
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem onClick={() => router.push(ROUTES.ONBOARDING)}>
                 <LogOutIcon />
-                Log out
+                {t('logOut')}
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>

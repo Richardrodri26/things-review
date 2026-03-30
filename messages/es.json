@@ -1,14 +1,17 @@
 {
   "app": {
     "name": "Things Review",
-    "tagline": "Reviewá las cosas que amás, en grupo."
+    "tagline": "Reseñá lo que amás, en comunidad."
   },
   "nav": {
     "movies": "Películas",
     "series": "Series",
-    "reviews": "Mis Reviews",
+    "reviews": "Mis Reseñas",
+    "watchlist": "Lista de espera",
     "groups": "Grupos",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "home": "Inicio",
+    "navigation": "Navegación"
   },
   "common": {
     "save": "Guardar",
@@ -17,14 +20,31 @@
     "edit": "Editar",
     "loading": "Cargando...",
     "error": "Algo salió mal",
-    "noResults": "No se encontraron resultados",
-    "required": "Este campo es requerido"
+    "noResults": "Sin resultados",
+    "required": "Este campo es obligatorio",
+    "optional": "opcional",
+    "back": "Volver",
+    "saving": "Guardando...",
+    "deleting": "Eliminando...",
+    "creating": "Creando...",
+    "seeAll": "Ver todo",
+    "clearFilters": "Limpiar filtros",
+    "copied": "¡Copiado!",
+    "copy": "Copiar"
+  },
+  "language": {
+    "toggle": "Cambiar idioma"
+  },
+  "theme": {
+    "toggle": "Cambiar tema",
+    "light": "Cambiar a modo claro",
+    "dark": "Cambiar a modo oscuro"
   },
   "contentType": {
     "movie": "Película",
     "series": "Serie",
     "music": "Música",
-    "game": "Videojuego",
+    "game": "Juego",
     "book": "Libro",
     "podcast": "Podcast"
   },
@@ -32,18 +52,18 @@
     "consumed": {
       "movie": "Vista",
       "series": "Vista",
-      "music": "Escuchado",
+      "music": "Escuchada",
       "game": "Jugado",
       "book": "Leído",
       "podcast": "Escuchado"
     },
     "want_to_consume": {
-      "movie": "Quiero verla",
-      "series": "Quiero verla",
-      "music": "Quiero escucharlo",
-      "game": "Quiero jugarlo",
-      "book": "Quiero leerlo",
-      "podcast": "Quiero escucharlo"
+      "movie": "Quiero ver",
+      "series": "Quiero ver",
+      "music": "Quiero escuchar",
+      "game": "Quiero jugar",
+      "book": "Quiero leer",
+      "podcast": "Quiero escuchar"
     },
     "consuming": {
       "movie": "Viendo",
@@ -56,10 +76,339 @@
     "dropped": {
       "movie": "Abandonada",
       "series": "Abandonada",
-      "music": "Abandonado",
+      "music": "Abandonada",
       "game": "Abandonado",
       "book": "Abandonado",
       "podcast": "Abandonado"
+    }
+  },
+  "user": {
+    "profile": "Perfil",
+    "logOut": "Cerrar sesión",
+    "guest": "Invitado"
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Buenos días",
+      "afternoon": "Buenas tardes",
+      "evening": "Buenas noches"
+    },
+    "subtitle": "Tu diario personal de reseñas.",
+    "reviewCount": "{count, plural, one {# reseña en tu diario.} other {# reseñas en tu diario.}}",
+    "newReview": "Nueva Reseña",
+    "stats": {
+      "title": "Tus Estadísticas",
+      "reviews": "Reseñas",
+      "avgRating": "Puntaje Promedio"
+    },
+    "recentReviews": {
+      "title": "Reseñas Recientes",
+      "empty": "Tu diario está vacío",
+      "emptyDescription": "Empezá reseñando una película o serie para armar tu colección.",
+      "browseMovies": "Ver Películas"
+    },
+    "highlights": {
+      "seeAll": "Ver todo",
+      "noMovies": "Todavía no hay películas en el catálogo.",
+      "noSeries": "Todavía no hay series en el catálogo.",
+      "moreCategories": "Más Categorías",
+      "noReviews": "Sin reseñas aún",
+      "reviewCount": "{count, plural, one {# reseña} other {# reseñas}}"
+    }
+  },
+  "catalog": {
+    "addContent": {
+      "buttonLabel": "Agregar manualmente",
+      "dialogTitle": "Agregar al catálogo",
+      "dialogDescription": "Agregá una película, serie, libro, juego, álbum de música o podcast al catálogo."
+    },
+    "form": {
+      "type": "Tipo",
+      "title": "Título",
+      "titleRequired": "Título *",
+      "year": "Año",
+      "yearRequired": "Año *",
+      "overview": "Descripción",
+      "coverImageUrl": "URL de imagen de portada",
+      "placeholderTitle": "ej. Inception",
+      "placeholderYear": "ej. 2010",
+      "placeholderOverview": "Descripción breve...",
+      "placeholderCoverUrl": "https://...",
+      "optional": "(opcional)",
+      "commaSeparated": "(separados por coma)",
+      "submit": "Agregar al catálogo",
+      "submitting": "Agregando...",
+      "genres": "Géneros",
+      "seriesStatus": "Estado de la serie",
+      "seriesStatusReturning": "En emisión",
+      "seriesStatusEnded": "Finalizada",
+      "seriesStatusCancelled": "Cancelada",
+      "seriesStatusInProduction": "En producción",
+      "totalSeasons": "Temporadas totales",
+      "totalEpisodes": "Episodios totales",
+      "albumType": "Tipo de álbum",
+      "albumTypeAlbum": "Álbum",
+      "albumTypeEP": "EP",
+      "albumTypeSingle": "Single",
+      "artists": "Artistas",
+      "platform": "Plataforma",
+      "totalEpisodesPodcast": "Episodios totales",
+      "publisher": "Editorial",
+      "author": "Autor/a",
+      "developer": "Desarrollador/a",
+      "platforms": "Plataformas",
+      "languages": "Idiomas",
+      "languagesOptional": "Idiomas (opcional)",
+      "languagePlaceholder": "ej. es, en",
+      "addLanguage": "Agregar"
+    },
+    "movies": {
+      "title": "Películas",
+      "count": "{count, plural, one {# título} other {# títulos}}",
+      "empty": "Sin películas en el catálogo",
+      "emptyDescription": "El catálogo se cargará en la próxima actualización."
+    },
+    "series": {
+      "title": "Series",
+      "count": "{count, plural, one {# título} other {# títulos}}",
+      "empty": "Sin series en el catálogo",
+      "emptyDescription": "El catálogo se cargará en la próxima actualización."
+    },
+    "detail": {
+      "notFound": "Contenido no encontrado.",
+      "myReview": "Mi Reseña",
+      "addReview": "Agregar Reseña",
+      "noReview": "Todavía no reseñaste esto.",
+      "seasons": "{count, plural, one {# temporada} other {# temporadas}}",
+      "episodes": "{count, plural, one {# ep} other {# eps}}",
+      "seriesStatus": {
+        "returning": "En emisión",
+        "ended": "Finalizada",
+        "cancelled": "Cancelada",
+        "in_production": "En producción"
+      }
+    }
+  },
+  "reviews": {
+    "title": "Mis Reseñas",
+    "addReview": "Agregar Reseña",
+    "empty": "Sin reseñas aún",
+    "emptyDescription": "Empezá agregando tu primera reseña.",
+    "emptyAction": "Agregar tu primera reseña",
+    "noMatch": "Ninguna reseña coincide con los filtros",
+    "noMatchDescription": "Probá ajustando o limpiando los filtros.",
+    "deleteDialog": {
+      "title": "Eliminar Reseña",
+      "description": "Esta acción no se puede deshacer. La reseña será eliminada permanentemente.",
+      "confirm": "Eliminar"
+    },
+    "filters": {
+      "type": "Tipo:",
+      "status": "Estado:",
+      "count": "{filtered} de {total} reseñas",
+      "countAll": "{count, plural, one {# reseña} other {# reseñas}}"
+    },
+    "card": {
+      "editAriaLabel": "Editar reseña",
+      "deleteAriaLabel": "Eliminar reseña",
+      "viewAriaLabel": "Ver reseña completa"
+    },
+    "editor": {
+      "titleNew": "Nueva Reseña",
+      "titleEdit": "Editar Reseña",
+      "publish": "Publicar Reseña",
+      "saveChanges": "Guardar Cambios",
+      "properties": "Propiedades",
+      "content": "Contenido",
+      "status": "Estado",
+      "containsSpoilers": "Contiene spoilers",
+      "titlePlaceholder": "Reseña sin título...",
+      "bodyPlaceholder": "Escribí tus pensamientos... Usá / para comandos",
+      "reassignWarning": "Esto va a reasignar la reseña a otro contenido.",
+      "cancelChange": "Cancelar cambio",
+      "selectContent": "Seleccioná el contenido a reseñar",
+      "statusOptions": {
+        "consumed": "Consumido",
+        "want_to_consume": "Quiero consumir",
+        "consuming": "Consumiendo",
+        "dropped": "Abandonado"
+      }
+    },
+    "detail": {
+      "breadcrumb": "Reseñas",
+      "deleteDialog": {
+        "title": "¿Eliminar esta reseña?",
+        "description": "Esto eliminará tu reseña permanentemente. Esta acción no se puede deshacer."
+      },
+      "noWrittenReview": "Sin reseña escrita — solo el puntaje.",
+      "discussion": "Discusión",
+      "spoilerWarning": "Esta reseña contiene spoilers",
+      "spoilerHint": "Continuá solo si ya experimentaste este contenido.",
+      "revealAnyway": "Ver de todas formas",
+      "spoilers": "Spoilers",
+      "editedAt": "editado {date}"
+    },
+    "form": {
+      "content": "Contenido",
+      "status": "Estado",
+      "rating": "Puntaje",
+      "title": "Título",
+      "review": "Reseña",
+      "addReview": "Agregar Reseña",
+      "saveChanges": "Guardar Cambios"
+    },
+    "contentPicker": {
+      "selectType": "Seleccioná el tipo",
+      "clearSelection": "Limpiar selección",
+      "noResultsSearch": "Sin resultados",
+      "noResultsCatalog": "Sin {type}s en el catálogo"
+    }
+  },
+  "watchlist": {
+    "title": "Lista de espera",
+    "count": "{count, plural, one {# ítem por consumir} other {# ítems por consumir}}",
+    "addItem": "Agregar ítem",
+    "empty": "Tu lista está vacía",
+    "emptyDescription": "Agregá contenido que querés consumir más adelante.",
+    "emptyAction": "Agregar a la lista",
+    "removeDialog": {
+      "title": "Quitar de la lista",
+      "description": "¿Querés quitar \"{title}\" de tu lista?",
+      "confirm": "Quitar"
+    },
+    "consumeDialog": {
+      "title": "Marcar como consumido",
+      "description": "¿Marcar \"{title}\" como consumido? Podés agregar una reseña después.",
+      "confirm": "Marcar como consumido"
+    },
+    "sort": {
+      "label": "Ordenar por",
+      "priority": "Prioridad",
+      "dateAdded": "Fecha de agregado",
+      "targetDate": "Fecha objetivo"
+    },
+    "filter": {
+      "all": "Todos",
+      "high": "Alta",
+      "medium": "Media",
+      "low": "Baja"
+    },
+    "stats": {
+      "total": "{count} total",
+      "high": "{count} alta",
+      "medium": "{count} media",
+      "low": "{count} baja",
+      "overdue": "{count} vencido"
+    },
+    "card": {
+      "priority": {
+        "high": "Alta",
+        "medium": "Media",
+        "low": "Baja"
+      },
+      "overdue": "Vencido",
+      "added": "Agregado {date}",
+      "editAriaLabel": "Editar",
+      "removeAriaLabel": "Quitar",
+      "consumeAriaLabel": "Marcar como consumido"
+    },
+    "form": {
+      "contentId": "ID de contenido",
+      "content": "Contenido",
+      "type": "Tipo",
+      "priority": "Prioridad",
+      "targetDate": "Fecha objetivo",
+      "note": "Nota",
+      "noteDescription": "Nota recordatorio opcional para vos.",
+      "submit": "Agregar a la lista",
+      "saveChanges": "Guardar Cambios"
+    }
+  },
+  "groups": {
+    "title": "Grupos",
+    "join": "Unirse",
+    "createGroup": "Crear Grupo",
+    "empty": "Sin grupos aún",
+    "emptyDescription": "Creá un grupo o unite con un código de invitación.",
+    "joinWithCode": "Unirse con código",
+    "createDialog": {
+      "title": "Crear Grupo"
+    },
+    "joinDialog": {
+      "title": "Unirse a un Grupo"
+    },
+    "detail": {
+      "back": "Grupos",
+      "notFound": "Grupo no encontrado.",
+      "inviteCode": "Código de invitación",
+      "myReviews": "Mis Reseñas",
+      "noReviews": "Sin reseñas aún",
+      "noReviewsDescription": "Agregá reseñas desde la página de Reseñas para compartir con este grupo.",
+      "deleteDialog": {
+        "title": "Eliminar Grupo",
+        "description": "Esto eliminará permanentemente \"{name}\" y todas sus membresías. Esta acción no se puede deshacer.",
+        "confirm": "Eliminar",
+        "ariaLabel": "Eliminar grupo"
+      },
+      "memberCount": "{count, plural, one {# miembro} other {# miembros}}"
+    },
+    "card": {
+      "owner": "Propietario",
+      "memberCount": "{count, plural, one {# miembro} other {# miembros}}"
+    },
+    "form": {
+      "groupName": "Nombre del grupo",
+      "namePlaceholder": "ej. Club de películas del finde",
+      "description": "Descripción",
+      "descriptionPlaceholder": "¿De qué se trata este grupo?",
+      "visibility": "Visibilidad",
+      "visibilityPublic": "Público",
+      "visibilityPrivate": "Privado",
+      "focusTypes": "Tipos de contenido",
+      "submit": "Crear Grupo",
+      "submitting": "Creando..."
+    },
+    "joinForm": {
+      "inviteCode": "Código de invitación",
+      "inviteCodePlaceholder": "Ingresá el código de invitación...",
+      "inviteCodeRequired": "El código de invitación es obligatorio",
+      "invalidCode": "Código de invitación inválido. Intentá de nuevo.",
+      "submit": "Unirse al Grupo",
+      "submitting": "Uniéndose..."
+    }
+  },
+  "profile": {
+    "editProfile": "Editar Perfil",
+    "overview": "Resumen",
+    "ratingBreakdown": "Distribución de puntajes",
+    "byType": "Por tipo",
+    "stats": {
+      "totalReviews": "Reseñas totales",
+      "avgRating": "Puntaje promedio"
+    },
+    "editDialog": {
+      "title": "Editar Perfil"
+    },
+    "form": {
+      "displayName": "Nombre de perfil",
+      "avatarUrl": "URL de avatar",
+      "bio": "Biografía",
+      "submit": "Guardar Cambios",
+      "submitting": "Guardando..."
+    }
+  },
+  "onboarding": {
+    "title": "Bienvenido/a a Things Review",
+    "description": "Configurá tu perfil para empezar a registrar y reseñar películas, series, libros y más.",
+    "form": {
+      "displayName": "Nombre de perfil",
+      "displayNamePlaceholder": "¿Cómo querés que te llamemos?",
+      "username": "Nombre de usuario",
+      "usernamePlaceholder": "tu_usuario",
+      "bio": "Biografía",
+      "bioPlaceholder": "Una descripción breve sobre vos...",
+      "submit": "Comenzar",
+      "submitting": "Creando perfil..."
     }
   }
 }

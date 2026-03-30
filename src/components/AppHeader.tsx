@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,19 +14,22 @@ import { Separator } from '@/components/ui/separator'
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { ROUTES } from '@/shared/constants'
 import { ThemeToggle } from '@/components/ThemeToggle'
-
-const routeLabels: Record<string, string> = {
-  [ROUTES.MOVIES]:  'Movies',
-  [ROUTES.SERIES]:  'Series',
-  [ROUTES.REVIEWS]: 'My Reviews',
-  [ROUTES.GROUPS]:  'Groups',
-  [ROUTES.PROFILE]: 'Profile',
-  [ROUTES.HOME]:    'Home',
-}
+import { LanguageSelector } from '@/components/LanguageSelector'
 
 export function AppHeader() {
   const pathname = usePathname()
-  const label = routeLabels[pathname] ?? 'Things Review'
+  const t = useTranslations()
+
+  const routeLabels: Record<string, string> = {
+    [ROUTES.MOVIES]:  t('nav.movies'),
+    [ROUTES.SERIES]:  t('nav.series'),
+    [ROUTES.REVIEWS]: t('nav.reviews'),
+    [ROUTES.GROUPS]:  t('nav.groups'),
+    [ROUTES.PROFILE]: t('nav.profile'),
+    [ROUTES.HOME]:    t('nav.home'),
+  }
+
+  const label = routeLabels[pathname] ?? t('app.name')
   const isHome = pathname === ROUTES.HOME
 
   return (
@@ -37,7 +41,7 @@ export function AppHeader() {
           {!isHome && (
             <>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href={ROUTES.HOME}>Home</BreadcrumbLink>
+                <BreadcrumbLink href={ROUTES.HOME}>{t('nav.home')}</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
             </>
@@ -47,7 +51,8 @@ export function AppHeader() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
-      <div className="ms-auto">
+      <div className="ms-auto flex items-center gap-1">
+        <LanguageSelector />
         <ThemeToggle />
       </div>
     </header>

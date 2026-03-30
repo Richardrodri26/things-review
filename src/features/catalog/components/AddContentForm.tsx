@@ -1,6 +1,7 @@
 // src/features/catalog/components/AddContentForm.tsx
 'use client'
 
+import { useRef } from 'react'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
@@ -8,6 +9,8 @@ import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
+import { Badge } from '@/components/ui/badge'
+import { XIcon } from 'lucide-react'
 import {
   Select,
   SelectContent,
@@ -15,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { useTranslations } from 'next-intl'
 import { CONTENT_TYPE_LABELS } from '@/shared/types'
 import { useAddCatalogItem } from '../hooks'
 import type { AddItemDTO, CatalogItem } from '@/shared/services'
@@ -32,13 +36,13 @@ const baseSchema = z.object({
 const addContentSchema = z.discriminatedUnion('contentType', [
   baseSchema.extend({
     contentType:      z.literal('movie'),
-    originalLanguage: z.string().length(2, 'Use 2-letter ISO code'),
+    originalLanguage: z.array(z.string().length(2)).optional(),
     runtime:          z.coerce.number().int().positive().optional(),
     releaseDate:      z.string().min(1, 'Release date is required'),
   }),
   baseSchema.extend({
     contentType:      z.literal('series'),
-    originalLanguage: z.string().length(2, 'Use 2-letter ISO code'),
+    originalLanguage: z.array(z.string().length(2)).optional(),
     firstAirDate:     z.string().min(1, 'First air date is required'),
     numberOfSeasons:  z.coerce.number().int().min(1),
     numberOfEpisodes: z.coerce.number().int().min(1),
@@ -60,13 +64,13 @@ const addContentSchema = z.discriminatedUnion('contentType', [
   baseSchema.extend({
     contentType: z.literal('book'),
     author:      z.string().min(1, 'Author is required'),
-    language:    z.string().length(2, 'Use 2-letter ISO code'),
+    language:    z.array(z.string().length(2)).optional(),
     pageCount:   z.coerce.number().int().positive().optional(),
   }),
   baseSchema.extend({
     contentType:   z.literal('podcast'),
     host:          z.string().min(1, 'Host is required'),
-    language:      z.string().length(2, 'Use 2-letter ISO code'),
+    language:      z.array(z.string().length(2)).optional(),
     isActive:      z.boolean(),
     totalEpisodes: z.coerce.number().int().positive().optional(),
   }),
@@ -90,7 +94,7 @@ function toAddItemDTO(values: AnyFormValues): AddItemDTO {
         year,
         overview:         values.overview as string | undefined,
         coverImageUrl:    cover,
-        originalLanguage: values.originalLanguage as string,
+        originalLanguage: (values.originalLanguage as string[] | undefined)?.[0] ?? 'unknown',
         runtime:          values.runtime ? Number(values.runtime) : undefined,
         releaseDate:      values.releaseDate as string,
         adult:            false,
@@ -103,7 +107,7 @@ function toAddItemDTO(values: AnyFormValues): AddItemDTO {
         year,
         overview:         values.overview as string | undefined,
         coverImageUrl:    cover,
-        originalLanguage: values.originalLanguage as string,
+        originalLanguage: (values.originalLanguage as string[] | undefined)?.[0] ?? 'unknown',
         firstAirDate:     values.firstAirDate as string,
         numberOfSeasons:  Number(values.numberOfSeasons),
         numberOfEpisodes: Number(values.numberOfEpisodes),
@@ -142,7 +146,7 @@ function toAddItemDTO(values: AnyFormValues): AddItemDTO {
         overview:     values.overview as string | undefined,
         coverImageUrl: cover,
         author:       (values.author as string).split(',').map((s) => s.trim()).filter(Boolean),
-        language:     values.language as string,
+        language:     (values.language as string[] | undefined)?.[0] ?? 'unknown',
         pageCount:    values.pageCount ? Number(values.pageCount) : undefined,
         genres:       [],
       }
@@ -154,12 +158,78 @@ function toAddItemDTO(values: AnyFormValues): AddItemDTO {
         overview:      values.overview as string | undefined,
         coverImageUrl: cover,
         host:          (values.host as string).split(',').map((s) => s.trim()).filter(Boolean),
-        language:      values.language as string,
+        language:      (values.language as string[] | undefined)?.[0] ?? 'unknown',
         isActive:      Boolean(values.isActive),
         totalEpisodes: values.totalEpisodes ? Number(values.totalEpisodes) : undefined,
         genres:        [],
       }
   }
+}
+
+// ─── Language tags input ─────────────────────────────────────────────────────
+
+interface LanguageTagsInputProps {
+  label: string
+  value: string[]
+  onChange: (langs: string[]) => void
+  placeholder: string
+  addLabel: string
+}
+
+function LanguageTagsInput({ label, value, onChange, placeholder, addLabel }: LanguageTagsInputProps) {
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  const addLanguage = () => {
+    const raw = inputRef.current?.value.trim().toLowerCase() ?? ''
+    if (raw.length === 2 && !value.includes(raw)) {
+      onChange([...value, raw])
+      if (inputRef.current) inputRef.current.value = ''
+    }
+  }
+
+  const removeLanguage = (lang: string) => {
+    onChange(value.filter((l) => l !== lang))
+  }
+
+  return (
+    <div className="space-y-1.5">
+      <Label>{label}</Label>
+      <div className="flex gap-2">
+        <Input
+          ref={inputRef}
+          placeholder={placeholder}
+          maxLength={2}
+          className="w-20 uppercase"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              addLanguage()
+            }
+          }}
+        />
+        <Button type="button" variant="outline" size="sm" onClick={addLanguage}>
+          {addLabel}
+        </Button>
+      </div>
+      {value.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mt-1">
+          {value.map((lang) => (
+            <Badge key={lang} variant="secondary" className="gap-1 pr-1 uppercase">
+              {lang}
+              <button
+                type="button"
+                onClick={() => removeLanguage(lang)}
+                className="ml-0.5 rounded-full hover:bg-muted-foreground/20 p-0.5"
+                aria-label={`Remove ${lang}`}
+              >
+                <XIcon className="size-2.5" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+    </div>
+  )
 }
 
 // ─── Props ───────────────────────────────────────────────────────────────────
@@ -191,6 +261,9 @@ export function AddContentForm({
   onCancel,
 }: AddContentFormProps) {
   const addItem = useAddCatalogItem()
+  const t = useTranslations('catalog.form')
+  const tCommon = useTranslations('common')
+  const tContentType = useTranslations('contentType')
 
   const form = useForm({
     defaultValues: {
@@ -200,7 +273,7 @@ export function AddContentForm({
       overview:         '',
       coverImageUrl:    '',
       // movie / series
-      originalLanguage: 'en',
+      originalLanguage: [] as string[],
       runtime:          undefined as number | undefined,
       releaseDate:      '',
       // series
@@ -217,7 +290,7 @@ export function AddContentForm({
       developer:        '',
       // book
       author:           '',
-      language:         'en',
+      language:         [] as string[],
       pageCount:        undefined as number | undefined,
       // podcast
       host:             '',
@@ -244,7 +317,7 @@ export function AddContentForm({
       <form.Field name="contentType">
         {(field) => (
           <div className="space-y-1.5">
-            <Label htmlFor={field.name}>Type</Label>
+            <Label htmlFor={field.name}>{t('type')}</Label>
             <Select
               value={field.state.value}
               onValueChange={(v) => field.handleChange(v as ContentType)}
@@ -258,9 +331,9 @@ export function AddContentForm({
                     ContentType,
                     { en: string; icon: string },
                   ][]
-                ).map(([type, { en, icon }]) => (
+                ).map(([type, { icon }]) => (
                   <SelectItem key={type} value={type}>
-                    {icon} {en}
+                    {icon} {tContentType(type)}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -273,10 +346,10 @@ export function AddContentForm({
       <form.Field name="title">
         {(field) => (
           <div className="space-y-1.5">
-            <Label htmlFor={field.name}>Title *</Label>
+            <Label htmlFor={field.name}>{t('titleRequired')}</Label>
             <Input
               id={field.name}
-              placeholder="e.g. Inception"
+              placeholder={t('placeholderTitle')}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               onBlur={field.handleBlur}
@@ -292,7 +365,7 @@ export function AddContentForm({
       <form.Field name="year">
         {(field) => (
           <div className="space-y-1.5">
-            <Label htmlFor={field.name}>Year *</Label>
+            <Label htmlFor={field.name}>{t('yearRequired')}</Label>
             <Input
               id={field.name}
               type="number"
@@ -314,11 +387,11 @@ export function AddContentForm({
         {(field) => (
           <div className="space-y-1.5">
             <Label htmlFor={field.name}>
-              Overview <span className="text-muted-foreground">(optional)</span>
+              {t('overview')} <span className="text-muted-foreground">{t('optional')}</span>
             </Label>
             <Textarea
               id={field.name}
-              placeholder="Short description..."
+              placeholder={t('placeholderOverview')}
               rows={3}
               className="resize-none"
               value={field.state.value ?? ''}
@@ -334,12 +407,12 @@ export function AddContentForm({
         {(field) => (
           <div className="space-y-1.5">
             <Label htmlFor={field.name}>
-              Cover Image URL <span className="text-muted-foreground">(optional)</span>
+              {t('coverImageUrl')} <span className="text-muted-foreground">{t('optional')}</span>
             </Label>
             <Input
               id={field.name}
               type="url"
-              placeholder="https://..."
+              placeholder={t('placeholderCoverUrl')}
               value={field.state.value ?? ''}
               onChange={(e) => field.handleChange(e.target.value)}
               onBlur={field.handleBlur}
@@ -378,27 +451,20 @@ export function AddContentForm({
                 <div className="grid grid-cols-2 gap-3">
                   <form.Field name="originalLanguage">
                     {(field) => (
-                      <div className="space-y-1.5">
-                        <Label htmlFor={field.name}>Language *</Label>
-                        <Input
-                          id={field.name}
-                          placeholder="en"
-                          maxLength={2}
-                          value={field.state.value ?? ''}
-                          onChange={(e) => field.handleChange(e.target.value.toLowerCase())}
-                          onBlur={field.handleBlur}
-                        />
-                        {field.state.meta.errors.length > 0 && (
-                          <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
-                        )}
-                      </div>
+                      <LanguageTagsInput
+                        label={t('languagesOptional')}
+                        value={field.state.value ?? []}
+                        onChange={(langs) => field.handleChange(langs)}
+                        placeholder={t('languagePlaceholder')}
+                        addLabel={t('addLanguage')}
+                      />
                     )}
                   </form.Field>
                   <form.Field name="runtime">
                     {(field) => (
                       <div className="space-y-1.5">
                         <Label htmlFor={field.name}>
-                          Runtime (min) <span className="text-muted-foreground">(optional)</span>
+                          Runtime (min) <span className="text-muted-foreground">{t('optional')}</span>
                         </Label>
                         <Input
                           id={field.name}
@@ -441,27 +507,20 @@ export function AddContentForm({
                 </form.Field>
                 <form.Field name="originalLanguage">
                   {(field) => (
-                    <div className="space-y-1.5">
-                      <Label htmlFor={field.name}>Language *</Label>
-                      <Input
-                        id={field.name}
-                        placeholder="en"
-                        maxLength={2}
-                        value={field.state.value ?? ''}
-                        onChange={(e) => field.handleChange(e.target.value.toLowerCase())}
-                        onBlur={field.handleBlur}
-                      />
-                      {field.state.meta.errors.length > 0 && (
-                        <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
-                      )}
-                    </div>
+                    <LanguageTagsInput
+                      label={t('languagesOptional')}
+                      value={field.state.value ?? []}
+                      onChange={(langs) => field.handleChange(langs)}
+                      placeholder={t('languagePlaceholder')}
+                      addLabel={t('addLanguage')}
+                    />
                   )}
                 </form.Field>
                 <div className="grid grid-cols-2 gap-3">
                    <form.Field name="numberOfSeasons">
                     {(field) => (
                       <div className="space-y-1.5">
-                        <Label htmlFor={field.name}>Seasons *</Label>
+                        <Label htmlFor={field.name}>{t('totalSeasons')} *</Label>
                         <Input
                           id={field.name}
                           type="number"
@@ -476,7 +535,7 @@ export function AddContentForm({
                   <form.Field name="numberOfEpisodes">
                     {(field) => (
                       <div className="space-y-1.5">
-                        <Label htmlFor={field.name}>Episodes *</Label>
+                        <Label htmlFor={field.name}>{t('totalEpisodes')} *</Label>
                         <Input
                           id={field.name}
                           type="number"
@@ -492,7 +551,7 @@ export function AddContentForm({
                 <form.Field name="status">
                   {(field) => (
                     <div className="space-y-1.5">
-                      <Label htmlFor={field.name}>Status *</Label>
+                      <Label htmlFor={field.name}>{t('seriesStatus')} *</Label>
                       <Select
                         value={field.state.value ?? ''}
                         onValueChange={(v) =>
@@ -505,10 +564,10 @@ export function AddContentForm({
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="returning_series">Returning Series</SelectItem>
-                          <SelectItem value="ended">Ended</SelectItem>
-                          <SelectItem value="canceled">Canceled</SelectItem>
-                          <SelectItem value="in_production">In Production</SelectItem>
+                          <SelectItem value="returning_series">{t('seriesStatusReturning')}</SelectItem>
+                          <SelectItem value="ended">{t('seriesStatusEnded')}</SelectItem>
+                          <SelectItem value="canceled">{t('seriesStatusCancelled')}</SelectItem>
+                          <SelectItem value="in_production">{t('seriesStatusInProduction')}</SelectItem>
                           <SelectItem value="planned">Planned</SelectItem>
                         </SelectContent>
                       </Select>
@@ -524,7 +583,7 @@ export function AddContentForm({
                 <form.Field name="artist">
                   {(field) => (
                     <div className="space-y-1.5">
-                      <Label htmlFor={field.name}>Artist *</Label>
+                      <Label htmlFor={field.name}>{t('artists')} *</Label>
                       <Input
                         id={field.name}
                         placeholder="e.g. Radiohead"
@@ -542,7 +601,7 @@ export function AddContentForm({
                   <form.Field name="albumType">
                     {(field) => (
                       <div className="space-y-1.5">
-                        <Label htmlFor={field.name}>Type *</Label>
+                        <Label htmlFor={field.name}>{t('albumType')} *</Label>
                         <Select
                           value={field.state.value ?? 'album'}
                           onValueChange={(v) =>
@@ -553,9 +612,9 @@ export function AddContentForm({
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="album">Album</SelectItem>
-                            <SelectItem value="ep">EP</SelectItem>
-                            <SelectItem value="single">Single</SelectItem>
+                            <SelectItem value="album">{t('albumTypeAlbum')}</SelectItem>
+                            <SelectItem value="ep">{t('albumTypeEP')}</SelectItem>
+                            <SelectItem value="single">{t('albumTypeSingle')}</SelectItem>
                             <SelectItem value="compilation">Compilation</SelectItem>
                           </SelectContent>
                         </Select>
@@ -588,7 +647,7 @@ export function AddContentForm({
                   {(field) => (
                     <div className="space-y-1.5">
                       <Label htmlFor={field.name}>
-                        Developer <span className="text-muted-foreground">(optional)</span>
+                        {t('developer')} <span className="text-muted-foreground">{t('optional')}</span>
                       </Label>
                       <Input
                         id={field.name}
@@ -606,7 +665,7 @@ export function AddContentForm({
                     const current = (field.state.value ?? []) as GamePlatformValue[]
                     return (
                       <div className="space-y-1.5">
-                        <Label>Platforms *</Label>
+                        <Label>{t('platforms')} *</Label>
                         <div className="grid grid-cols-2 gap-2">
                           {PLATFORMS.map((p) => (
                             <div key={p.value} className="flex items-center gap-2">
@@ -647,8 +706,8 @@ export function AddContentForm({
                   {(field) => (
                     <div className="space-y-1.5">
                       <Label htmlFor={field.name}>
-                        Author(s) *{' '}
-                        <span className="text-muted-foreground text-xs">(comma-separated)</span>
+                        {t('author')} *{' '}
+                        <span className="text-muted-foreground text-xs">{t('commaSeparated')}</span>
                       </Label>
                       <Input
                         id={field.name}
@@ -666,27 +725,20 @@ export function AddContentForm({
                 <div className="grid grid-cols-2 gap-3">
                   <form.Field name="language">
                     {(field) => (
-                      <div className="space-y-1.5">
-                        <Label htmlFor={field.name}>Language *</Label>
-                        <Input
-                          id={field.name}
-                          placeholder="en"
-                          maxLength={2}
-                          value={field.state.value ?? ''}
-                          onChange={(e) => field.handleChange(e.target.value.toLowerCase())}
-                          onBlur={field.handleBlur}
-                        />
-                        {field.state.meta.errors.length > 0 && (
-                          <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
-                        )}
-                      </div>
+                      <LanguageTagsInput
+                        label={t('languagesOptional')}
+                        value={field.state.value ?? []}
+                        onChange={(langs) => field.handleChange(langs)}
+                        placeholder={t('languagePlaceholder')}
+                        addLabel={t('addLanguage')}
+                      />
                     )}
                   </form.Field>
                   <form.Field name="pageCount">
                     {(field) => (
                       <div className="space-y-1.5">
                         <Label htmlFor={field.name}>
-                          Pages <span className="text-muted-foreground">(optional)</span>
+                          Pages <span className="text-muted-foreground">{t('optional')}</span>
                         </Label>
                         <Input
                           id={field.name}
@@ -714,8 +766,8 @@ export function AddContentForm({
                   {(field) => (
                     <div className="space-y-1.5">
                       <Label htmlFor={field.name}>
-                        Host(s) *{' '}
-                        <span className="text-muted-foreground text-xs">(comma-separated)</span>
+                        {t('publisher')} *{' '}
+                        <span className="text-muted-foreground text-xs">{t('commaSeparated')}</span>
                       </Label>
                       <Input
                         id={field.name}
@@ -733,27 +785,20 @@ export function AddContentForm({
                 <div className="grid grid-cols-2 gap-3">
                   <form.Field name="language">
                     {(field) => (
-                      <div className="space-y-1.5">
-                        <Label htmlFor={field.name}>Language *</Label>
-                        <Input
-                          id={field.name}
-                          placeholder="en"
-                          maxLength={2}
-                          value={field.state.value ?? ''}
-                          onChange={(e) => field.handleChange(e.target.value.toLowerCase())}
-                          onBlur={field.handleBlur}
-                        />
-                        {field.state.meta.errors.length > 0 && (
-                          <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
-                        )}
-                      </div>
+                      <LanguageTagsInput
+                        label={t('languagesOptional')}
+                        value={field.state.value ?? []}
+                        onChange={(langs) => field.handleChange(langs)}
+                        placeholder={t('languagePlaceholder')}
+                        addLabel={t('addLanguage')}
+                      />
                     )}
                   </form.Field>
                   <form.Field name="totalEpisodes">
                     {(field) => (
                       <div className="space-y-1.5">
                         <Label htmlFor={field.name}>
-                          Episodes <span className="text-muted-foreground">(optional)</span>
+                          {t('totalEpisodesPodcast')} <span className="text-muted-foreground">{t('optional')}</span>
                         </Label>
                         <Input
                           id={field.name}
@@ -797,11 +842,11 @@ export function AddContentForm({
           <div className="flex items-center justify-end gap-2 pt-2">
             {onCancel && (
               <Button type="button" variant="ghost" onClick={onCancel} disabled={isSubmitting}>
-                Cancel
+                {tCommon('cancel')}
               </Button>
             )}
             <Button type="submit" disabled={!canSubmit || isSubmitting}>
-              {isSubmitting ? 'Adding...' : 'Add to Catalog'}
+              {isSubmitting ? t('submitting') : t('submit')}
             </Button>
           </div>
         )}

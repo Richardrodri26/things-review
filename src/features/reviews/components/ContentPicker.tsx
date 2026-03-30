@@ -2,6 +2,7 @@
 
 // src/features/reviews/components/ContentPicker.tsx
 import { useState, useMemo } from 'react'
+import { useTranslations } from 'next-intl'
 import { CheckIcon, ChevronDownIcon, SearchIcon, XIcon } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import {
@@ -49,6 +50,9 @@ export function ContentPicker({
   compact = false,
   disableType = false,
 }: ContentPickerProps) {
+  const t = useTranslations('reviews.contentPicker')
+  const tContentType = useTranslations('contentType')
+  const tCommon = useTranslations('common')
   const [search, setSearch] = useState('')
   const [open, setOpen] = useState(false)
 
@@ -65,7 +69,8 @@ export function ContentPicker({
     [items, contentId]
   )
 
-  const { icon, en: typeLabel } = CONTENT_TYPE_LABELS[contentType]
+  const { icon } = CONTENT_TYPE_LABELS[contentType]
+  const typeLabel = tContentType(contentType)
 
   function handleTypeChange(value: string | null) {
     if (!value) return
@@ -92,20 +97,20 @@ export function ContentPicker({
       {!disableType && (
         <Select value={contentType} onValueChange={handleTypeChange}>
           <SelectTrigger className={cn('w-full', compact ? 'h-8 text-xs' : '')}>
-            <SelectValue placeholder="Select type">
+            <SelectValue placeholder={t('selectType')}>
               {(v: string | null) => {
-                if (!v) return 'Select type'
-                const t = CONTENT_TYPE_LABELS[v as ContentType]
-                return t ? `${t.icon} ${t.en}` : v
+                if (!v) return t('selectType')
+                const ct = CONTENT_TYPE_LABELS[v as ContentType]
+                return ct ? `${ct.icon} ${tContentType(v as ContentType)}` : v
               }}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
             {CONTENT_TYPES.map((type) => {
-              const { icon: ic, en: label } = CONTENT_TYPE_LABELS[type]
+              const { icon: ic } = CONTENT_TYPE_LABELS[type]
               return (
                 <SelectItem key={type} value={type} className={compact ? 'text-xs' : ''}>
-                  {ic} {label}
+                  {ic} {tContentType(type)}
                 </SelectItem>
               )
             })}
@@ -139,7 +144,7 @@ export function ContentPicker({
                 onClick={handleClear}
                 onKeyDown={(e) => e.key === 'Enter' && handleClear(e as unknown as React.MouseEvent)}
                 className="rounded-sm p-0.5 hover:bg-muted text-muted-foreground hover:text-foreground"
-                aria-label="Clear selection"
+                aria-label={t('clearSelection')}
               >
                 <XIcon className={compact ? 'size-3' : 'size-3.5'} />
               </span>
@@ -166,10 +171,12 @@ export function ContentPicker({
             {/* Lista */}
             <div className="max-h-52 overflow-y-auto p-1">
               {isLoading ? (
-                <p className="py-3 text-center text-xs text-muted-foreground">Loading...</p>
+                <p className="py-3 text-center text-xs text-muted-foreground">{tCommon('loading')}</p>
               ) : filtered.length === 0 ? (
                 <p className="py-3 text-center text-xs text-muted-foreground">
-                  {search ? 'No results found' : `No ${typeLabel.toLowerCase()}s in catalog`}
+                  {search
+                    ? t('noResultsSearch')
+                    : t('noResultsCatalog', { type: typeLabel.toLowerCase() })}
                 </p>
               ) : (
                 filtered.map((item) => (

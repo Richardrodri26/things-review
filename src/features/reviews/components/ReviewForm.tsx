@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
 import type { OutputData } from '@editorjs/editorjs'
@@ -47,14 +48,10 @@ function getErrorMessage(error: unknown): string | undefined {
   return undefined
 }
 
-const STATUS_LABELS: Record<string, string> = {
-  consumed:        'Consumed',
-  want_to_consume: 'Want to consume',
-  consuming:       'Currently consuming',
-  dropped:         'Dropped',
-}
-
 export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }: ReviewFormProps) {
+  const t = useTranslations('reviews')
+  const tCommon = useTranslations('common')
+  const tStatusOptions = useTranslations('reviews.editor.statusOptions')
   const user = useUser()
   const createReview = useCreateReview()
   const updateReview = useUpdateReview()
@@ -123,7 +120,7 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
     >
       {/* Content picker — tipo + item del catálogo en 2 pasos */}
       <div className="space-y-1.5">
-        <Label>Content</Label>
+        <Label>{t('form.content')}</Label>
 
         {isEditMode && contentLocked ? (
           /* Locked — muestra el contenido actual con botón de cambio */
@@ -152,7 +149,7 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
           <div className="space-y-1.5">
             <div className="flex items-center gap-1.5 rounded-md bg-amber-500/10 border border-amber-500/30 px-2.5 py-1.5 text-[11px] text-amber-600 dark:text-amber-400">
               <AlertTriangleIcon className="size-3 shrink-0" />
-              <span>This will reassign the review to a different content.</span>
+              <span>{t('editor.reassignWarning')}</span>
             </div>
             <form.Field name="contentType">
               {(typeField) => (
@@ -190,7 +187,7 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
               }}
               className="text-[11px] text-muted-foreground hover:text-foreground underline-offset-2 hover:underline"
             >
-              Cancel change
+              {t('editor.cancelChange')}
             </button>
           </div>
         ) : (
@@ -228,7 +225,7 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
       <form.Field name="status">
         {(field) => (
           <div className="space-y-1.5">
-            <Label htmlFor={field.name}>Status</Label>
+            <Label htmlFor={field.name}>{t('form.status')}</Label>
             <Select
               value={field.state.value}
               onValueChange={(v) => v && field.handleChange(v as ReviewFormValues['status'])}
@@ -237,15 +234,15 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
                 id={field.name}
                 className={cn('w-full', field.state.meta.errors.length > 0 && 'border-destructive')}
               >
-                <SelectValue placeholder="Select status">
-                  {(v: string | null) => v ? STATUS_LABELS[v] ?? v : 'Select status'}
+                <SelectValue placeholder={t('form.status')}>
+                  {(v: string | null) => v ? tStatusOptions(v as Parameters<typeof tStatusOptions>[0]) : t('form.status')}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="consumed">Consumed</SelectItem>
-                <SelectItem value="want_to_consume">Want to consume</SelectItem>
-                <SelectItem value="consuming">Currently consuming</SelectItem>
-                <SelectItem value="dropped">Dropped</SelectItem>
+                <SelectItem value="consumed">{t('editor.statusOptions.consumed')}</SelectItem>
+                <SelectItem value="want_to_consume">{t('editor.statusOptions.want_to_consume')}</SelectItem>
+                <SelectItem value="consuming">{t('editor.statusOptions.consuming')}</SelectItem>
+                <SelectItem value="dropped">{t('editor.statusOptions.dropped')}</SelectItem>
               </SelectContent>
             </Select>
             {field.state.meta.errors.length > 0 && (
@@ -261,7 +258,7 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
       <form.Field name="rating">
         {(field) => (
           <div className="space-y-1.5">
-            <Label>Rating</Label>
+            <Label>{t('form.rating')}</Label>
             <RatingStars
               value={field.state.value}
               onChange={(r: Rating) => field.handleChange(r)}
@@ -277,7 +274,7 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
         {(field) => (
           <div className="space-y-1.5">
             <Label htmlFor={field.name}>
-              Title <span className="text-muted-foreground">(optional)</span>
+              {t('form.title')} <span className="text-muted-foreground">({tCommon('optional')})</span>
             </Label>
             <Input
               id={field.name}
@@ -300,7 +297,7 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
         {(field) => (
           <div className="space-y-1.5">
             <Label>
-              Review <span className="text-muted-foreground">(optional)</span>
+              {t('form.review')} <span className="text-muted-foreground">({tCommon('optional')})</span>
             </Label>
             <div className="min-h-[160px] rounded-md border border-input bg-background px-3 py-2 text-sm focus-within:ring-1 focus-within:ring-ring">
               <EditorClient
@@ -319,11 +316,11 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
           <div className="flex items-center justify-end gap-2 pt-2">
             {onCancel && (
               <Button type="button" variant="ghost" onClick={onCancel} disabled={isSubmitting}>
-                Cancel
+                {tCommon('cancel')}
               </Button>
             )}
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? 'Saving...' : mode === 'create' ? 'Add Review' : 'Save Changes'}
+              {isSubmitting ? tCommon('saving') : mode === 'create' ? t('form.addReview') : t('form.saveChanges')}
             </Button>
           </div>
         )}

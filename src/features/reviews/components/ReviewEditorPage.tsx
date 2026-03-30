@@ -2,6 +2,7 @@
 
 // src/features/reviews/components/ReviewEditorPage.tsx
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
 import { XIcon, CheckIcon, BookOpenIcon, PencilIcon, AlertTriangleIcon } from 'lucide-react'
@@ -46,15 +47,11 @@ function getErrorMessage(error: unknown): string | undefined {
 }
 
 const STATUS_OPTIONS = [
-  { value: 'consumed',        label: 'Consumed' },
-  { value: 'want_to_consume', label: 'Want to consume' },
-  { value: 'consuming',       label: 'Currently consuming' },
-  { value: 'dropped',         label: 'Dropped' },
+  { value: 'consumed' },
+  { value: 'want_to_consume' },
+  { value: 'consuming' },
+  { value: 'dropped' },
 ]
-
-const STATUS_LABELS: Record<string, string> = Object.fromEntries(
-  STATUS_OPTIONS.map((o) => [o.value, o.label])
-)
 
 interface ReviewEditorPageProps extends ReviewFormProps {
   /** Title shown at the top of the editor page */
@@ -69,6 +66,8 @@ export function ReviewEditorPage({
   onCancel,
   contentTitle,
 }: ReviewEditorPageProps) {
+  const t = useTranslations('reviews.editor')
+  const tCommon = useTranslations('common')
   const user = useUser()
   const createReview = useCreateReview()
   const updateReview = useUpdateReview()
@@ -180,7 +179,7 @@ export function ReviewEditorPage({
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <BookOpenIcon className="size-4" />
           <span className="font-medium text-foreground">
-            {mode === 'create' ? 'New Review' : 'Edit Review'}
+            {mode === 'create' ? t('titleNew') : t('titleEdit')}
           </span>
           {contentTitle && (
             <>
@@ -193,11 +192,11 @@ export function ReviewEditorPage({
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="sm" onClick={onCancel} className="gap-1.5" disabled={isSubmitting}>
             <XIcon className="size-3.5" />
-            Cancel
+            {tCommon('cancel')}
           </Button>
           <Button size="sm" onClick={handleSubmit} disabled={isSubmitting} className="gap-1.5">
             <CheckIcon className="size-3.5" />
-            {isSubmitting ? 'Saving...' : mode === 'create' ? 'Publish Review' : 'Save Changes'}
+            {isSubmitting ? tCommon('saving') : mode === 'create' ? t('publish') : t('saveChanges')}
           </Button>
         </div>
       </header>
@@ -218,7 +217,7 @@ export function ReviewEditorPage({
             <input
               ref={titleRef}
               defaultValue={initialTitle}
-              placeholder="Untitled review..."
+              placeholder={t('titlePlaceholder')}
               className="review-editor-title"
             />
 
@@ -239,7 +238,7 @@ export function ReviewEditorPage({
               <EditorClient
                 defaultValue={initialBody}
                 onChange={handleEditorChange}
-                placeholder="Write your thoughts... Use / for commands"
+                placeholder={t('bodyPlaceholder')}
                 className="min-h-[400px]"
               />
             </div>
@@ -249,11 +248,11 @@ export function ReviewEditorPage({
         {/* ── Sidebar ─────────────────────────────── */}
         <aside className="hidden sm:flex w-64 flex-col gap-5 border-l border-border/60 bg-muted/20 px-5 py-8 overflow-y-auto">
           <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
-            Properties
+            {t('properties')}
           </p>
 
           {/* ── Content ─────────────────────────────── */}
-          <SidebarProperty label="Content">
+          <SidebarProperty label={t('content')}>
             {isEditMode && contentLocked ? (
               /* Locked — muestra el contenido actual con botón de cambio */
               <div className="flex flex-col gap-1.5">
@@ -281,10 +280,10 @@ export function ReviewEditorPage({
             ) : isEditMode && !contentLocked ? (
               /* Unlocked en edit — picker + advertencia */
               <div className="flex flex-col gap-1.5">
-                <div className="flex items-center gap-1 rounded-md bg-amber-500/10 border border-amber-500/30 px-2 py-1.5 text-[10px] text-amber-600 dark:text-amber-400">
-                  <AlertTriangleIcon className="size-3 shrink-0" />
-                  <span>This will reassign the review to a different content.</span>
-                </div>
+                  <div className="flex items-center gap-1 rounded-md bg-amber-500/10 border border-amber-500/30 px-2 py-1.5 text-[10px] text-amber-600 dark:text-amber-400">
+                    <AlertTriangleIcon className="size-3 shrink-0" />
+                    <span>{t('reassignWarning')}</span>
+                  </div>
                 <form.Field name="contentType">
                   {(typeField) => (
                     <form.Field name="contentId">
@@ -323,7 +322,7 @@ export function ReviewEditorPage({
                   }}
                   className="text-[10px] text-muted-foreground hover:text-foreground underline-offset-2 hover:underline self-start"
                 >
-                  Cancel change
+                  {t('cancelChange')}
                 </button>
               </div>
             ) : (
@@ -361,20 +360,18 @@ export function ReviewEditorPage({
           {/* ── Status ──────────────────────────────── */}
           <form.Field name="status">
             {(field) => (
-              <SidebarProperty label="Status">
+              <SidebarProperty label={t('status')}>
                 <Select
                   value={field.state.value}
                   onValueChange={(v) => v && field.handleChange(v as ReviewFormValues['status'])}
                 >
                   <SelectTrigger className={cn('h-8 text-xs', field.state.meta.errors.length > 0 && 'border-destructive')}>
-                    <SelectValue placeholder="Select status">
-                      {(v: string | null) => v ? STATUS_LABELS[v] ?? v : 'Select status'}
-                    </SelectValue>
+                    <SelectValue placeholder={t('status')} />
                   </SelectTrigger>
                   <SelectContent>
                     {STATUS_OPTIONS.map((opt) => (
                       <SelectItem key={opt.value} value={opt.value} className="text-xs">
-                        {opt.label}
+                        {t(`statusOptions.${opt.value}` as `statusOptions.${typeof opt.value}`)}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -391,7 +388,7 @@ export function ReviewEditorPage({
           {/* ── Spoilers ────────────────────────────── */}
           <form.Field name="containsSpoilers">
             {(field) => (
-              <SidebarProperty label="Contains spoilers">
+              <SidebarProperty label={t('containsSpoilers')}>
                 <button
                   type="button"
                   role="switch"

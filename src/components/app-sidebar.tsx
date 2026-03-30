@@ -2,6 +2,7 @@
 
 import * as React from 'react'
 import {
+  HomeIcon,
   FilmIcon,
   TvIcon,
   StarIcon,
@@ -9,6 +10,7 @@ import {
   UserCircleIcon,
   BookmarkIcon,
 } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 import { NavMain } from '@/components/nav-main'
 import { NavUser } from '@/components/nav-user'
@@ -24,16 +26,19 @@ import {
 } from '@/components/ui/sidebar'
 import { ROUTES } from '@/shared/constants'
 
-const navItems = [
-  { title: 'Movies',    url: ROUTES.MOVIES,    icon: <FilmIcon /> },
-  { title: 'Series',    url: ROUTES.SERIES,    icon: <TvIcon /> },
-  { title: 'Reviews',   url: ROUTES.REVIEWS,   icon: <StarIcon /> },
-  { title: 'Watchlist', url: ROUTES.WATCHLIST, icon: <BookmarkIcon /> },
-  { title: 'Groups',    url: ROUTES.GROUPS,    icon: <UsersIcon /> },
-  { title: 'Profile',   url: ROUTES.PROFILE,   icon: <UserCircleIcon /> },
-]
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const t = useTranslations()
+
+  const navItems = [
+    { title: t('nav.home'),      url: ROUTES.HOME,      icon: <HomeIcon />,       exact: true },
+    { title: t('nav.movies'),    url: ROUTES.MOVIES,    icon: <FilmIcon /> },
+    { title: t('nav.series'),    url: ROUTES.SERIES,    icon: <TvIcon /> },
+    { title: t('nav.reviews'),   url: ROUTES.REVIEWS,   icon: <StarIcon /> },
+    { title: t('nav.watchlist'), url: ROUTES.WATCHLIST, icon: <BookmarkIcon /> },
+    { title: t('nav.groups'),    url: ROUTES.GROUPS,    icon: <UsersIcon /> },
+    { title: t('nav.profile'),   url: ROUTES.PROFILE,   icon: <UserCircleIcon /> },
+  ]
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -44,8 +49,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 TR
               </div>
               <div className="grid flex-1 text-start leading-tight">
-                <span className="truncate font-semibold text-sm">Things Review</span>
-                <span className="truncate text-xs text-muted-foreground">Your reviews, together</span>
+                <span className="truncate font-semibold text-sm">{t('app.name')}</span>
+                <span className="truncate text-xs text-muted-foreground">{t('app.tagline')}</span>
               </div>
             </SidebarMenuButton>
           </SidebarMenuItem>

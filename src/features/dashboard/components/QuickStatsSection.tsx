@@ -1,5 +1,8 @@
 // src/features/dashboard/components/QuickStatsSection.tsx
+'use client'
+
 import { BookOpenIcon, StarIcon, TrendingUpIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { RatingStars } from '@/shared/ui/atoms'
 import { CONTENT_TYPE_LABELS } from '@/shared/types'
 import { computeUserStats } from '@/features/profile/lib/computeUserStats'
@@ -11,6 +14,8 @@ interface QuickStatsSectionProps {
 
 export function QuickStatsSection({ reviews }: QuickStatsSectionProps) {
   const stats = computeUserStats(reviews)
+  const t = useTranslations('dashboard.stats')
+  const tContentType = useTranslations('contentType')
 
   const activeTypes = (
     Object.entries(stats.reviewsByContentType) as [keyof typeof CONTENT_TYPE_LABELS, number][]
@@ -23,7 +28,7 @@ export function QuickStatsSection({ reviews }: QuickStatsSectionProps) {
       {/* Section label */}
       <div className="flex items-center gap-3">
         <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground">
-          Your Stats
+          {t('title')}
         </span>
         <div className="flex-1 h-px bg-border" />
       </div>
@@ -36,7 +41,7 @@ export function QuickStatsSection({ reviews }: QuickStatsSectionProps) {
             style={{ background: 'radial-gradient(ellipse 80% 60% at 0% 100%, oklch(0.488 0.243 264.376 / 0.06) 0%, transparent 70%)' }} />
           <div className="flex items-center gap-1.5 text-muted-foreground mb-2">
             <BookOpenIcon className="size-3.5" />
-            <span className="text-[10px] font-semibold tracking-widest uppercase">Reviews</span>
+            <span className="text-[10px] font-semibold tracking-widest uppercase">{t('reviews')}</span>
           </div>
           <p
             className="text-5xl font-black leading-none tracking-tighter text-foreground"
@@ -52,7 +57,7 @@ export function QuickStatsSection({ reviews }: QuickStatsSectionProps) {
             style={{ background: 'radial-gradient(ellipse 80% 60% at 100% 100%, oklch(0.809 0.105 251.813 / 0.06) 0%, transparent 70%)' }} />
           <div className="flex items-center gap-1.5 text-muted-foreground mb-2">
             <StarIcon className="size-3.5" />
-            <span className="text-[10px] font-semibold tracking-widest uppercase">Avg Rating</span>
+            <span className="text-[10px] font-semibold tracking-widest uppercase">{t('avgRating')}</span>
           </div>
           {stats.averageRating !== null ? (
             <>
@@ -90,7 +95,7 @@ export function QuickStatsSection({ reviews }: QuickStatsSectionProps) {
               >
                 <span aria-hidden>{label.icon}</span>
                 <span className="font-semibold">{count}</span>
-                <span className="text-muted-foreground">{label.en}</span>
+                <span className="text-muted-foreground">{tContentType(contentType)}</span>
               </div>
             )
           })}

@@ -1,10 +1,11 @@
 'use client'
 
 import { useForm } from '@tanstack/react-form'
+import { useTranslations } from 'next-intl'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Input } from '@/components/ui/input'
 import {
   Field,
   FieldGroup,
@@ -12,16 +13,9 @@ import {
   FieldDescription,
   FieldError,
 } from '@/components/ui/field'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Spinner } from '@/components/ui/spinner'
+import { ContentPicker } from '@/features/reviews/components/ContentPicker'
 import type { WatchlistItem, WatchlistPriority } from '@/entities/watchlist/types'
 import type { ContentType } from '@/shared/types'
 import { useAddToWatchlist, useUpdateWatchlistItem } from '../hooks'
@@ -61,6 +55,8 @@ export function WatchlistForm({
   onSuccess,
   onCancel,
 }: WatchlistFormProps) {
+  const t = useTranslations('watchlist.form')
+  const tCommon = useTranslations('common')
   const addToWatchlist = useAddToWatchlist()
   const updateItem = useUpdateWatchlistItem()
 
@@ -114,51 +110,29 @@ export function WatchlistForm({
       }}
     >
       <FieldGroup>
-        {/* Content ID — solo en modo add */}
-        {mode === 'add' && (
-          <form.Field name="contentId">
-            {(field) => (
-              <Field data-invalid={field.state.meta.errors.length > 0 || undefined}>
-                <FieldLabel htmlFor={field.name}>Content ID</FieldLabel>
-                <Input
-                  id={field.name}
-                  placeholder="e.g. tt1234567"
-                  value={field.state.value}
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  onBlur={field.handleBlur}
-                  aria-invalid={field.state.meta.errors.length > 0 || undefined}
-                />
-                <FieldError errors={field.state.meta.errors.map((e) => ({ message: getErrorMessage(e) }))} />
-              </Field>
-            )}
-          </form.Field>
-        )}
-
-        {/* Content Type — solo en modo add */}
+        {/* ContentPicker — solo en modo add */}
         {mode === 'add' && (
           <form.Field name="contentType">
-            {(field) => (
-              <Field>
-                <FieldLabel htmlFor={field.name}>Type</FieldLabel>
-                <Select
-                  value={field.state.value}
-                  onValueChange={(v) => field.handleChange(v as WatchlistFormData['contentType'])}
-                >
-                  <SelectTrigger id={field.name} className="w-full">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectItem value="movie">🎬 Movie</SelectItem>
-                      <SelectItem value="series">📺 Series</SelectItem>
-                      <SelectItem value="music">🎵 Music</SelectItem>
-                      <SelectItem value="game">🎮 Game</SelectItem>
-                      <SelectItem value="book">📚 Book</SelectItem>
-                      <SelectItem value="podcast">🎙️ Podcast</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
+            {(typeField) => (
+              <form.Field name="contentId">
+                {(idField) => (
+                  <Field data-invalid={idField.state.meta.errors.length > 0 || undefined}>
+                    <FieldLabel>{t('content')}</FieldLabel>
+                    <ContentPicker
+                      contentType={typeField.state.value as ContentType}
+                      contentId={idField.state.value}
+                      onTypeChange={(type) => {
+                        typeField.handleChange(type as WatchlistFormData['contentType'])
+                        idField.handleChange('')
+                      }}
+                      onItemChange={(id) => {
+                        idField.handleChange(id)
+                      }}
+                    />
+                    <FieldError errors={idField.state.meta.errors.map((e) => ({ message: getErrorMessage(e) }))} />
+                  </Field>
+                )}
+              </form.Field>
             )}
           </form.Field>
         )}
@@ -167,7 +141,7 @@ export function WatchlistForm({
         <form.Field name="priority">
           {(field) => (
             <Field>
-              <FieldLabel>Priority</FieldLabel>
+              <FieldLabel>{t('priority')}</FieldLabel>
               <ToggleGroup
                 variant="outline"
                 value={[field.state.value]}
@@ -197,9 +171,9 @@ export function WatchlistForm({
           {(field) => (
             <Field>
               <FieldLabel htmlFor={field.name}>
-                Target Date
+                {t('targetDate')}
               </FieldLabel>
-              <FieldDescription>Optional — when do you want to consume this?</FieldDescription>
+              <FieldDescription>{tCommon('optional')}</FieldDescription>
               <Input
                 id={field.name}
                 type="date"
@@ -215,11 +189,11 @@ export function WatchlistForm({
         <form.Field name="note">
           {(field) => (
             <Field data-invalid={field.state.meta.errors.length > 0 || undefined}>
-              <FieldLabel htmlFor={field.name}>Note</FieldLabel>
-              <FieldDescription>Optional — why did you add this?</FieldDescription>
+              <FieldLabel htmlFor={field.name}>{t('note')}</FieldLabel>
+              <FieldDescription>{t('noteDescription')}</FieldDescription>
               <Textarea
                 id={field.name}
-                placeholder="Why did you add this? Any notes..."
+                placeholder={t('note')}
                 className="resize-none"
                 rows={3}
                 value={field.state.value ?? ''}
@@ -239,12 +213,12 @@ export function WatchlistForm({
           <div className="flex items-center justify-end gap-2 pt-4">
             {onCancel && (
               <Button type="button" variant="ghost" onClick={onCancel} disabled={isSubmitting}>
-                Cancel
+                {tCommon('cancel')}
               </Button>
             )}
             <Button type="submit" disabled={!canSubmit || isSubmitting}>
               {isSubmitting && <Spinner data-icon="inline-start" />}
-              {mode === 'add' ? 'Add to Watchlist' : 'Save Changes'}
+              {mode === 'add' ? t('submit') : t('saveChanges')}
             </Button>
           </div>
         )}

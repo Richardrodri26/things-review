@@ -3,6 +3,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import { PlusIcon, UsersIcon, KeyRoundIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
@@ -26,6 +27,7 @@ export function GroupsPage() {
   const user = useUser()
   const { data: groups = [], isLoading } = useGroups()
   const [dialog, setDialog] = useState<DialogMode>('none')
+  const t = useTranslations('groups')
 
   function handleGroupCreated(groupId: string) {
     setDialog('none')
@@ -41,15 +43,15 @@ export function GroupsPage() {
     <div className="flex flex-1 flex-col gap-4 p-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Groups</h1>
+        <h1 className="text-xl font-semibold">{t('title')}</h1>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={() => setDialog('join')}>
             <KeyRoundIcon />
-            Join
+            {t('join')}
           </Button>
           <Button size="sm" onClick={() => setDialog('create')}>
             <PlusIcon />
-            Create Group
+            {t('createGroup')}
           </Button>
         </div>
       </div>
@@ -64,17 +66,17 @@ export function GroupsPage() {
       ) : groups.length === 0 ? (
         <EmptyState
           icon={<UsersIcon className="size-6" />}
-          title="No groups yet"
-          description="Create a group or join one with an invite code."
+          title={t('empty')}
+          description={t('emptyDescription')}
           action={
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => setDialog('join')}>
                 <KeyRoundIcon />
-                Join with code
+                {t('joinWithCode')}
               </Button>
               <Button size="sm" onClick={() => setDialog('create')}>
                 <PlusIcon />
-                Create Group
+                {t('createGroup')}
               </Button>
             </div>
           }
@@ -95,7 +97,7 @@ export function GroupsPage() {
       <Dialog open={dialog === 'create'} onOpenChange={(open) => !open && setDialog('none')}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Create Group</DialogTitle>
+            <DialogTitle>{t('createDialog.title')}</DialogTitle>
           </DialogHeader>
           <GroupForm
             onSuccess={handleGroupCreated}
@@ -108,7 +110,7 @@ export function GroupsPage() {
       <Dialog open={dialog === 'join'} onOpenChange={(open) => !open && setDialog('none')}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Join a Group</DialogTitle>
+            <DialogTitle>{t('joinDialog.title')}</DialogTitle>
           </DialogHeader>
           <JoinGroupForm
             onSuccess={handleGroupJoined}

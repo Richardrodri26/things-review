@@ -4,6 +4,7 @@
 import { useState } from 'react'
 import { PlusIcon, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useTranslations } from 'next-intl'
 import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage'
 import { useUser, useStore } from '@/shared/lib/store'
 import { QuickStatsSection } from './QuickStatsSection'
@@ -14,11 +15,12 @@ export function DashboardPage() {
   const user = useUser()
   const reviews = useStore((s) => s.reviews)
   const [isAddingReview, setIsAddingReview] = useState(false)
+  const t = useTranslations('dashboard')
 
   const firstName = user?.displayName?.split(' ')[0] ?? 'there'
   const hour = new Date().getHours()
-  const timeGreeting =
-    hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening'
+  const greetingKey = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening'
+  const timeGreeting = t(`greeting.${greetingKey}`)
 
   return (
     <div className="flex flex-1 flex-col">
@@ -60,8 +62,8 @@ export function DashboardPage() {
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <p className="text-sm text-muted-foreground max-w-sm">
               {reviews.length === 0
-                ? 'Your personal review journal. Start tracking what you watch, read, and play.'
-                : `${reviews.length} ${reviews.length === 1 ? 'review' : 'reviews'} in your journal.`}
+                ? t('subtitle')
+                : t('reviewCount', { count: reviews.length })}
             </p>
             <Button
               size="sm"
@@ -69,7 +71,7 @@ export function DashboardPage() {
               className="gap-1.5 shrink-0"
             >
               <PlusIcon className="size-3.5" />
-              New Review
+              {t('newReview')}
             </Button>
           </div>
         </div>

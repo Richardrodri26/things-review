@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -17,26 +18,33 @@ export function NavMain({
     title: string
     url: string
     icon?: React.ReactNode
+    exact?: boolean
   }[]
 }) {
   const pathname = usePathname()
+  const t = useTranslations('nav')
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+      <SidebarGroupLabel>{t('navigation')}</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
-          <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton
-              render={<Link href={item.url} />}
-              isActive={pathname === item.url || pathname.startsWith(item.url + '/')}
-              tooltip={item.title}
-            >
-              {item.icon}
-              <span>{item.title}</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
+        {items.map((item) => {
+          const isActive = item.exact
+            ? pathname === item.url
+            : pathname === item.url || pathname.startsWith(item.url + '/')
+          return (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton
+                render={<Link href={item.url} />}
+                isActive={isActive}
+                tooltip={item.title}
+              >
+                {item.icon}
+                <span>{item.title}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          )
+        })}
       </SidebarMenu>
     </SidebarGroup>
   )

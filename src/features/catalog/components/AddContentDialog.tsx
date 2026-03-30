@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
+import { useTranslations } from 'next-intl'
 import { AddContentForm } from './AddContentForm'
 import type { ContentType } from '@/shared/types'
 
@@ -20,20 +21,21 @@ interface AddContentDialogProps {
 
 export function AddContentDialog({ defaultContentType }: AddContentDialogProps) {
   const [open, setOpen] = useState(false)
+  const t = useTranslations('catalog.addContent')
 
   return (
     <>
       <Button size="sm" variant="outline" onClick={() => setOpen(true)}>
         <PlusIcon />
-        Add manually
+        {t('buttonLabel')}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Add to Catalog</DialogTitle>
+            <DialogTitle>{t('dialogTitle')}</DialogTitle>
             <DialogDescription>
-              Add a movie, series, game, book, album or podcast manually.
+              {t('dialogDescription')}
             </DialogDescription>
           </DialogHeader>
           {open && (

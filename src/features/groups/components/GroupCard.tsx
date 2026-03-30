@@ -1,6 +1,9 @@
 // src/features/groups/components/GroupCard.tsx
+'use client'
+
 import Link from 'next/link'
 import { UsersIcon, LockIcon, GlobeIcon } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { Badge } from '@/components/ui/badge'
 import { CONTENT_TYPE_LABELS } from '@/shared/types'
 import { ROUTES } from '@/shared/constants'
@@ -12,6 +15,9 @@ interface GroupCardProps {
 }
 
 export function GroupCard({ group, isOwner }: GroupCardProps) {
+  const t = useTranslations('groups')
+  const tContentType = useTranslations('contentType')
+
   return (
     <Link
       href={ROUTES.GROUP_DETAIL(group.id)}
@@ -27,7 +33,7 @@ export function GroupCard({ group, isOwner }: GroupCardProps) {
         </div>
         <div className="flex items-center gap-1.5 shrink-0">
           {isOwner && (
-            <Badge variant="secondary" className="text-[10px]">Owner</Badge>
+            <Badge variant="secondary" className="text-[10px]">{t('card.owner')}</Badge>
           )}
           {group.visibility === 'private' ? (
             <LockIcon className="size-3.5 text-muted-foreground" />
@@ -41,7 +47,7 @@ export function GroupCard({ group, isOwner }: GroupCardProps) {
       {group.focusContentTypes && group.focusContentTypes.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {group.focusContentTypes.map((ct) => (
-            <span key={ct} className="text-base" title={CONTENT_TYPE_LABELS[ct].en} aria-label={CONTENT_TYPE_LABELS[ct].en}>
+            <span key={ct} className="text-base" title={tContentType(ct)} aria-label={tContentType(ct)}>
               {CONTENT_TYPE_LABELS[ct].icon}
             </span>
           ))}
@@ -51,7 +57,7 @@ export function GroupCard({ group, isOwner }: GroupCardProps) {
       {/* Footer */}
       <div className="flex items-center gap-1 text-xs text-muted-foreground">
         <UsersIcon className="size-3.5" />
-        <span>{group.memberIds.length} {group.memberIds.length === 1 ? 'member' : 'members'}</span>
+        <span>{t('card.memberCount', { count: group.memberIds.length })}</span>
       </div>
     </Link>
   )

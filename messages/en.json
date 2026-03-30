@@ -7,8 +7,11 @@
     "movies": "Movies",
     "series": "Series",
     "reviews": "My Reviews",
+    "watchlist": "Watchlist",
     "groups": "Groups",
-    "profile": "Profile"
+    "profile": "Profile",
+    "home": "Home",
+    "navigation": "Navigation"
   },
   "common": {
     "save": "Save",
@@ -18,7 +21,24 @@
     "loading": "Loading...",
     "error": "Something went wrong",
     "noResults": "No results found",
-    "required": "This field is required"
+    "required": "This field is required",
+    "optional": "optional",
+    "back": "Back",
+    "saving": "Saving...",
+    "deleting": "Deleting...",
+    "creating": "Creating...",
+    "seeAll": "See all",
+    "clearFilters": "Clear filters",
+    "copied": "Copied!",
+    "copy": "Copy"
+  },
+  "language": {
+    "toggle": "Change language"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Switch to light mode",
+    "dark": "Switch to dark mode"
   },
   "contentType": {
     "movie": "Movie",
@@ -60,6 +80,335 @@
       "game": "Dropped",
       "book": "Dropped",
       "podcast": "Dropped"
+    }
+  },
+  "user": {
+    "profile": "Profile",
+    "logOut": "Log out",
+    "guest": "Guest"
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "subtitle": "Your personal review journal.",
+    "reviewCount": "{count, plural, one {# review in your journal.} other {# reviews in your journal.}}",
+    "newReview": "New Review",
+    "stats": {
+      "title": "Your Stats",
+      "reviews": "Reviews",
+      "avgRating": "Avg Rating"
+    },
+    "recentReviews": {
+      "title": "Recent Reviews",
+      "empty": "Your journal is empty",
+      "emptyDescription": "Start by reviewing a movie or series to build your collection.",
+      "browseMovies": "Browse Movies"
+    },
+    "highlights": {
+      "seeAll": "See all",
+      "noMovies": "No movies in catalog yet.",
+      "noSeries": "No series in catalog yet.",
+      "moreCategories": "More Categories",
+      "noReviews": "No reviews yet",
+      "reviewCount": "{count, plural, one {# review} other {# reviews}}"
+    }
+  },
+  "catalog": {
+    "addContent": {
+      "buttonLabel": "Add manually",
+      "dialogTitle": "Add to Catalog",
+      "dialogDescription": "Add a movie, series, book, game, music album, or podcast to the catalog."
+    },
+    "form": {
+      "type": "Type",
+      "title": "Title",
+      "titleRequired": "Title *",
+      "year": "Year",
+      "yearRequired": "Year *",
+      "overview": "Overview",
+      "coverImageUrl": "Cover Image URL",
+      "placeholderTitle": "e.g. Inception",
+      "placeholderYear": "e.g. 2010",
+      "placeholderOverview": "Short description...",
+      "placeholderCoverUrl": "https://...",
+      "optional": "(optional)",
+      "commaSeparated": "(comma-separated)",
+      "submit": "Add to Catalog",
+      "submitting": "Adding...",
+      "genres": "Genres",
+      "seriesStatus": "Series Status",
+      "seriesStatusReturning": "Returning",
+      "seriesStatusEnded": "Ended",
+      "seriesStatusCancelled": "Cancelled",
+      "seriesStatusInProduction": "In Production",
+      "totalSeasons": "Total Seasons",
+      "totalEpisodes": "Total Episodes",
+      "albumType": "Album Type",
+      "albumTypeAlbum": "Album",
+      "albumTypeEP": "EP",
+      "albumTypeSingle": "Single",
+      "artists": "Artists",
+      "platform": "Platform",
+      "totalEpisodesPodcast": "Total Episodes",
+      "publisher": "Publisher",
+      "author": "Author",
+      "developer": "Developer",
+      "platforms": "Platforms",
+      "languages": "Languages",
+      "languagesOptional": "Languages (optional)",
+      "languagePlaceholder": "e.g. en, es",
+      "addLanguage": "Add"
+    },
+    "movies": {
+      "title": "Movies",
+      "count": "{count, plural, one {# title} other {# titles}}",
+      "empty": "No movies in catalog",
+      "emptyDescription": "The catalog will populate on next load."
+    },
+    "series": {
+      "title": "Series",
+      "count": "{count, plural, one {# title} other {# titles}}",
+      "empty": "No series in catalog",
+      "emptyDescription": "The catalog will populate on next load."
+    },
+    "detail": {
+      "notFound": "Content not found.",
+      "myReview": "My Review",
+      "addReview": "Add Review",
+      "noReview": "You haven't reviewed this yet.",
+      "seasons": "{count, plural, one {# season} other {# seasons}}",
+      "episodes": "{count, plural, one {# ep} other {# eps}}",
+      "seriesStatus": {
+        "returning": "Returning",
+        "ended": "Ended",
+        "cancelled": "Cancelled",
+        "in_production": "In Production"
+      }
+    }
+  },
+  "reviews": {
+    "title": "My Reviews",
+    "addReview": "Add Review",
+    "empty": "No reviews yet",
+    "emptyDescription": "Start by adding your first review.",
+    "emptyAction": "Add your first review",
+    "noMatch": "No reviews match your filters",
+    "noMatchDescription": "Try adjusting or clearing the filters.",
+    "deleteDialog": {
+      "title": "Delete Review",
+      "description": "This action cannot be undone. The review will be permanently deleted.",
+      "confirm": "Delete"
+    },
+    "filters": {
+      "type": "Type:",
+      "status": "Status:",
+      "count": "{filtered} of {total} reviews",
+      "countAll": "{count, plural, one {# review} other {# reviews}}"
+    },
+    "card": {
+      "editAriaLabel": "Edit review",
+      "deleteAriaLabel": "Delete review",
+      "viewAriaLabel": "View full review"
+    },
+    "editor": {
+      "titleNew": "New Review",
+      "titleEdit": "Edit Review",
+      "publish": "Publish Review",
+      "saveChanges": "Save Changes",
+      "properties": "Properties",
+      "content": "Content",
+      "status": "Status",
+      "containsSpoilers": "Contains spoilers",
+      "titlePlaceholder": "Untitled review...",
+      "bodyPlaceholder": "Write your thoughts... Use / for commands",
+      "reassignWarning": "This will reassign the review to a different piece of content.",
+      "cancelChange": "Cancel change",
+      "selectContent": "Select content to review",
+      "statusOptions": {
+        "consumed": "Consumed",
+        "want_to_consume": "Want to consume",
+        "consuming": "Currently consuming",
+        "dropped": "Dropped"
+      }
+    },
+    "detail": {
+      "breadcrumb": "Reviews",
+      "deleteDialog": {
+        "title": "Delete this review?",
+        "description": "This will permanently delete your review. This cannot be undone."
+      },
+      "noWrittenReview": "No written review — just the rating.",
+      "discussion": "Discussion",
+      "spoilerWarning": "This review contains spoilers",
+      "spoilerHint": "Continue only if you've already experienced this content.",
+      "revealAnyway": "Reveal anyway",
+      "spoilers": "Spoilers",
+      "editedAt": "edited {date}"
+    },
+    "form": {
+      "content": "Content",
+      "status": "Status",
+      "rating": "Rating",
+      "title": "Title",
+      "review": "Review",
+      "addReview": "Add Review",
+      "saveChanges": "Save Changes"
+    },
+    "contentPicker": {
+      "selectType": "Select type",
+      "clearSelection": "Clear selection",
+      "noResultsSearch": "No results found",
+      "noResultsCatalog": "No {type}s in catalog"
+    }
+  },
+  "watchlist": {
+    "title": "Watchlist",
+    "count": "{count, plural, one {# item to consume} other {# items to consume}}",
+    "addItem": "Add Item",
+    "empty": "Your watchlist is empty",
+    "emptyDescription": "Add content you want to consume later.",
+    "emptyAction": "Add to Watchlist",
+    "removeDialog": {
+      "title": "Remove from Watchlist",
+      "description": "Remove \"{title}\" from your watchlist?",
+      "confirm": "Remove"
+    },
+    "consumeDialog": {
+      "title": "Mark as Consumed",
+      "description": "Mark \"{title}\" as consumed? You can add a review afterwards.",
+      "confirm": "Mark as Consumed"
+    },
+    "sort": {
+      "label": "Sort by",
+      "priority": "Priority",
+      "dateAdded": "Date Added",
+      "targetDate": "Target Date"
+    },
+    "filter": {
+      "all": "All",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "stats": {
+      "total": "{count} total",
+      "high": "{count} high",
+      "medium": "{count} medium",
+      "low": "{count} low",
+      "overdue": "{count} overdue"
+    },
+    "card": {
+      "priority": {
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      },
+      "overdue": "Overdue",
+      "added": "Added {date}",
+      "editAriaLabel": "Edit",
+      "removeAriaLabel": "Remove",
+      "consumeAriaLabel": "Mark as consumed"
+    },
+    "form": {
+      "contentId": "Content ID",
+      "content": "Content",
+      "type": "Type",
+      "priority": "Priority",
+      "targetDate": "Target Date",
+      "note": "Note",
+      "noteDescription": "Optional reminder note for yourself.",
+      "submit": "Add to Watchlist",
+      "saveChanges": "Save Changes"
+    }
+  },
+  "groups": {
+    "title": "Groups",
+    "join": "Join",
+    "createGroup": "Create Group",
+    "empty": "No groups yet",
+    "emptyDescription": "Create a group or join one with an invite code.",
+    "joinWithCode": "Join with code",
+    "createDialog": {
+      "title": "Create Group"
+    },
+    "joinDialog": {
+      "title": "Join a Group"
+    },
+    "detail": {
+      "back": "Groups",
+      "notFound": "Group not found.",
+      "inviteCode": "Invite Code",
+      "myReviews": "My Reviews",
+      "noReviews": "No reviews yet",
+      "noReviewsDescription": "Add reviews from the Reviews page to share with this group.",
+      "deleteDialog": {
+        "title": "Delete Group",
+        "description": "This will permanently delete \"{name}\" and all its memberships. This cannot be undone.",
+        "confirm": "Delete",
+        "ariaLabel": "Delete group"
+      },
+      "memberCount": "{count, plural, one {# member} other {# members}}"
+    },
+    "card": {
+      "owner": "Owner",
+      "memberCount": "{count, plural, one {# member} other {# members}}"
+    },
+    "form": {
+      "groupName": "Group Name",
+      "namePlaceholder": "e.g. Weekend Movie Club",
+      "description": "Description",
+      "descriptionPlaceholder": "What's this group about?",
+      "visibility": "Visibility",
+      "visibilityPublic": "Public",
+      "visibilityPrivate": "Private",
+      "focusTypes": "Focus Types",
+      "submit": "Create Group",
+      "submitting": "Creating..."
+    },
+    "joinForm": {
+      "inviteCode": "Invite Code",
+      "inviteCodePlaceholder": "Enter invite code...",
+      "inviteCodeRequired": "Invite code is required",
+      "invalidCode": "Invalid invite code. Please try again.",
+      "submit": "Join Group",
+      "submitting": "Joining..."
+    }
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "overview": "Overview",
+    "ratingBreakdown": "Rating Breakdown",
+    "byType": "By Type",
+    "stats": {
+      "totalReviews": "Total Reviews",
+      "avgRating": "Avg Rating"
+    },
+    "editDialog": {
+      "title": "Edit Profile"
+    },
+    "form": {
+      "displayName": "Display Name",
+      "avatarUrl": "Avatar URL",
+      "bio": "Bio",
+      "submit": "Save Changes",
+      "submitting": "Saving..."
+    }
+  },
+  "onboarding": {
+    "title": "Welcome to Things Review",
+    "description": "Set up your profile to start tracking and reviewing movies, series, books, and more.",
+    "form": {
+      "displayName": "Display Name",
+      "displayNamePlaceholder": "How should we call you?",
+      "username": "Username",
+      "usernamePlaceholder": "your_username",
+      "bio": "Bio",
+      "bioPlaceholder": "A short description about yourself...",
+      "submit": "Get Started",
+      "submitting": "Creating profile..."
     }
   }
 }

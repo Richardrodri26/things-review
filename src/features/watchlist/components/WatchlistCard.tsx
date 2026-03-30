@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { CalendarIcon, CheckIcon, PencilIcon, TrashIcon, AlertCircleIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -22,18 +23,13 @@ const PRIORITY_VARIANT: Record<WatchlistPriority, 'destructive' | 'default' | 'o
   low:    'outline',
 }
 
-const PRIORITY_LABEL: Record<WatchlistPriority, string> = {
-  high:   'High',
-  medium: 'Medium',
-  low:    'Low',
-}
-
 function isOverdue(targetDate?: Date): boolean {
   if (!targetDate) return false
   return new Date(targetDate) < new Date()
 }
 
 export function WatchlistCard({ item, onEdit, onRemove, onMarkAsConsumed }: WatchlistCardProps) {
+  const t = useTranslations('watchlist')
   const itemTitle = useCatalogItemTitle(item.contentId)
   const overdue = isOverdue(item.targetDate)
 
@@ -46,12 +42,12 @@ export function WatchlistCard({ item, onEdit, onRemove, onMarkAsConsumed }: Watc
         <CardDescription className="flex items-center gap-1.5">
           <ContentTypeBadge contentType={item.contentType} />
           <Badge variant={PRIORITY_VARIANT[item.priority]}>
-            {PRIORITY_LABEL[item.priority]}
+            {t(`card.priority.${item.priority}` as `card.priority.high`)}
           </Badge>
           {overdue && (
             <Badge variant="destructive">
               <AlertCircleIcon data-icon="inline-start" />
-              Overdue
+              {t('card.overdue')}
             </Badge>
           )}
         </CardDescription>
@@ -62,8 +58,7 @@ export function WatchlistCard({ item, onEdit, onRemove, onMarkAsConsumed }: Watc
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => onMarkAsConsumed(item)}
-                aria-label="Mark as consumed"
-                title="I've consumed this!"
+                aria-label={t('card.consumeAriaLabel')}
               >
                 <CheckIcon />
               </Button>
@@ -73,7 +68,7 @@ export function WatchlistCard({ item, onEdit, onRemove, onMarkAsConsumed }: Watc
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => onEdit(item)}
-                aria-label="Edit watchlist item"
+                aria-label={t('card.editAriaLabel')}
               >
                 <PencilIcon />
               </Button>
@@ -83,7 +78,7 @@ export function WatchlistCard({ item, onEdit, onRemove, onMarkAsConsumed }: Watc
                 variant="ghost"
                 size="icon-sm"
                 onClick={() => onRemove(item)}
-                aria-label="Remove from watchlist"
+                aria-label={t('card.removeAriaLabel')}
                 className="text-destructive hover:text-destructive"
               >
                 <TrashIcon />
@@ -108,7 +103,7 @@ export function WatchlistCard({ item, onEdit, onRemove, onMarkAsConsumed }: Watc
             {formatDate(item.targetDate)}
           </span>
         ) : (
-          <span>Added {formatDate(item.addedAt)}</span>
+          <span>{t('card.added', { date: formatDate(item.addedAt) })}</span>
         )}
       </CardFooter>
     </Card>

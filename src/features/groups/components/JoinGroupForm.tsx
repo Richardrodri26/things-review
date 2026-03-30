@@ -3,6 +3,7 @@
 
 import { useForm } from '@tanstack/react-form'
 import { z } from 'zod'
+import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -32,6 +33,8 @@ interface JoinGroupFormProps {
 
 export function JoinGroupForm({ onSuccess, onCancel }: JoinGroupFormProps) {
   const joinGroup = useJoinGroup()
+  const t = useTranslations('groups.joinForm')
+  const tCommon = useTranslations('common')
 
   const defaultValues: FormData = { inviteCode: '' }
 
@@ -56,10 +59,10 @@ export function JoinGroupForm({ onSuccess, onCancel }: JoinGroupFormProps) {
       <form.Field name="inviteCode">
         {(field) => (
           <div className="space-y-1.5">
-            <Label htmlFor={field.name}>Invite Code</Label>
+            <Label htmlFor={field.name}>{t('inviteCode')}</Label>
             <Input
               id={field.name}
-              placeholder="Enter invite code..."
+              placeholder={t('inviteCodePlaceholder')}
               value={field.state.value}
               onChange={(e) => field.handleChange(e.target.value)}
               onBlur={field.handleBlur}
@@ -69,7 +72,7 @@ export function JoinGroupForm({ onSuccess, onCancel }: JoinGroupFormProps) {
               <p className="text-xs text-destructive">{getError(field.state.meta.errors)}</p>
             )}
             {joinGroup.isError && (
-              <p className="text-xs text-destructive">Invalid invite code. Please try again.</p>
+              <p className="text-xs text-destructive">{t('invalidCode')}</p>
             )}
           </div>
         )}
@@ -80,11 +83,11 @@ export function JoinGroupForm({ onSuccess, onCancel }: JoinGroupFormProps) {
           <div className="flex items-center justify-end gap-2 pt-2">
             {onCancel && (
               <Button type="button" variant="ghost" onClick={onCancel} disabled={isSubmitting}>
-                Cancel
+                {tCommon('cancel')}
               </Button>
             )}
             <Button type="submit" disabled={!canSubmit || isSubmitting}>
-              {isSubmitting ? 'Joining...' : 'Join Group'}
+              {isSubmitting ? t('submitting') : t('submit')}
             </Button>
           </div>
         )}

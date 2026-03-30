@@ -2,9 +2,10 @@
 'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
-import { ArrowRightIcon, StarIcon, BookOpenIcon, HeadphonesIcon, GamepadIcon, MusicIcon, Tv2Icon, FilmIcon } from 'lucide-react'
+import { ArrowRightIcon, StarIcon, BookOpenIcon, HeadphonesIcon, GamepadIcon, MusicIcon } from 'lucide-react'
+import { CoverImage } from '@/shared/ui/atoms/CoverImage'
 import { buttonVariants } from '@/components/ui/button'
+import { useTranslations } from 'next-intl'
 import { useMovies, useSeriesList } from '@/features/catalog/hooks'
 import { useStore } from '@/shared/lib/store'
 import { ROUTES } from '@/shared/constants'
@@ -36,19 +37,15 @@ function PosterCard({
   return (
     <Link href={href} className="group relative flex-shrink-0 w-[100px] sm:w-[120px]">
       <div className="relative aspect-[2/3] w-full rounded-lg overflow-hidden bg-muted shadow-sm group-hover:shadow-lg transition-shadow duration-300">
-        {item.coverImageUrl ? (
-          <Image
-            src={item.coverImageUrl}
-            alt={item.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 640px) 100px, 120px"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-muted-foreground text-[10px] text-center px-2 leading-tight">
-            {item.title}
-          </div>
-        )}
+        <CoverImage
+          src={item.coverImageUrl}
+          alt={item.title}
+          contentType={item.contentType}
+          sizes="(max-width: 640px) 100px, 120px"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          iconSize="text-4xl"
+          title={item.title}
+        />
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/25 transition-colors duration-300 rounded-lg" />
         {hasReview && (
           <div className="absolute top-1.5 right-1.5 rounded-full bg-primary p-1 shadow-md">
@@ -75,6 +72,7 @@ function PosterShelf({
   reviewedIds,
   isLoading,
   emptyText,
+  allLabel,
 }: {
   label: string
   href: string
@@ -82,7 +80,9 @@ function PosterShelf({
   reviewedIds: Set<string>
   isLoading: boolean
   emptyText: string
+  allLabel: string
 }) {
+  const tCommon = useTranslations('common')
   const highlights = items.slice(0, MAX_HIGHLIGHTS)
 
   return (
@@ -100,7 +100,7 @@ function PosterShelf({
             'gap-1 h-6 px-2 text-xs text-muted-foreground hover:text-foreground'
           )}
         >
-          See all
+          {tCommon('seeAll')}
           <ArrowRightIcon className="size-3" />
         </Link>
       </div>
@@ -134,7 +134,7 @@ function PosterShelf({
           >
             <ArrowRightIcon className="size-4" />
             <span className="text-[10px] font-medium text-center leading-tight px-2">
-              All {label.toLowerCase()}
+              {allLabel}
             </span>
           </Link>
         </div>
@@ -145,10 +145,9 @@ function PosterShelf({
 
 // ── Category quick-access tiles ───────────────────────────────────────────────
 
-const OTHER_CATEGORIES = [
+const OTHER_CATEGORY_KEYS = [
   {
     key: 'music' as const,
-    label: 'Music',
     icon: MusicIcon,
     color: 'text-rose-500',
     bg: 'bg-rose-500/8 dark:bg-rose-500/10',
@@ -156,7 +155,6 @@ const OTHER_CATEGORIES = [
   },
   {
     key: 'game' as const,
-    label: 'Games',
     icon: GamepadIcon,
     color: 'text-green-500',
     bg: 'bg-green-500/8 dark:bg-green-500/10',
@@ -164,7 +162,6 @@ const OTHER_CATEGORIES = [
   },
   {
     key: 'book' as const,
-    label: 'Books',
     icon: BookOpenIcon,
     color: 'text-amber-500',
     bg: 'bg-amber-500/8 dark:bg-amber-500/10',
@@ -172,7 +169,6 @@ const OTHER_CATEGORIES = [
   },
   {
     key: 'podcast' as const,
-    label: 'Podcasts',
     icon: HeadphonesIcon,
     color: 'text-purple-500',
     bg: 'bg-purple-500/8 dark:bg-purple-500/10',
@@ -181,6 +177,9 @@ const OTHER_CATEGORIES = [
 ]
 
 function CategoryTiles({ reviews }: { reviews: Review[] }) {
+  const tContentType = useTranslations('contentType')
+  const tHighlights = useTranslations('dashboard.highlights')
+
   const countByType = reviews.reduce<Record<string, number>>((acc, r) => {
     acc[r.contentType] = (acc[r.contentType] ?? 0) + 1
     return acc
@@ -190,18 +189,19 @@ function CategoryTiles({ reviews }: { reviews: Review[] }) {
     <div className="space-y-3">
       <div className="flex items-center gap-3">
         <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground">
-          More Categories
+          {tHighlights('moreCategories')}
         </span>
         <div className="flex-1 h-px bg-border" />
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {OTHER_CATEGORIES.map(({ key, label, icon: Icon, color, bg, border }) => {
+        {OTHER_CATEGORY_KEYS.map(({ key, icon: Icon, color, bg, border }) => {
           const count = countByType[key] ?? 0
+          const label = tContentType(key)
           return (
             <Link
               key={key}
-              href={ROUTES.REVIEWS}
+              href={`${ROUTES.REVIEWS}?types=${key}`}
               className={cn(
                 'group relative rounded-xl border p-4 flex flex-col gap-2 hover:shadow-sm transition-all duration-200',
                 bg,
@@ -214,7 +214,9 @@ function CategoryTiles({ reviews }: { reviews: Review[] }) {
               <div>
                 <p className="text-sm font-semibold leading-none">{label}</p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {count > 0 ? `${count} ${count === 1 ? 'review' : 'reviews'}` : 'No reviews yet'}
+                  {count > 0
+                    ? tHighlights('reviewCount', { count })
+                    : tHighlights('noReviews')}
                 </p>
               </div>
               <ArrowRightIcon className="size-3 text-muted-foreground/40 group-hover:text-foreground group-hover:translate-x-0.5 transition-all duration-200 absolute top-4 right-4" />
@@ -231,26 +233,30 @@ function CategoryTiles({ reviews }: { reviews: Review[] }) {
 export function CatalogHighlightsSection({ reviews }: CatalogHighlightsSectionProps) {
   const { data: movies = [], isLoading: moviesLoading } = useMovies()
   const { data: seriesList = [], isLoading: seriesLoading } = useSeriesList()
+  const tHighlights = useTranslations('dashboard.highlights')
+  const tNav = useTranslations('nav')
 
   const reviewedContentIds = new Set(reviews.map((r) => r.contentId))
 
   return (
     <section className="space-y-8">
       <PosterShelf
-        label="Movies"
+        label={tNav('movies')}
         href={ROUTES.MOVIES}
         items={movies}
         reviewedIds={reviewedContentIds}
         isLoading={moviesLoading}
-        emptyText="No movies in catalog yet."
+        emptyText={tHighlights('noMovies')}
+        allLabel={tNav('movies')}
       />
       <PosterShelf
-        label="Series"
+        label={tNav('series')}
         href={ROUTES.SERIES}
         items={seriesList}
         reviewedIds={reviewedContentIds}
         isLoading={seriesLoading}
-        emptyText="No series in catalog yet."
+        emptyText={tHighlights('noSeries')}
+        allLabel={tNav('series')}
       />
       <CategoryTiles reviews={reviews} />
     </section>

@@ -3,6 +3,7 @@
 
 import { TvIcon } from 'lucide-react'
 import { EmptyState } from '@/shared/ui/atoms'
+import { useTranslations } from 'next-intl'
 import { useStore } from '@/shared/lib/store'
 import { useSeriesList } from '../hooks'
 import { CatalogItemCard } from './CatalogItemCard'
@@ -11,6 +12,7 @@ import { AddContentDialog } from './AddContentDialog'
 export function SeriesPage() {
   const { data: seriesList = [], isLoading } = useSeriesList()
   const reviews = useStore((s) => s.reviews)
+  const t = useTranslations('catalog.series')
 
   const reviewedContentIds = new Set(reviews.map((r) => r.contentId))
 
@@ -18,10 +20,12 @@ export function SeriesPage() {
     <div className="flex flex-1 flex-col gap-4 p-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Series</h1>
+        <h1 className="text-xl font-semibold">{t('title')}</h1>
         <div className="flex items-center gap-2">
           {!isLoading && (
-            <span className="text-sm text-muted-foreground">{seriesList.length} titles</span>
+            <span className="text-sm text-muted-foreground">
+              {t('count', { count: seriesList.length })}
+            </span>
           )}
           <AddContentDialog defaultContentType="series" />
         </div>
@@ -37,8 +41,8 @@ export function SeriesPage() {
       ) : seriesList.length === 0 ? (
         <EmptyState
           icon={<TvIcon className="size-6" />}
-          title="No series in catalog"
-          description="The catalog will populate on next load."
+          title={t('empty')}
+          description={t('emptyDescription')}
         />
       ) : (
         <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">

@@ -5,6 +5,7 @@
 import { useState } from 'react'
 import { notFound, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 import {
   ArrowLeftIcon,
   PencilIcon,
@@ -46,6 +47,8 @@ interface ReviewDetailPageProps {
 }
 
 export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
+  const t = useTranslations('reviews.detail')
+  const tCommon = useTranslations('common')
   const router = useRouter()
   const { data: review, isLoading } = useReviewById(reviewId)
   const itemTitle = useCatalogItemTitle(review?.contentId ?? '')
@@ -93,7 +96,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
             )}
           >
             <ArrowLeftIcon className="size-4 mr-1.5" />
-            Reviews
+            {t('breadcrumb')}
           </Link>
 
           <div className="flex items-center gap-0.5">
@@ -104,7 +107,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
               className="text-muted-foreground hover:text-foreground"
             >
               <PencilIcon className="size-3.5 mr-1.5" />
-              Edit
+              {tCommon('edit')}
             </Button>
 
             <AlertDialog>
@@ -116,21 +119,21 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
                     className="text-muted-foreground hover:text-destructive"
                   >
                     <TrashIcon className="size-3.5 mr-1.5" />
-                    Delete
+                    {tCommon('delete')}
                   </Button>
                 }
               />
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Delete this review?</AlertDialogTitle>
+                  <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This action cannot be undone. The review and all comments will be permanently deleted.
+                    {t('deleteDialog.description')}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
                   <AlertDialogAction onClick={handleDelete} variant="destructive">
-                    Delete
+                    {tCommon('delete')}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -154,7 +157,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
                 className="gap-1 text-amber-600 border-amber-400/50 text-xs"
               >
                 <EyeOffIcon className="size-3" />
-                Spoilers
+                {t('spoilers')}
               </Badge>
             )}
           </div>
@@ -186,7 +189,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
             </span>
             {review.updatedAt > review.createdAt && (
               <span className="italic">
-                edited {formatDate(review.updatedAt)}
+                {t('editedAt', { date: formatDate(review.updatedAt) })}
               </span>
             )}
           </div>
@@ -205,7 +208,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
           </section>
         ) : (
           <p className="text-muted-foreground/50 italic text-sm mb-16">
-            No written review — just the rating.
+            {t('noWrittenReview')}
           </p>
         )}
 
@@ -214,7 +217,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
           <div className="flex items-center gap-2 mb-8">
             <MessageSquareIcon className="size-4 text-muted-foreground/60" />
             <h2 className="text-xs font-semibold text-muted-foreground tracking-widest uppercase">
-              Discussion
+              {t('discussion')}
             </h2>
           </div>
           <CommentList reviewId={reviewId} groupId={DEFAULT_GROUP_ID} />
@@ -226,13 +229,14 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
 
 // ── Spoiler Gate ─────────────────────────────────────────────
 function SpoilerGate({ onReveal }: { onReveal: () => void }) {
+  const t = useTranslations('reviews.detail')
   return (
     <div className="rounded-2xl border border-amber-300/30 bg-amber-50/10 dark:bg-amber-950/10 p-12 text-center space-y-4">
       <div className="text-4xl select-none">⚠️</div>
       <div className="space-y-2">
-        <p className="font-semibold text-foreground">This review contains spoilers</p>
+        <p className="font-semibold text-foreground">{t('spoilerWarning')}</p>
         <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-          Continue only if you&apos;ve already experienced this content.
+          {t('spoilerHint')}
         </p>
       </div>
       <Button
@@ -242,7 +246,7 @@ function SpoilerGate({ onReveal }: { onReveal: () => void }) {
         className="mt-2 border-amber-300/40 hover:bg-amber-50/20"
       >
         <EyeOffIcon className="size-3.5 mr-1.5" />
-        Reveal anyway
+        {t('revealAnyway')}
       </Button>
     </div>
   )

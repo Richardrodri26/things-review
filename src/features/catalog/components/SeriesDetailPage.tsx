@@ -3,10 +3,12 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Image from 'next/image'
 import { ArrowLeftIcon, PlusIcon, PencilIcon } from 'lucide-react'
+import { CoverImage } from '@/shared/ui/atoms/CoverImage'
+import { BackdropImage } from '@/shared/ui/atoms/BackdropImage'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { useTranslations } from 'next-intl'
 import { ReviewCard } from '@/features/reviews/components/ReviewCard'
 import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage'
 import { useStore } from '@/shared/lib/store'
@@ -19,20 +21,15 @@ interface SeriesDetailPageProps {
 
 type DialogMode = 'none' | 'create' | 'edit'
 
-const SERIES_STATUS_LABELS: Record<string, string> = {
-  returning_series: 'Returning',
-  ended: 'Ended',
-  canceled: 'Canceled',
-  in_production: 'In Production',
-  planned: 'Planned',
-}
-
 export function SeriesDetailPage({ seriesId }: SeriesDetailPageProps) {
   const router = useRouter()
   const { data: series, isLoading } = useSeriesItem(seriesId)
   const reviews = useStore((s) => s.reviews)
   const deleteReview = useDeleteReview()
   const [dialog, setDialog] = useState<DialogMode>('none')
+  const t = useTranslations('catalog.detail')
+  const tNav = useTranslations('nav')
+  const tCommon = useTranslations('common')
 
   const existingReview = reviews.find((r) => r.contentId === seriesId)
 
@@ -49,25 +46,32 @@ export function SeriesDetailPage({ seriesId }: SeriesDetailPageProps) {
       <div className="flex flex-1 flex-col gap-4 p-4">
         <Button variant="ghost" size="sm" onClick={() => router.back()} className="w-fit">
           <ArrowLeftIcon />
-          Back
+          {tCommon('back')}
         </Button>
-        <p className="text-muted-foreground">Series not found.</p>
+        <p className="text-muted-foreground">{t('notFound')}</p>
       </div>
     )
   }
+
+  const STATUS_KEY_MAP: Record<string, 'returning' | 'ended' | 'cancelled' | 'in_production'> = {
+    returning_series: 'returning',
+    ended: 'ended',
+    canceled: 'cancelled',
+    in_production: 'in_production',
+    planned: 'returning', // fallback
+  }
+  const statusKey = STATUS_KEY_MAP[series.status] ?? 'ended'
+  const seriesStatusLabel = t(`seriesStatus.${statusKey}`)
 
   return (
     <div className="flex flex-1 flex-col">
       {/* Backdrop */}
       {series.backdropImageUrl && (
         <div className="relative h-48 w-full overflow-hidden sm:h-64">
-          <Image
+          <BackdropImage
             src={series.backdropImageUrl}
             alt={series.title}
-            fill
-            className="object-cover"
             priority
-            sizes="100vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         </div>
@@ -77,23 +81,23 @@ export function SeriesDetailPage({ seriesId }: SeriesDetailPageProps) {
         {/* Back */}
         <Button variant="ghost" size="sm" onClick={() => router.back()} className="w-fit">
           <ArrowLeftIcon />
-          Series
+          {tNav('series')}
         </Button>
 
         {/* Header */}
         <div className="flex gap-4">
           {/* Poster */}
-          {series.coverImageUrl && (
-            <div className="relative shrink-0 w-24 aspect-[2/3] rounded-lg overflow-hidden border border-border shadow-md sm:w-32">
-              <Image
-                src={series.coverImageUrl}
-                alt={series.title}
-                fill
-                className="object-cover"
-                sizes="128px"
-              />
-            </div>
-          )}
+          <div className="relative shrink-0 w-24 aspect-[2/3] rounded-lg overflow-hidden border border-border shadow-md sm:w-32">
+            <CoverImage
+              src={series.coverImageUrl}
+              alt={series.title}
+              contentType="series"
+              sizes="128px"
+              className="object-cover"
+              iconSize="text-3xl"
+              title={series.title}
+            />
+          </div>
 
           <div className="flex-1 space-y-2 min-w-0">
             <h1 className="text-xl font-bold leading-tight">{series.title}</h1>
@@ -102,13 +106,13 @@ export function SeriesDetailPage({ seriesId }: SeriesDetailPageProps) {
             )}
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <span>{series.year}</span>
-              <span>· {series.numberOfSeasons} {series.numberOfSeasons === 1 ? 'season' : 'seasons'}</span>
-              <span>· {series.numberOfEpisodes} eps</span>
+              <span>· {t('seasons', { count: series.numberOfSeasons })}</span>
+              <span>· {t('episodes', { count: series.numberOfEpisodes })}</span>
               <span>· {series.originalLanguage.toUpperCase()}</span>
             </div>
             <div className="flex flex-wrap gap-1">
               <Badge variant="outline" className="text-[10px]">
-                {SERIES_STATUS_LABELS[series.status] ?? series.status}
+                {seriesStatusLabel}
               </Badge>
               {series.genres.map((g) => (
                 <Badge key={g.id} variant="outline" className="text-[10px]">{g.name}</Badge>
@@ -126,17 +130,17 @@ export function SeriesDetailPage({ seriesId }: SeriesDetailPageProps) {
         <div>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
-              My Review
+              {t('myReview')}
             </h2>
             {!existingReview ? (
               <Button size="sm" onClick={() => setDialog('create')}>
                 <PlusIcon />
-                Add Review
+                {t('addReview')}
               </Button>
             ) : (
               <Button size="sm" variant="outline" onClick={() => setDialog('edit')}>
                 <PencilIcon />
-                Edit
+                {tCommon('edit')}
               </Button>
             )}
           </div>
@@ -149,7 +153,7 @@ export function SeriesDetailPage({ seriesId }: SeriesDetailPageProps) {
               }}
             />
           ) : (
-            <p className="text-sm text-muted-foreground">You haven&apos;t reviewed this series yet.</p>
+            <p className="text-sm text-muted-foreground">{t('noReview')}</p>
           )}
         </div>
       </div>

@@ -1,3 +1,4 @@
+import { useTranslations } from 'next-intl'
 import { AlertCircleIcon } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
@@ -9,6 +10,7 @@ interface WatchlistStatsBarProps {
 }
 
 export function WatchlistStatsBar({ stats }: WatchlistStatsBarProps) {
+  const t = useTranslations('watchlist.stats')
   const topTypes = (
     Object.entries(stats.byContentType) as [keyof typeof CONTENT_TYPE_LABELS, number][]
   )
@@ -20,23 +22,23 @@ export function WatchlistStatsBar({ stats }: WatchlistStatsBarProps) {
     <div className="flex flex-wrap items-center gap-2 rounded-lg border border-border bg-muted/40 px-4 py-3">
       {/* Total */}
       <Badge variant="secondary">
-        {stats.total} total
+        {t('total', { count: stats.total })}
       </Badge>
 
       {/* By priority */}
       {stats.byPriority.high > 0 && (
         <Badge variant="destructive">
-          {stats.byPriority.high} high
+          {t('high', { count: stats.byPriority.high })}
         </Badge>
       )}
       {stats.byPriority.medium > 0 && (
         <Badge variant="default">
-          {stats.byPriority.medium} medium
+          {t('medium', { count: stats.byPriority.medium })}
         </Badge>
       )}
       {stats.byPriority.low > 0 && (
         <Badge variant="outline">
-          {stats.byPriority.low} low
+          {t('low', { count: stats.byPriority.low })}
         </Badge>
       )}
 
@@ -59,7 +61,7 @@ export function WatchlistStatsBar({ stats }: WatchlistStatsBarProps) {
           <Separator orientation="vertical" className="h-4 hidden sm:block" />
           <Badge variant="destructive">
             <AlertCircleIcon data-icon="inline-start" />
-            {stats.overdueCount} overdue
+            {t('overdue', { count: stats.overdueCount })}
           </Badge>
         </>
       )}
