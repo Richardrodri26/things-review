@@ -4,6 +4,9 @@ import { z } from 'zod'
 // UUID genérico — reutilizable en todos los schemas
 export const uuidSchema = z.string().uuid()
 
+// Better Auth genera IDs alfanuméricos (no UUID) — usar para userId/authorId/ownerId
+export const userIdSchema = z.string().min(1)
+
 // Date como string ISO — para localStorage y forms
 export const isoDateSchema = z.string().datetime()
 

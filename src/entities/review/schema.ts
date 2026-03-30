@@ -1,6 +1,6 @@
 // entities/review/schema.ts
 import { z } from 'zod'
-import { uuidSchema, ratingSchema, consumptionStatusSchema, contentTypeSchema } from '@/shared/schemas'
+import { uuidSchema, userIdSchema, ratingSchema, consumptionStatusSchema, contentTypeSchema } from '@/shared/schemas'
 
 export const gamePlatformSchema = z.enum([
   'pc', 'playstation_5', 'playstation_4', 'xbox_series',
@@ -55,7 +55,7 @@ const editorOutputSchema = z.object({
 
 export const reviewSchema = z.object({
   id: uuidSchema,
-  userId: uuidSchema,
+  userId: userIdSchema,
   contentId: z.string(),
   contentType: contentTypeSchema,
   rating: ratingSchema.optional(),

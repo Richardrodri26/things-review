@@ -1,6 +1,6 @@
 // entities/group/schema.ts
 import { z } from 'zod'
-import { uuidSchema, groupVisibilitySchema, contentTypeSchema } from '@/shared/schemas'
+import { uuidSchema, userIdSchema, groupVisibilitySchema, contentTypeSchema } from '@/shared/schemas'
 
 export const groupSchema = z.object({
   id: uuidSchema,
@@ -9,8 +9,8 @@ export const groupSchema = z.object({
   avatarUrl: z.string().url().optional(),
   visibility: groupVisibilitySchema,
   inviteCode: z.string().length(8),
-  ownerId: uuidSchema,
-  memberIds: z.array(uuidSchema),
+  ownerId: userIdSchema,
+  memberIds: z.array(userIdSchema),
   focusContentTypes: z.array(contentTypeSchema).optional(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),

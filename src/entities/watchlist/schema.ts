@@ -1,12 +1,12 @@
 // entities/watchlist/schema.ts
 import { z } from 'zod'
-import { uuidSchema, contentTypeSchema } from '@/shared/schemas'
+import { uuidSchema, userIdSchema, contentTypeSchema } from '@/shared/schemas'
 
 export const watchlistPrioritySchema = z.enum(['low', 'medium', 'high'])
 
 export const watchlistItemSchema = z.object({
   id: uuidSchema,
-  userId: uuidSchema,
+  userId: userIdSchema,
   contentId: z.string().min(1),
   contentType: contentTypeSchema,
   priority: watchlistPrioritySchema,

@@ -1,9 +1,9 @@
 // entities/user/schema.ts
 import { z } from 'zod'
-import { uuidSchema } from '@/shared/schemas'
+import { userIdSchema } from '@/shared/schemas'
 
 export const userSchema = z.object({
-  id: uuidSchema,
+  id: userIdSchema,
   username: z.string().min(3).max(30),
   displayName: z.string().min(1).max(50),
   avatarUrl: z.string().url().optional(),

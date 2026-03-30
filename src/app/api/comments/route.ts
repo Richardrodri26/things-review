@@ -14,11 +14,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  // Verificar que el usuario es miembro del grupo
-  const isMember = await prisma.groupMembership.findUnique({
-    where: { userId_groupId: { userId: session.user.id, groupId: parsed.data.groupId } },
-  })
-  if (!isMember) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  // Verificar que el usuario es miembro del grupo (omitir para comentarios personales)
+  if (parsed.data.groupId !== 'personal') {
+    const isMember = await prisma.groupMembership.findUnique({
+      where: { userId_groupId: { userId: session.user.id, groupId: parsed.data.groupId } },
+    })
+    if (!isMember) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
 
   const comment = await prisma.comment.create({
     data: {

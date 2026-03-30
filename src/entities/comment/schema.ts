@@ -1,12 +1,12 @@
 // entities/comment/schema.ts
 import { z } from 'zod'
-import { uuidSchema } from '@/shared/schemas'
+import { uuidSchema, userIdSchema } from '@/shared/schemas'
 
 export const commentSchema = z.object({
   id: uuidSchema,
   reviewId: uuidSchema,
-  groupId: uuidSchema,
-  authorId: uuidSchema,
+  groupId: z.string().min(1),
+  authorId: userIdSchema,
   body: z.string().min(1).max(500),
   parentId: uuidSchema.nullable(),
   createdAt: z.coerce.date(),
