@@ -7,12 +7,26 @@ export interface Comment {
   groupId: string
   authorId: string
   body: string
+  /**
+   * ID del comentario padre. `null` = comentario raíz.
+   * Actualmente solo se soporta 1 nivel de profundidad (replies a raíces).
+   * Ver docs/plans/2026-03-30-comment-replies.md para escalar a hilos infinitos.
+   */
+  parentId: string | null
   createdAt: Date
   updatedAt: Date
 }
 
 export interface CommentWithAuthor extends Comment {
   author: Pick<User, 'id' | 'username' | 'displayName' | 'avatarUrl'>
+}
+
+/**
+ * Comentario raíz con sus replies directas (1 nivel).
+ * Para hilos infinitos, cambiar `replies` a `CommentThread[]` y hacerlo recursivo.
+ */
+export interface CommentThread extends Comment {
+  replies: Comment[]
 }
 
 export type CreateCommentDTO = Omit<Comment, 'id' | 'createdAt' | 'updatedAt'>

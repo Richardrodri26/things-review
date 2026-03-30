@@ -8,6 +8,7 @@ export const commentSchema = z.object({
   groupId: uuidSchema,
   authorId: uuidSchema,
   body: z.string().min(1).max(500),
+  parentId: uuidSchema.nullable(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 })
