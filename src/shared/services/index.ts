@@ -1,19 +1,23 @@
-// shared/services/index.ts
-import { LocalUserService } from './user.service'
-import { LocalReviewService } from './review.service'
-import { LocalGroupService } from './group.service'
-import { LocalCatalogService } from './catalog.service'
-import { LocalWatchlistService } from './watchlist.service'
-import { LocalCommentService } from './comment.service'
+// shared/services/index.ts — Service Container
+// Para cambiar de localStorage a API: swap de imports a continuación
 
-// Service Container — cambiar implementaciones aquí cuando llegue el backend
+// ─── Implementaciones de API (backend real) ───────────────────────────────────
+import { ApiUserService } from './api/user.service'
+import { ApiReviewService } from './api/review.service'
+import { ApiGroupService } from './api/group.service'
+import { ApiWatchlistService } from './api/watchlist.service'
+import { ApiCommentService } from './api/comment.service'
+
+// ─── Catálogo: sigue siendo externo (TMDB / mock) ────────────────────────────
+import { LocalCatalogService } from './catalog.service'
+
 export const services = {
-  users: new LocalUserService(),
-  reviews: new LocalReviewService(),
-  groups: new LocalGroupService(),
+  users: new ApiUserService(),
+  reviews: new ApiReviewService(),
+  groups: new ApiGroupService(),
   catalog: new LocalCatalogService(),
-  watchlist: new LocalWatchlistService(),
-  comments: new LocalCommentService(),
+  watchlist: new ApiWatchlistService(),
+  comments: new ApiCommentService(),
 } as const
 
 export type Services = typeof services

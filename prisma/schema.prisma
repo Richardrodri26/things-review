@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Better Auth required tables ──────────────────────────────────────────────
+
+model User {
+  id            String   @id
+  name          String
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // App-specific fields
+  username    String? @unique
+  displayName String?
+  bio         String?
+
+  // Relations
+  sessions         Session[]
+  accounts         Account[]
+  reviews          Review[]
+  comments         Comment[]
+  groupMemberships GroupMembership[]
+  ownedGroups      Group[]           @relation("GroupOwner")
+  watchlistItems   WatchlistItem[]
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ─── App tables ───────────────────────────────────────────────────────────────
+
+model Review {
+  id               String    @id @default(uuid())
+  userId           String
+  contentId        String
+  contentType      String
+  rating           Int?
+  title            String?
+  body             Json?
+  containsSpoilers Boolean   @default(false)
+  status           String
+  metadata         Json?
+  consumedAt       DateTime?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments Comment[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  reviewId  String
+  groupId   String
+  authorId  String
+  body      String   @db.VarChar(500)
+  parentId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  review  Review    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  group   Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  author  User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent  Comment?  @relation("CommentThread", fields: [parentId], references: [id])
+  replies Comment[] @relation("CommentThread")
+}
+
+model Group {
+  id                String   @id @default(uuid())
+  name              String   @db.VarChar(50)
+  description       String?  @db.VarChar(200)
+  avatarUrl         String?
+  visibility        String
+  inviteCode        String   @unique @db.Char(8)
+  ownerId           String
+  focusContentTypes String[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  owner       User              @relation("GroupOwner", fields: [ownerId], references: [id])
+  memberships GroupMembership[]
+  comments    Comment[]
+}
+
+model GroupMembership {
+  userId   String
+  groupId  String
+  role     String
+  joinedAt DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@id([userId, groupId])
+}
+
+model WatchlistItem {
+  id          String    @id @default(uuid())
+  userId      String
+  contentId   String
+  contentType String
+  priority    String    // 'low' | 'medium' | 'high'
+  note        String?   @db.VarChar(500)
+  targetDate  DateTime?
+  addedAt     DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, contentId])
+}

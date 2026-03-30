@@ -397,6 +397,33 @@
       "submitting": "Guardando..."
     }
   },
+  "auth": {
+    "login": {
+      "title": "Bienvenido de vuelta",
+      "description": "Ingresá a tu cuenta de Things Review.",
+      "email": "Email",
+      "password": "Contraseña",
+      "submit": "Ingresar",
+      "noAccount": "¿No tenés cuenta?",
+      "register": "Creá una",
+      "error": "Email o contraseña incorrectos"
+    },
+    "register": {
+      "title": "Creá tu cuenta",
+      "description": "Unite a Things Review y empezá a registrar lo que amás.",
+      "displayName": "Nombre de perfil",
+      "displayNamePlaceholder": "¿Cómo querés que te llamemos?",
+      "username": "Nombre de usuario",
+      "usernamePlaceholder": "tu_usuario",
+      "email": "Email",
+      "password": "Contraseña",
+      "confirmPassword": "Confirmá la contraseña",
+      "submit": "Crear cuenta",
+      "hasAccount": "¿Ya tenés cuenta?",
+      "login": "Ingresá",
+      "error": "Algo salió mal. Intentá de nuevo."
+    }
+  },
   "onboarding": {
     "title": "Bienvenido/a a Things Review",
     "description": "Configurá tu perfil para empezar a registrar y reseñar películas, series, libros y más.",
