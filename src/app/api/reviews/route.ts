@@ -3,6 +3,15 @@ import { requireSession } from '@/lib/auth-server'
 import { prisma } from '@/lib/prisma'
 import { createReviewDTOSchema } from '@/entities/review/schema'
 
+const CATALOG_ITEM_SELECT = {
+  id: true,
+  title: true,
+  coverImageUrl: true,
+  backdropImageUrl: true,
+  contentType: true,
+  year: true,
+} as const
+
 export async function GET(req: NextRequest) {
   const { session, response } = await requireSession()
   if (response) return response
@@ -17,6 +26,7 @@ export async function GET(req: NextRequest) {
       ...(contentType && { contentType }),
       ...(status && { status }),
     },
+    include: { catalogItem: { select: CATALOG_ITEM_SELECT } },
     orderBy: { createdAt: 'desc' },
   })
 
@@ -44,6 +54,9 @@ export async function POST(req: NextRequest) {
     )
   }
 
+  // Auto-resolver catalogItemId si el contentId corresponde a un CatalogItem en DB
+  const catalogItem = await prisma.catalogItem.findUnique({ where: { id: contentId } })
+
   const review = await prisma.review.create({
     data: {
       userId,
@@ -56,7 +69,9 @@ export async function POST(req: NextRequest) {
       status: reviewStatus,
       metadata: metadata as object,
       consumedAt,
+      ...(catalogItem ? { catalogItemId: catalogItem.id } : {}),
     },
+    include: { catalogItem: { select: CATALOG_ITEM_SELECT } },
   })
 
   return NextResponse.json(review, { status: 201 })

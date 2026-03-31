@@ -5,12 +5,24 @@ import { updateReviewDTOSchema } from '@/entities/review/schema'
 
 type Params = { params: Promise<{ id: string }> }
 
+const CATALOG_ITEM_SELECT = {
+  id: true,
+  title: true,
+  coverImageUrl: true,
+  backdropImageUrl: true,
+  contentType: true,
+  year: true,
+} as const
+
 export async function GET(_req: NextRequest, { params }: Params) {
   const { session, response } = await requireSession()
   if (response) return response
 
   const { id } = await params
-  const review = await prisma.review.findUnique({ where: { id } })
+  const review = await prisma.review.findUnique({
+    where: { id },
+    include: { catalogItem: { select: CATALOG_ITEM_SELECT } },
+  })
 
   if (!review) return NextResponse.json({ error: 'Review not found' }, { status: 404 })
 
@@ -62,6 +74,7 @@ export async function PATCH(req: NextRequest, { params }: Params) {
       ...(reviewBody !== undefined && { body: reviewBody as object }),
       ...(metadata !== undefined && { metadata: metadata as object }),
     },
+    include: { catalogItem: { select: CATALOG_ITEM_SELECT } },
   })
 
   return NextResponse.json(review)

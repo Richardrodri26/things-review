@@ -41,6 +41,15 @@ export type ReviewMetadata =
   | PodcastReviewMetadata
   | null
 
+export interface CatalogItemSnapshot {
+  id: string
+  title: string
+  coverImageUrl: string | null
+  backdropImageUrl: string | null
+  contentType: string
+  year: number | null
+}
+
 export interface Review {
   id: string
   userId: string
@@ -53,6 +62,7 @@ export interface Review {
   status: ConsumptionStatus
   metadata?: ReviewMetadata
   consumedAt?: Date
+  catalogItem?: CatalogItemSnapshot | null
   createdAt: Date
   updatedAt: Date
 }

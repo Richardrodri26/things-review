@@ -2,6 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireSession } from '@/lib/auth-server'
 import { prisma } from '@/lib/prisma'
 
+const CATALOG_ITEM_SELECT = {
+  id: true,
+  title: true,
+  coverImageUrl: true,
+  backdropImageUrl: true,
+  contentType: true,
+  year: true,
+} as const
+
 // GET /api/reviews/by-content?contentId=xxx&memberIds=id1,id2&groupId=xxx
 export async function GET(req: NextRequest) {
   const { session, response } = await requireSession()
@@ -24,6 +33,7 @@ export async function GET(req: NextRequest) {
     include: groupId
       ? {
           user: { select: { id: true, username: true, displayName: true, image: true } },
+          catalogItem: { select: CATALOG_ITEM_SELECT },
           comments: {
             where: { groupId },
             include: {
@@ -33,6 +43,7 @@ export async function GET(req: NextRequest) {
         }
       : {
           user: { select: { id: true, username: true, displayName: true, image: true } },
+          catalogItem: { select: CATALOG_ITEM_SELECT },
         },
     orderBy: { createdAt: 'desc' },
   })

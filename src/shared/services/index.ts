@@ -8,14 +8,14 @@ import { ApiGroupService } from './api/group.service'
 import { ApiWatchlistService } from './api/watchlist.service'
 import { ApiCommentService } from './api/comment.service'
 
-// ─── Catálogo: sigue siendo externo (TMDB / mock) ────────────────────────────
-import { LocalCatalogService } from './catalog.service'
+// ─── Catálogo: ahora desde la DB via API ─────────────────────────────────────
+import { ApiCatalogService } from './api/catalog.service'
 
 export const services = {
   users: new ApiUserService(),
   reviews: new ApiReviewService(),
   groups: new ApiGroupService(),
-  catalog: new LocalCatalogService(),
+  catalog: new ApiCatalogService(),
   watchlist: new ApiWatchlistService(),
   comments: new ApiCommentService(),
 } as const

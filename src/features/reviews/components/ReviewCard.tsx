@@ -9,7 +9,6 @@ import { RatingStars, ContentTypeBadge, StatusBadge } from '@/shared/ui/atoms'
 import { CoverImage } from '@/shared/ui/atoms/CoverImage'
 import { formatDate } from '@/shared/utils'
 import { useCatalogItem } from '@/features/catalog/hooks/useCatalog'
-import { useCatalogItemTitle } from '@/features/catalog/hooks'
 import { useComments } from '@/features/comments/hooks/useComments'
 import { ROUTES } from '@/shared/constants'
 import { extractPlainText } from '@/components/editor/editor-client'
@@ -26,8 +25,9 @@ interface ReviewCardProps {
 
 export function ReviewCard({ review, onEdit, onDelete, author, isOwn }: ReviewCardProps) {
   const t = useTranslations('reviews.card')
-  const catalogItem = useCatalogItem(review.contentType, review.contentId)
-  const itemTitle = useCatalogItemTitle(review.contentId, review.contentType)
+  const localCatalogItem = useCatalogItem(review.contentType, review.contentId)
+  const resolvedItem = review.catalogItem ?? localCatalogItem
+  const itemTitle = resolvedItem?.title ?? review.contentId
   const { data: comments = [] } = useComments(review.id)
 
   // Only top-level comments (no replies) count toward the badge
@@ -43,7 +43,7 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn }: ReviewCa
       {/* ── Poster area ─────────────────────────────────────────────── */}
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted">
         <CoverImage
-          src={catalogItem?.coverImageUrl}
+          src={resolvedItem?.coverImageUrl}
           alt={itemTitle ?? ''}
           contentType={review.contentType}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 220px"

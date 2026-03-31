@@ -4,6 +4,15 @@ import { prisma } from '@/lib/prisma'
 
 type Params = { params: Promise<{ id: string }> }
 
+const CATALOG_ITEM_SELECT = {
+  id: true,
+  title: true,
+  coverImageUrl: true,
+  backdropImageUrl: true,
+  contentType: true,
+  year: true,
+} as const
+
 // GET /api/groups/[id]/reviews — all reviews from group members
 // Supports optional ?contentId=xxx to filter by a specific content item
 export async function GET(req: NextRequest, { params }: Params) {
@@ -34,13 +43,15 @@ export async function GET(req: NextRequest, { params }: Params) {
     },
     include: {
       user: { select: { id: true, username: true, displayName: true, image: true } },
+      catalogItem: { select: CATALOG_ITEM_SELECT },
     },
     orderBy: { createdAt: 'desc' },
   })
 
   // Map Prisma `image` field to app-layer `avatarUrl`
-  const mapped = reviews.map(({ user, ...review }) => ({
+  const mapped = reviews.map(({ user, catalogItem, ...review }) => ({
     ...review,
+    catalogItem: catalogItem ?? null,
     user: {
       id: user.id,
       username: user.username ?? '',
