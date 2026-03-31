@@ -109,10 +109,10 @@ export function MovieDetailPage({ movieId, defaultGroupId }: MovieDetailPageProp
             <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
               <span>{movie.year}</span>
               {runtimeFormatted && <span>· {runtimeFormatted}</span>}
-              <span>· {movie.originalLanguage.toUpperCase()}</span>
+              {movie.originalLanguage && <span>· {movie.originalLanguage.toUpperCase()}</span>}
             </div>
             <div className="flex flex-wrap gap-1">
-              {movie.genres.map((g) => (
+              {movie.genres?.map((g) => (
                 <Badge key={g.id} variant="outline" className="text-[10px]">{g.name}</Badge>
               ))}
             </div>

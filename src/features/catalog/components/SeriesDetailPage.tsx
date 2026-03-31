@@ -116,13 +116,13 @@ export function SeriesDetailPage({ seriesId, defaultGroupId }: SeriesDetailPageP
               <span>{series.year}</span>
               <span>· {t('seasons', { count: series.numberOfSeasons })}</span>
               <span>· {t('episodes', { count: series.numberOfEpisodes })}</span>
-              <span>· {series.originalLanguage.toUpperCase()}</span>
+              {series.originalLanguage && <span>· {series.originalLanguage.toUpperCase()}</span>}
             </div>
             <div className="flex flex-wrap gap-1">
               <Badge variant="outline" className="text-[10px]">
                 {seriesStatusLabel}
               </Badge>
-              {series.genres.map((g) => (
+              {series.genres?.map((g) => (
                 <Badge key={g.id} variant="outline" className="text-[10px]">{g.name}</Badge>
               ))}
             </div>
