@@ -107,46 +107,48 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
             {t('breadcrumb')}
           </Link>
 
-          <div className="flex items-center gap-0.5">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsEditing(true)}
-              className="text-muted-foreground hover:text-foreground"
-            >
-              <PencilIcon className="size-3.5 mr-1.5" />
-              {tCommon('edit')}
-            </Button>
+          {isOwner && (
+            <div className="flex items-center gap-0.5">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsEditing(true)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <PencilIcon className="size-3.5 mr-1.5" />
+                {tCommon('edit')}
+              </Button>
 
-            <AlertDialog>
-              <AlertDialogTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-muted-foreground hover:text-destructive"
-                  >
-                    <TrashIcon className="size-3.5 mr-1.5" />
-                    {tCommon('delete')}
-                  </Button>
-                }
-              />
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {t('deleteDialog.description')}
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete} variant="destructive">
-                    {tCommon('delete')}
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
+              <AlertDialog>
+                <AlertDialogTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-muted-foreground hover:text-destructive"
+                    >
+                      <TrashIcon className="size-3.5 mr-1.5" />
+                      {tCommon('delete')}
+                    </Button>
+                  }
+                />
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{t('deleteDialog.title')}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {t('deleteDialog.description')}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{tCommon('cancel')}</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDelete} variant="destructive">
+                      {tCommon('delete')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          )}
         </div>
       </div>
 

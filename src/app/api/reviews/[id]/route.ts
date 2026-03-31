@@ -13,8 +13,24 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const review = await prisma.review.findUnique({ where: { id } })
 
   if (!review) return NextResponse.json({ error: 'Review not found' }, { status: 404 })
+
+  // Owner can always see their own review
   if (review.userId !== session.user.id) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    // Allow if the viewer shares at least one group with the review's author
+    const sharedGroup = await prisma.groupMembership.findFirst({
+      where: {
+        userId: session.user.id,
+        group: {
+          memberships: {
+            some: { userId: review.userId },
+          },
+        },
+      },
+    })
+
+    if (!sharedGroup) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
   }
 
   return NextResponse.json(review)
