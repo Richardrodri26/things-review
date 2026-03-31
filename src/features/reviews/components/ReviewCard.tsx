@@ -26,8 +26,8 @@ interface ReviewCardProps {
 
 export function ReviewCard({ review, onEdit, onDelete, author, isOwn }: ReviewCardProps) {
   const t = useTranslations('reviews.card')
-  const itemTitle = useCatalogItemTitle(review.contentId)
   const catalogItem = useCatalogItem(review.contentType, review.contentId)
+  const itemTitle = useCatalogItemTitle(review.contentId, review.contentType)
   const { data: comments = [] } = useComments(review.id)
 
   // Only top-level comments (no replies) count toward the badge

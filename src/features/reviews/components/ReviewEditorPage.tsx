@@ -142,6 +142,10 @@ export function ReviewEditorPage({
       // Actualizar el error de contentId para mostrarlo inline
       const contentIdIssue = validation.error.issues.find((i) => i.path[0] === 'contentId')
       setContentIdError(contentIdIssue?.message)
+
+      if (contentIdIssue) {
+        toast.error({ title: tToasts('reviews.selectContent') })
+      }
       return
     }
 

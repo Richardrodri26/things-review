@@ -53,7 +53,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   const tToasts = useTranslations('toasts')
   const router = useRouter()
   const { data: review, isLoading } = useReviewById(reviewId)
-  const itemTitle = useCatalogItemTitle(review?.contentId ?? '')
+  const itemTitle = useCatalogItemTitle(review?.contentId ?? '', review?.contentType)
   const deleteReview = useDeleteReview({
     deleted: tToasts('reviews.deleted'),
     deletedError: tToasts('reviews.deletedError'),

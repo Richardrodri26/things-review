@@ -11,17 +11,20 @@ import { Badge } from '@/components/ui/badge'
 import { useTranslations } from 'next-intl'
 import { ReviewCard } from '@/features/reviews/components/ReviewCard'
 import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage'
+import { ContentReviewTabs } from '@/features/reviews/components/ContentReviewTabs'
 import { useStore } from '@/shared/lib/store'
 import { useDeleteReview } from '@/features/reviews/hooks'
 import { useSeriesItem } from '../hooks'
 
 interface SeriesDetailPageProps {
   seriesId: string
+  /** groupId pre-seleccionado (navegación desde GroupDetailPage) */
+  defaultGroupId?: string
 }
 
 type DialogMode = 'none' | 'create' | 'edit'
 
-export function SeriesDetailPage({ seriesId }: SeriesDetailPageProps) {
+export function SeriesDetailPage({ seriesId, defaultGroupId }: SeriesDetailPageProps) {
   const router = useRouter()
   const { data: series, isLoading } = useSeriesItem(seriesId)
   const reviews = useStore((s) => s.reviews)
@@ -151,15 +154,23 @@ export function SeriesDetailPage({ seriesId }: SeriesDetailPageProps) {
           </div>
 
           {existingReview ? (
-            <ReviewCard
-              review={existingReview}
-              onDelete={async (r) => {
-                await deleteReview.mutateAsync(r.id)
-              }}
-            />
+            <div className="mb-6">
+              <ReviewCard
+                review={existingReview}
+                onDelete={async (r) => {
+                  await deleteReview.mutateAsync(r.id)
+                }}
+              />
+            </div>
           ) : (
-            <p className="text-sm text-muted-foreground">{t('noReview')}</p>
+            <p className="text-sm text-muted-foreground mb-4">{t('noReview')}</p>
           )}
+
+          {/* Tabs: Todas / Mis Grupos */}
+          <ContentReviewTabs
+            contentId={series.id}
+            defaultGroupId={defaultGroupId}
+          />
         </div>
       </div>
 

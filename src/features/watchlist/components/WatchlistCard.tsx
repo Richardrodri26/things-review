@@ -44,8 +44,8 @@ function isOverdue(targetDate?: Date): boolean {
 
 export function WatchlistCard({ item, onEdit, onRemove, onMarkAsConsumed }: WatchlistCardProps) {
   const t = useTranslations('watchlist')
-  const itemTitle = useCatalogItemTitle(item.contentId)
   const catalogItem = useCatalogItem(item.contentType, item.contentId)
+  const itemTitle = useCatalogItemTitle(item.contentId, item.contentType)
   const overdue = isOverdue(item.targetDate)
 
   const title = itemTitle ?? item.contentId

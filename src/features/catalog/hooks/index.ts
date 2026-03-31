@@ -5,6 +5,7 @@ export {
   useSeriesList,
   useSeriesItem,
   useCatalogItemTitle,
+  useCatalogItem,
   useAddCatalogItem,
   MOVIES_QUERY_KEY,
   SERIES_QUERY_KEY,

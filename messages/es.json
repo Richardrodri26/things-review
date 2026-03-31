@@ -198,6 +198,19 @@
         "cancelled": "Cancelada",
         "in_production": "En producción"
       }
+    },
+    "reviewTabs": {
+      "allTab": "Todas",
+      "groupTab": "Mis Grupos",
+      "allHint": "Este es tu espacio personal de reseñas.",
+      "selectGroup": "Grupo",
+      "selectGroupPlaceholder": "Seleccioná un grupo...",
+      "memberCount": "{count, plural, one {# miembro} other {# miembros}}",
+      "noGroups": "Sin grupos aún",
+      "noGroupsDescription": "Creá o unite a un grupo para comparar reseñas con otros.",
+      "noGroupReviews": "Sin reseñas en este grupo",
+      "noGroupReviewsDescription": "Nadie en {group} reseñó esto todavía.",
+      "groupAverage": "{count, plural, one {# puntaje} other {# puntajes}}"
     }
   },
   "reviews": {
@@ -365,7 +378,9 @@
         "ariaLabel": "Eliminar grupo"
       },
       "memberCount": "{count, plural, one {# miembro} other {# miembros}}",
-      "groupReviews": "Reseñas del grupo"
+      "groupReviews": "Reseñas del grupo",
+      "reviewCount": "{count, plural, one {# reseña} other {# reseñas}}",
+      "groupAvg": "prom. del grupo"
     },
     "card": {
       "owner": "Propietario",
@@ -468,7 +483,8 @@
       "deleted": "Reseña eliminada",
       "deletedError": "No se pudo eliminar la reseña",
       "failedToSave": "Error al guardar la reseña",
-      "failedToSaveDescription": "Algo salió mal. Intentá de nuevo."
+      "failedToSaveDescription": "Algo salió mal. Intentá de nuevo.",
+      "selectContent": "Seleccioná un contenido antes de publicar"
     },
     "watchlist": {
       "added": "Agregado a la lista",

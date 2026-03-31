@@ -11,17 +11,20 @@ import { Badge } from '@/components/ui/badge'
 import { useTranslations } from 'next-intl'
 import { ReviewCard } from '@/features/reviews/components/ReviewCard'
 import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage'
+import { ContentReviewTabs } from '@/features/reviews/components/ContentReviewTabs'
 import { useStore } from '@/shared/lib/store'
 import { useDeleteReview } from '@/features/reviews/hooks'
 import { useMovie } from '../hooks'
 
 interface MovieDetailPageProps {
   movieId: string
+  /** groupId pre-seleccionado (navegación desde GroupDetailPage) */
+  defaultGroupId?: string
 }
 
 type DialogMode = 'none' | 'create' | 'edit'
 
-export function MovieDetailPage({ movieId }: MovieDetailPageProps) {
+export function MovieDetailPage({ movieId, defaultGroupId }: MovieDetailPageProps) {
   const router = useRouter()
   const { data: movie, isLoading } = useMovie(movieId)
   const reviews = useStore((s) => s.reviews)
@@ -141,7 +144,7 @@ export function MovieDetailPage({ movieId }: MovieDetailPageProps) {
           </div>
 
           {existingReview ? (
-            <div className="max-w-[220px]">
+            <div className="max-w-[220px] mb-6">
               <ReviewCard
                 review={existingReview}
                 onDelete={async (r) => {
@@ -150,8 +153,14 @@ export function MovieDetailPage({ movieId }: MovieDetailPageProps) {
               />
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">{t('noReview')}</p>
+            <p className="text-sm text-muted-foreground mb-4">{t('noReview')}</p>
           )}
+
+          {/* Tabs: Todas / Mis Grupos */}
+          <ContentReviewTabs
+            contentId={movie.id}
+            defaultGroupId={defaultGroupId}
+          />
         </div>
       </div>
 

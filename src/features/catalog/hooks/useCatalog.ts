@@ -61,9 +61,20 @@ export function useCatalogByType(contentType: ContentType | null) {
   })
 }
 
-export function useCatalogItemTitle(contentId: string): string | undefined {
+export function useCatalogItem(contentType: ContentType | null, contentId: string): CatalogItem | undefined {
+  const { data } = useCatalogByType(contentType)
+  if (!data || !contentId) return undefined
+  return data.find((item) => item.id === contentId)
+}
+
+export function useCatalogItemTitle(contentId: string, contentType?: ContentType | null): string | undefined {
+  // Always call all hooks unconditionally — Rules of Hooks
+  const itemFromType = useCatalogItem(contentType ?? null, contentId)
   const queryClient = useQueryClient()
 
+  if (itemFromType) return itemFromType.title
+
+  // Fallback: search cache across known types (for cases where contentType is unknown)
   const movies = queryClient.getQueryData<Movie[]>(MOVIES_QUERY_KEY) ?? []
   const seriesList = queryClient.getQueryData<Series[]>(SERIES_QUERY_KEY) ?? []
 
@@ -74,12 +85,6 @@ export function useCatalogItemTitle(contentId: string): string | undefined {
   if (series) return series.title
 
   return undefined
-}
-
-export function useCatalogItem(contentType: ContentType | null, contentId: string): CatalogItem | undefined {
-  const { data } = useCatalogByType(contentType)
-  if (!data || !contentId) return undefined
-  return data.find((item) => item.id === contentId)
 }
 
 export function useAddCatalogItem() {

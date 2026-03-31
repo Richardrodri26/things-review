@@ -40,3 +40,12 @@ export function useGroupReviews(groupId: string) {
     enabled: !!groupId,
   })
 }
+
+export function useGroupReviewsByContent(groupId: string, contentId: string) {
+  return useQuery({
+    queryKey: [...GROUPS_QUERY_KEY, groupId, 'reviews', 'content', contentId] as const,
+    queryFn: () =>
+      apiGet<ReviewWithUser[]>(`/groups/${groupId}/reviews`, { contentId }),
+    enabled: !!groupId && !!contentId,
+  })
+}

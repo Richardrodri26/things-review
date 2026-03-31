@@ -5,11 +5,13 @@ import { prisma } from '@/lib/prisma'
 type Params = { params: Promise<{ id: string }> }
 
 // GET /api/groups/[id]/reviews — all reviews from group members
-export async function GET(_req: NextRequest, { params }: Params) {
+// Supports optional ?contentId=xxx to filter by a specific content item
+export async function GET(req: NextRequest, { params }: Params) {
   const { session, response } = await requireSession()
   if (response) return response
 
   const { id } = await params
+  const contentId = req.nextUrl.searchParams.get('contentId') ?? undefined
 
   const membership = await prisma.groupMembership.findUnique({
     where: { userId_groupId: { userId: session.user.id, groupId: id } },
@@ -26,7 +28,10 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const memberIds = memberships.map((m) => m.userId)
 
   const reviews = await prisma.review.findMany({
-    where: { userId: { in: memberIds } },
+    where: {
+      userId: { in: memberIds },
+      ...(contentId ? { contentId } : {}),
+    },
     include: {
       user: { select: { id: true, username: true, displayName: true, image: true } },
     },

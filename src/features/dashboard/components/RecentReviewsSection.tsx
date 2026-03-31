@@ -16,7 +16,7 @@ import type { Review } from '@/entities/review/types'
 const MAX_RECENT = 3
 
 function RecentReviewCard({ review }: { review: Review }) {
-  const itemTitle = useCatalogItemTitle(review.contentId)
+  const itemTitle = useCatalogItemTitle(review.contentId, review.contentType)
   const bodyPreview = review.body ? extractPlainText(review.body) : undefined
 
   return (

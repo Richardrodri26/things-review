@@ -12,7 +12,6 @@ import {
   LockIcon,
   GlobeIcon,
   TrashIcon,
-  StarIcon,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
@@ -25,8 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { EmptyState } from '@/shared/ui/atoms'
-import { ReviewCard } from '@/features/reviews/components/ReviewCard'
+import { ContentReviewGroup } from '@/features/reviews/components/ContentReviewGroup'
 import { useUser } from '@/shared/lib/store'
 import { CONTENT_TYPE_LABELS } from '@/shared/types'
 import { ROUTES } from '@/shared/constants'
@@ -174,23 +172,8 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
           <div className="flex items-center justify-center py-8">
             <div className="size-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
           </div>
-        ) : groupReviews.length === 0 ? (
-          <EmptyState
-            icon={<StarIcon className="size-6" />}
-            title={t('noReviews')}
-            description={t('noReviewsDescription')}
-          />
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {groupReviews.map((review) => (
-              <ReviewCard
-                key={review.id}
-                review={review}
-                author={review.user}
-                isOwn={review.userId === user?.id}
-              />
-            ))}
-          </div>
+          <ContentReviewGroup reviews={groupReviews} />
         )}
       </div>
 
