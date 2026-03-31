@@ -101,10 +101,7 @@ export function useJoinGroup(messages?: GroupToastMessages) {
   return useMutation({
     mutationFn: async (inviteCode: string) => {
       if (!user) throw new Error('No user')
-      const group = await services.groups.getByInviteCode(inviteCode)
-      if (!group) throw new Error('Invalid invite code')
-      await services.groups.addMember(group.id, user.id)
-      return group
+      return services.groups.joinByInviteCode(inviteCode)
     },
     onSuccess: (group) => {
       addGroup(group)

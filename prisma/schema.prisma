@@ -78,7 +78,7 @@ model Review {
   userId           String
   contentId        String
   contentType      String
-  rating           Int?
+  rating           Float?
   title            String?
   body             Json?
   containsSpoilers Boolean   @default(false)

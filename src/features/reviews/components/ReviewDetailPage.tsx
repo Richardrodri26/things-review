@@ -37,6 +37,7 @@ import { ROUTES } from '@/shared/constants'
 import { formatDate } from '@/shared/utils'
 import { useCatalogItemTitle } from '@/features/catalog/hooks'
 import { useReviewById, useDeleteReview } from '../hooks'
+import { useSession } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
 
 // Grupo por defecto para comentarios sin contexto de grupo real
@@ -58,6 +59,8 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
     deletedError: tToasts('reviews.deletedError'),
     deletedErrorDescription: tToasts('tryAgain'),
   })
+  const { data: session } = useSession()
+  const isOwner = session?.user?.id === review?.userId
   const [showSpoilers, setShowSpoilers] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -205,7 +208,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
         {/* ── Body ─────────────────────────────────────── */}
         {hasBody ? (
           <section className="mb-16">
-            {review.containsSpoilers && !showSpoilers ? (
+            {review.containsSpoilers && !showSpoilers && !isOwner ? (
               <SpoilerGate onReveal={() => setShowSpoilers(true)} />
             ) : (
               <EditorRenderer data={review.body!} />

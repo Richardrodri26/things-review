@@ -17,6 +17,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { signUp } from '@/lib/auth-client'
+import { toast } from '@/shared/lib/toast'
 import { services } from '@/shared/services'
 import { ROUTES } from '@/shared/constants'
 
@@ -40,8 +41,6 @@ const registerSchema = z
     path: ['confirmPassword'],
   })
 
-type FormData = z.input<typeof registerSchema>
-
 function getError(errors: unknown[]): string | undefined {
   const e = errors[0]
   if (!e) return undefined
@@ -54,6 +53,7 @@ export function RegisterForm() {
   const router = useRouter()
   const t = useTranslations('auth')
   const tCommon = useTranslations('common')
+  const tToasts = useTranslations('toasts')
 
   const form = useForm({
     defaultValues: { email: '', password: '', confirmPassword: '', displayName: '', username: '' },
@@ -67,14 +67,26 @@ export function RegisterForm() {
       })
 
       if (result.error) {
-        throw new Error(result.error.message ?? t('register.error'))
+        toast.error({
+          title: tToasts('auth.registerError'),
+          description: result.error.message ?? tToasts('tryAgain'),
+        })
+        return
       }
 
       // 2. Guardar username y displayName via PATCH /api/me
-      await services.users.update({
-        username: value.username,
-        displayName: value.displayName,
-      })
+      try {
+        await services.users.update({
+          username: value.username,
+          displayName: value.displayName,
+        })
+      } catch (err) {
+        toast.error({
+          title: tToasts('auth.updateProfileError'),
+          description: err instanceof Error ? err.message : tToasts('tryAgain'),
+        })
+        return
+      }
 
       router.replace(ROUTES.HOME)
     },
@@ -198,16 +210,11 @@ export function RegisterForm() {
             )}
           </form.Field>
 
-          <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting, s.errors] as const}>
-            {([canSubmit, isSubmitting, errors]) => (
-              <>
-                {errors.length > 0 && (
-                  <p className="text-sm text-destructive">{String(errors[0])}</p>
-                )}
-                <Button type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
-                  {isSubmitting ? tCommon('loading') : t('register.submit')}
-                </Button>
-              </>
+          <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting] as const}>
+            {([canSubmit, isSubmitting]) => (
+              <Button type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
+                {isSubmitting ? tCommon('loading') : t('register.submit')}
+              </Button>
             )}
           </form.Subscribe>
         </form>

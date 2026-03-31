@@ -453,6 +453,11 @@
   },
   "toasts": {
     "tryAgain": "Intentá de nuevo.",
+    "auth": {
+      "loginError": "No se pudo iniciar sesión",
+      "registerError": "No se pudo crear la cuenta",
+      "updateProfileError": "No se pudo guardar los datos del perfil"
+    },
     "reviews": {
       "saved": "Reseña guardada",
       "savedError": "No se pudo guardar la reseña",

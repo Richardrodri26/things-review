@@ -23,6 +23,7 @@ import {
 import { ChevronsUpDownIcon, UserCircleIcon, LogOutIcon } from 'lucide-react'
 import { useUser } from '@/shared/lib/store'
 import { ROUTES } from '@/shared/constants'
+import { signOut } from '@/lib/auth-client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
@@ -36,6 +37,11 @@ export function NavUser() {
   const displayName = user?.displayName ?? t('guest')
   const username = user?.username ?? 'guest'
   const initials = displayName.slice(0, 2).toUpperCase()
+
+  const handleLogOut = async () => {
+    await signOut()
+    router.replace(ROUTES.LOGIN)
+  }
 
   return (
     <SidebarMenu>
@@ -85,7 +91,7 @@ export function NavUser() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push(ROUTES.ONBOARDING)}>
+              <DropdownMenuItem onClick={handleLogOut}>
                 <LogOutIcon />
                 {t('logOut')}
               </DropdownMenuItem>

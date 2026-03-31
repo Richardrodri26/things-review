@@ -24,6 +24,16 @@ import { useAddCatalogItem } from '../hooks'
 import type { AddItemDTO, CatalogItem } from '@/shared/services'
 import type { ContentType } from '@/shared/types'
 
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function getError(errors: unknown[]): string | undefined {
+  const e = errors[0]
+  if (!e) return undefined
+  if (typeof e === 'string') return e
+  if (e && typeof e === 'object' && 'message' in e) return String((e as { message: unknown }).message)
+  return undefined
+}
+
 // ─── Zod Schema ─────────────────────────────────────────────────────────────
 
 const baseSchema = z.object({
@@ -355,7 +365,7 @@ export function AddContentForm({
               onBlur={field.handleBlur}
             />
             {field.state.meta.errors.length > 0 && (
-              <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
+              <p className="text-xs text-destructive">{getError(field.state.meta.errors)}</p>
             )}
           </div>
         )}
@@ -376,7 +386,7 @@ export function AddContentForm({
               onBlur={field.handleBlur}
             />
             {field.state.meta.errors.length > 0 && (
-              <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
+              <p className="text-xs text-destructive">{getError(field.state.meta.errors)}</p>
             )}
           </div>
         )}
@@ -418,7 +428,7 @@ export function AddContentForm({
               onBlur={field.handleBlur}
             />
             {field.state.meta.errors.length > 0 && (
-              <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
+              <p className="text-xs text-destructive">{getError(field.state.meta.errors)}</p>
             )}
           </div>
         )}
@@ -443,7 +453,7 @@ export function AddContentForm({
                         onBlur={field.handleBlur}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
+                        <p className="text-xs text-destructive">{getError(field.state.meta.errors)}</p>
                       )}
                     </div>
                   )}
@@ -500,7 +510,7 @@ export function AddContentForm({
                         onBlur={field.handleBlur}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
+                        <p className="text-xs text-destructive">{getError(field.state.meta.errors)}</p>
                       )}
                     </div>
                   )}
@@ -592,7 +602,7 @@ export function AddContentForm({
                         onBlur={field.handleBlur}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
+                        <p className="text-xs text-destructive">{getError(field.state.meta.errors)}</p>
                       )}
                     </div>
                   )}
@@ -690,7 +700,7 @@ export function AddContentForm({
                           ))}
                         </div>
                         {field.state.meta.errors.length > 0 && (
-                          <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
+                          <p className="text-xs text-destructive">{getError(field.state.meta.errors)}</p>
                         )}
                       </div>
                     )
@@ -717,7 +727,7 @@ export function AddContentForm({
                         onBlur={field.handleBlur}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
+                        <p className="text-xs text-destructive">{getError(field.state.meta.errors)}</p>
                       )}
                     </div>
                   )}
@@ -777,7 +787,7 @@ export function AddContentForm({
                         onBlur={field.handleBlur}
                       />
                       {field.state.meta.errors.length > 0 && (
-                        <p className="text-xs text-destructive">{String(field.state.meta.errors[0])}</p>
+                        <p className="text-xs text-destructive">{getError(field.state.meta.errors)}</p>
                       )}
                     </div>
                   )}

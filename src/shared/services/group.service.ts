@@ -17,6 +17,7 @@ export interface IGroupService {
   addMember(groupId: string, userId: string, role?: GroupRole): Promise<GroupMembership>
   removeMember(groupId: string, userId: string): Promise<void>
   getMemberIds(groupId: string): Promise<string[]>
+  joinByInviteCode(inviteCode: string): Promise<Group>
 }
 
 export class LocalGroupService implements IGroupService {
@@ -118,5 +119,13 @@ export class LocalGroupService implements IGroupService {
     return this.readMemberships()
       .filter(m => m.groupId === groupId)
       .map(m => m.userId)
+  }
+
+  async joinByInviteCode(inviteCode: string): Promise<Group> {
+    // LocalGroupService no tiene contexto de sesión — el hook pasa el userId por fuera
+    // Esta implementación existe sólo para satisfacer la interfaz en local mode
+    const group = await this.getByInviteCode(inviteCode)
+    if (!group) throw new Error('Invalid invite code')
+    return group
   }
 }

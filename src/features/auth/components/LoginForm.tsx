@@ -17,14 +17,13 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { signIn } from '@/lib/auth-client'
+import { toast } from '@/shared/lib/toast'
 import { ROUTES } from '@/shared/constants'
 
 const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(8),
 })
-
-type FormData = z.input<typeof loginSchema>
 
 function getError(errors: unknown[]): string | undefined {
   const e = errors[0]
@@ -38,6 +37,7 @@ export function LoginForm() {
   const router = useRouter()
   const t = useTranslations('auth')
   const tCommon = useTranslations('common')
+  const tToasts = useTranslations('toasts')
 
   const form = useForm({
     defaultValues: { email: '', password: '' },
@@ -49,7 +49,11 @@ export function LoginForm() {
       })
 
       if (result.error) {
-        throw new Error(result.error.message ?? t('login.error'))
+        toast.error({
+          title: tToasts('auth.loginError'),
+          description: result.error.message ?? tToasts('tryAgain'),
+        })
+        return
       }
 
       router.replace(ROUTES.HOME)
@@ -111,16 +115,11 @@ export function LoginForm() {
             )}
           </form.Field>
 
-          <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting, s.errors] as const}>
-            {([canSubmit, isSubmitting, errors]) => (
-              <>
-                {errors.length > 0 && (
-                  <p className="text-sm text-destructive">{String(errors[0])}</p>
-                )}
-                <Button type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
-                  {isSubmitting ? tCommon('loading') : t('login.submit')}
-                </Button>
-              </>
+          <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting] as const}>
+            {([canSubmit, isSubmitting]) => (
+              <Button type="submit" className="w-full" disabled={!canSubmit || isSubmitting}>
+                {isSubmitting ? tCommon('loading') : t('login.submit')}
+              </Button>
             )}
           </form.Subscribe>
         </form>

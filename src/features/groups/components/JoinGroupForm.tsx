@@ -12,8 +12,7 @@ import { useJoinGroup } from '../hooks'
 const joinSchema = z.object({
   inviteCode: z
     .string()
-    .min(1, 'Invite code is required')
-    .max(20, 'Invalid invite code'),
+    .length(8, 'Invite code must be 8 characters'),
 })
 
 type FormData = z.input<typeof joinSchema>

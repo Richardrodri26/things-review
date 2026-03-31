@@ -37,6 +37,13 @@ export async function POST(req: NextRequest) {
   const { userId, contentId, contentType, rating, title, body: reviewBody,
     containsSpoilers, status: reviewStatus, metadata, consumedAt } = parsed.data
 
+  if (reviewStatus === 'want_to_consume') {
+    return NextResponse.json(
+      { error: 'A review cannot have status "want_to_consume". Use consumed, consuming, or dropped.' },
+      { status: 422 }
+    )
+  }
+
   const review = await prisma.review.create({
     data: {
       userId,

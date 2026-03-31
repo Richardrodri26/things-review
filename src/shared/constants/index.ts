@@ -5,7 +5,6 @@ export const ROUTES = {
   HOME: '/',
   LOGIN: '/login',
   REGISTER: '/register',
-  ONBOARDING: '/onboarding',
   MOVIES: '/movies',
   MOVIE_DETAIL: (id: string) => `/movies/${id}`,
   SERIES: '/series',

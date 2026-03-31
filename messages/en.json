@@ -453,6 +453,11 @@
   },
   "toasts": {
     "tryAgain": "Please try again.",
+    "auth": {
+      "loginError": "Could not sign in",
+      "registerError": "Could not create account",
+      "updateProfileError": "Could not save profile data"
+    },
     "reviews": {
       "saved": "Review saved",
       "savedError": "Could not save review",

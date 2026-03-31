@@ -35,7 +35,7 @@ const reviewFormSchema = z.object({
   title:            z.string().max(100).optional(),
   body:             z.object({ blocks: z.array(z.any()) }).optional(),
   containsSpoilers: z.boolean(),
-  status:           z.enum(['consumed', 'want_to_consume', 'consuming', 'dropped']),
+  status:           z.enum(['consumed', 'consuming', 'dropped']),
 })
 
 type ReviewFormData = z.input<typeof reviewFormSchema>
@@ -75,7 +75,11 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
     title:            initialValues?.title ?? review?.title,
     body:             (initialValues?.body ?? review?.body) as OutputData | undefined,
     containsSpoilers: initialValues?.containsSpoilers ?? review?.containsSpoilers ?? false,
-    status:           initialValues?.status ?? review?.status ?? 'consumed',
+    status:           ((): ReviewFormData['status'] => {
+      const s = initialValues?.status ?? review?.status
+      if (!s || s === 'want_to_consume') return 'consumed'
+      return s
+    })(),
   }
 
   const form = useForm({
@@ -231,7 +235,7 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
             <Label htmlFor={field.name}>{t('form.status')}</Label>
             <Select
               value={field.state.value}
-              onValueChange={(v) => v && field.handleChange(v as ReviewFormValues['status'])}
+              onValueChange={(v) => v && field.handleChange(v as ReviewFormData['status'])}
             >
               <SelectTrigger
                 id={field.name}
@@ -241,12 +245,11 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
                   {(v: string | null) => v ? tStatusOptions(v as Parameters<typeof tStatusOptions>[0]) : t('form.status')}
                 </SelectValue>
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="consumed">{t('editor.statusOptions.consumed')}</SelectItem>
-                <SelectItem value="want_to_consume">{t('editor.statusOptions.want_to_consume')}</SelectItem>
-                <SelectItem value="consuming">{t('editor.statusOptions.consuming')}</SelectItem>
-                <SelectItem value="dropped">{t('editor.statusOptions.dropped')}</SelectItem>
-              </SelectContent>
+                <SelectContent>
+                  <SelectItem value="consumed">{t('editor.statusOptions.consumed')}</SelectItem>
+                  <SelectItem value="consuming">{t('editor.statusOptions.consuming')}</SelectItem>
+                  <SelectItem value="dropped">{t('editor.statusOptions.dropped')}</SelectItem>
+                </SelectContent>
             </Select>
             {field.state.meta.errors.length > 0 && (
               <p className="text-xs text-destructive">

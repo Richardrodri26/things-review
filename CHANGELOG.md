@@ -9,7 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Pending items to be tracked as development continues
+- `LoginForm` and `RegisterForm` auth components
+- Auth layout for sign-in/sign-up pages
+- Toast notifications for review mutations (create, update, delete)
+
+### Changed
+
+- Migrated data persistence from localStorage to Prisma + PostgreSQL
+- `NavUser` component updated to read user from Zustand store
+- `ReviewDetailPage` — improved action links and interaction feedback
+- `AddContentForm` — refinements to catalog entry flow
+- `JoinGroupForm` — UX improvements
+- `useGroupMutations` hook updated
+
+### Fixed
+
+- `rating` field type changed to `Float` in Prisma schema (migration `20260331163054_rating_float`)
 
 ---
 
