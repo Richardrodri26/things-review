@@ -3,6 +3,8 @@ import { useQuery } from '@tanstack/react-query'
 import { services } from '@/shared/services'
 import { useUser, useGroups as useGroupsStore } from '@/shared/lib/store'
 import { useStore } from '@/shared/lib/store'
+import { apiGet } from '@/shared/services/api/api-client'
+import type { ReviewWithUser } from '@/entities/review/types'
 
 export const GROUPS_QUERY_KEY = ['groups'] as const
 
@@ -28,5 +30,13 @@ export function useGroup(id: string) {
     queryKey: [...GROUPS_QUERY_KEY, id] as const,
     queryFn: () => services.groups.getById(id),
     enabled: !!id,
+  })
+}
+
+export function useGroupReviews(groupId: string) {
+  return useQuery({
+    queryKey: [...GROUPS_QUERY_KEY, groupId, 'reviews'] as const,
+    queryFn: () => apiGet<ReviewWithUser[]>(`/groups/${groupId}/reviews`),
+    enabled: !!groupId,
   })
 }

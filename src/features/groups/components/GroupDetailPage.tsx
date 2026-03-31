@@ -28,10 +28,9 @@ import {
 import { EmptyState } from '@/shared/ui/atoms'
 import { ReviewCard } from '@/features/reviews/components/ReviewCard'
 import { useUser } from '@/shared/lib/store'
-import { useStore } from '@/shared/lib/store'
 import { CONTENT_TYPE_LABELS } from '@/shared/types'
 import { ROUTES } from '@/shared/constants'
-import { useGroup, useDeleteGroup } from '../hooks'
+import { useGroup, useGroupReviews, useDeleteGroup } from '../hooks'
 
 interface GroupDetailPageProps {
   groupId: string
@@ -40,8 +39,8 @@ interface GroupDetailPageProps {
 export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
   const router = useRouter()
   const user = useUser()
-  const reviews = useStore((s) => s.reviews)
   const { data: group, isLoading } = useGroup(groupId)
+  const { data: groupReviews = [], isLoading: reviewsLoading } = useGroupReviews(groupId)
   const [copied, setCopied] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const t = useTranslations('groups.detail')
@@ -169,9 +168,13 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
       {/* Reviews Section */}
       <div>
         <h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">
-          {t('myReviews')}
+          {t('groupReviews')}
         </h2>
-        {reviews.length === 0 ? (
+        {reviewsLoading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="size-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+          </div>
+        ) : groupReviews.length === 0 ? (
           <EmptyState
             icon={<StarIcon className="size-6" />}
             title={t('noReviews')}
@@ -179,8 +182,13 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
           />
         ) : (
           <div className="grid gap-3 sm:grid-cols-2">
-            {reviews.map((review) => (
-              <ReviewCard key={review.id} review={review} />
+            {groupReviews.map((review) => (
+              <ReviewCard
+                key={review.id}
+                review={review}
+                author={review.user}
+                isOwn={review.userId === user?.id}
+              />
             ))}
           </div>
         )}

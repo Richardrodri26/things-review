@@ -222,7 +222,8 @@
     "card": {
       "editAriaLabel": "Editar reseña",
       "deleteAriaLabel": "Eliminar reseña",
-      "viewAriaLabel": "Ver reseña completa"
+      "viewAriaLabel": "Ver reseña completa",
+      "you": "Vos"
     },
     "editor": {
       "titleNew": "Nueva Reseña",
@@ -363,7 +364,8 @@
         "confirm": "Eliminar",
         "ariaLabel": "Eliminar grupo"
       },
-      "memberCount": "{count, plural, one {# miembro} other {# miembros}}"
+      "memberCount": "{count, plural, one {# miembro} other {# miembros}}",
+      "groupReviews": "Reseñas del grupo"
     },
     "card": {
       "owner": "Propietario",

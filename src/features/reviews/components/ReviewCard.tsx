@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import { PencilIcon, TrashIcon, MessageSquareIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { RatingStars, ContentTypeBadge, StatusBadge } from '@/shared/ui/atoms'
 import { CoverImage } from '@/shared/ui/atoms/CoverImage'
 import { formatDate } from '@/shared/utils'
@@ -13,14 +14,17 @@ import { useComments } from '@/features/comments/hooks/useComments'
 import { ROUTES } from '@/shared/constants'
 import { extractPlainText } from '@/components/editor/editor-client'
 import type { Review } from '@/entities/review/types'
+import type { User } from '@/entities/user/types'
 
 interface ReviewCardProps {
   review: Review
   onEdit?: (review: Review) => void
   onDelete?: (review: Review) => void
+  author?: Pick<User, 'id' | 'username' | 'displayName' | 'avatarUrl'>
+  isOwn?: boolean
 }
 
-export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
+export function ReviewCard({ review, onEdit, onDelete, author, isOwn }: ReviewCardProps) {
   const t = useTranslations('reviews.card')
   const itemTitle = useCatalogItemTitle(review.contentId)
   const catalogItem = useCatalogItem(review.contentType, review.contentId)
@@ -114,13 +118,30 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
 
         {/* Footer meta */}
         <div className="flex items-center justify-between mt-1 text-[10px] text-muted-foreground">
-          <span>{formatDate(review.createdAt)}</span>
-          {commentCount > 0 && (
-            <span className="flex items-center gap-0.5">
-              <MessageSquareIcon className="size-3" />
-              {commentCount}
-            </span>
+          {author ? (
+            isOwn ? (
+              <span className="font-medium text-primary">{t('you')}</span>
+            ) : (
+              <span className="flex items-center gap-1 min-w-0">
+                <Avatar size="sm" className="size-4 shrink-0">
+                  <AvatarImage src={author.avatarUrl} alt={author.displayName} />
+                  <AvatarFallback>{author.displayName.charAt(0).toUpperCase()}</AvatarFallback>
+                </Avatar>
+                <span className="truncate">{author.displayName}</span>
+              </span>
+            )
+          ) : (
+            <span>{formatDate(review.createdAt)}</span>
           )}
+          <span className="flex items-center gap-1.5 shrink-0">
+            {author && <span>{formatDate(review.createdAt)}</span>}
+            {commentCount > 0 && (
+              <span className="flex items-center gap-0.5">
+                <MessageSquareIcon className="size-3" />
+                {commentCount}
+              </span>
+            )}
+          </span>
         </div>
       </div>
     </Link>
