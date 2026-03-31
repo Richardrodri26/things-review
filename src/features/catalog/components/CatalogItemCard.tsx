@@ -19,7 +19,7 @@ export function CatalogItemCard({ item, hasReview }: CatalogItemCardProps) {
   return (
     <Link
       href={href}
-      className="group relative flex flex-col rounded-lg border border-border bg-card overflow-hidden hover:border-primary/50 transition-colors"
+      className="group relative flex flex-col rounded-lg border border-border bg-card overflow-hidden hover:border-primary/50 transition-colors w-full"
     >
       {/* Poster */}
       <div className="relative aspect-[2/3] w-full overflow-hidden">

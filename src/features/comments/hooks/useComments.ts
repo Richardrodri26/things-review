@@ -6,6 +6,15 @@ import type { CreateCommentDTO, UpdateCommentDTO } from '@/entities/comment/type
 
 export const COMMENTS_QUERY_KEY = ['comments'] as const
 
+export interface CommentToastMessages {
+  postError?: string
+  postErrorDescription?: string
+  updateError?: string
+  updateErrorDescription?: string
+  deleteError?: string
+  deleteErrorDescription?: string
+}
+
 export function useComments(reviewId: string) {
   return useQuery({
     queryKey: [...COMMENTS_QUERY_KEY, reviewId],
@@ -14,7 +23,7 @@ export function useComments(reviewId: string) {
   })
 }
 
-export function useCreateComment(reviewId: string) {
+export function useCreateComment(reviewId: string, messages?: CommentToastMessages) {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -23,12 +32,15 @@ export function useCreateComment(reviewId: string) {
       queryClient.invalidateQueries({ queryKey: [...COMMENTS_QUERY_KEY, reviewId] })
     },
     onError: () => {
-      toast.error({ title: 'Could not post comment', description: 'Please try again.' })
+      toast.error({
+        title: messages?.postError ?? 'Could not post comment',
+        description: messages?.postErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }
 
-export function useUpdateComment(reviewId: string) {
+export function useUpdateComment(reviewId: string, messages?: CommentToastMessages) {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -38,12 +50,15 @@ export function useUpdateComment(reviewId: string) {
       queryClient.invalidateQueries({ queryKey: [...COMMENTS_QUERY_KEY, reviewId] })
     },
     onError: () => {
-      toast.error({ title: 'Could not update comment', description: 'Please try again.' })
+      toast.error({
+        title: messages?.updateError ?? 'Could not update comment',
+        description: messages?.updateErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }
 
-export function useDeleteComment(reviewId: string) {
+export function useDeleteComment(reviewId: string, messages?: CommentToastMessages) {
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -52,7 +67,10 @@ export function useDeleteComment(reviewId: string) {
       queryClient.invalidateQueries({ queryKey: [...COMMENTS_QUERY_KEY, reviewId] })
     },
     onError: () => {
-      toast.error({ title: 'Could not delete comment', description: 'Please try again.' })
+      toast.error({
+        title: messages?.deleteError ?? 'Could not delete comment',
+        description: messages?.deleteErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }

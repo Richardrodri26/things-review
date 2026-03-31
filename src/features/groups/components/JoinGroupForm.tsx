@@ -32,9 +32,16 @@ interface JoinGroupFormProps {
 }
 
 export function JoinGroupForm({ onSuccess, onCancel }: JoinGroupFormProps) {
-  const joinGroup = useJoinGroup()
   const t = useTranslations('groups.joinForm')
   const tCommon = useTranslations('common')
+  const tToasts = useTranslations('toasts')
+  const joinGroup = useJoinGroup({
+    joined: (name) => tToasts('groups.joined', { name }),
+    joinedInvalidCode: t('invalidCode'),
+    joinedInvalidCodeDescription: tCommon('error'),
+    joinedError: tToasts('groups.createdError'),
+    joinedErrorDescription: tToasts('tryAgain'),
+  })
 
   const defaultValues: FormData = { inviteCode: '' }
 

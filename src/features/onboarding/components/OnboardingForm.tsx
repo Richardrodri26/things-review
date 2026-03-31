@@ -59,7 +59,7 @@ export function OnboardingForm() {
     defaultValues,
     validators: { onChange: onboardingSchema },
     onSubmit: async ({ value }) => {
-      const user = await services.users.create({
+      const user = await services.users.update({
         username: value.username,
         displayName: value.displayName,
         bio: value.bio || undefined,

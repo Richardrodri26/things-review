@@ -6,7 +6,23 @@ import { toast } from '@/shared/lib/toast'
 import type { CreateWatchlistItemDTO, UpdateWatchlistItemDTO } from '@/entities/watchlist/types'
 import { WATCHLIST_QUERY_KEY } from './useWatchlist'
 
-export function useAddToWatchlist() {
+export interface WatchlistToastMessages {
+  added?: string
+  addedError?: string
+  addedErrorDescription?: string
+  updated?: string
+  updatedError?: string
+  updatedErrorDescription?: string
+  removed?: string
+  removedError?: string
+  removedErrorDescription?: string
+  consumed?: string
+  consumedDescription?: string
+  consumedError?: string
+  consumedErrorDescription?: string
+}
+
+export function useAddToWatchlist(messages?: WatchlistToastMessages) {
   const queryClient = useQueryClient()
   const addWatchlistItem = useStore((s) => s.addWatchlistItem)
   const user = useUser()
@@ -19,15 +35,18 @@ export function useAddToWatchlist() {
     onSuccess: (newItem) => {
       addWatchlistItem(newItem)
       queryClient.invalidateQueries({ queryKey: WATCHLIST_QUERY_KEY })
-      toast.success({ title: 'Added to watchlist' })
+      toast.success({ title: messages?.added ?? 'Added to watchlist' })
     },
     onError: () => {
-      toast.error({ title: 'Could not add to watchlist', description: 'Please try again.' })
+      toast.error({
+        title: messages?.addedError ?? 'Could not add to watchlist',
+        description: messages?.addedErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }
 
-export function useUpdateWatchlistItem() {
+export function useUpdateWatchlistItem(messages?: WatchlistToastMessages) {
   const queryClient = useQueryClient()
   const updateWatchlistItem = useStore((s) => s.updateWatchlistItem)
 
@@ -37,15 +56,18 @@ export function useUpdateWatchlistItem() {
     onSuccess: (updated) => {
       updateWatchlistItem(updated.id, updated)
       queryClient.invalidateQueries({ queryKey: WATCHLIST_QUERY_KEY })
-      toast.success({ title: 'Watchlist item updated' })
+      toast.success({ title: messages?.updated ?? 'Watchlist item updated' })
     },
     onError: () => {
-      toast.error({ title: 'Could not update item', description: 'Please try again.' })
+      toast.error({
+        title: messages?.updatedError ?? 'Could not update item',
+        description: messages?.updatedErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }
 
-export function useRemoveFromWatchlist() {
+export function useRemoveFromWatchlist(messages?: WatchlistToastMessages) {
   const queryClient = useQueryClient()
   const removeWatchlistItem = useStore((s) => s.removeWatchlistItem)
 
@@ -54,17 +76,20 @@ export function useRemoveFromWatchlist() {
     onSuccess: (_, id) => {
       removeWatchlistItem(id)
       queryClient.invalidateQueries({ queryKey: WATCHLIST_QUERY_KEY })
-      toast.success({ title: 'Removed from watchlist' })
+      toast.success({ title: messages?.removed ?? 'Removed from watchlist' })
     },
     onError: () => {
-      toast.error({ title: 'Could not remove item', description: 'Please try again.' })
+      toast.error({
+        title: messages?.removedError ?? 'Could not remove item',
+        description: messages?.removedErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }
 
 // Hook conveniente para saber si un item ya fue reviewed
 // y ofrecer marcarlo como "consumido" desde la watchlist
-export function useConvertWatchlistItemToReview() {
+export function useConvertWatchlistItemToReview(messages?: WatchlistToastMessages) {
   const queryClient = useQueryClient()
   const removeWatchlistItem = useStore((s) => s.removeWatchlistItem)
   const user = useUser()
@@ -100,12 +125,15 @@ export function useConvertWatchlistItemToReview() {
       queryClient.invalidateQueries({ queryKey: WATCHLIST_QUERY_KEY })
       queryClient.invalidateQueries({ queryKey: ['reviews'] })
       toast.success({
-        title: 'Marked as consumed',
-        description: 'A review was created — add your rating and thoughts.',
+        title: messages?.consumed ?? 'Marked as consumed',
+        description: messages?.consumedDescription ?? 'A review was created — add your rating and thoughts.',
       })
     },
     onError: () => {
-      toast.error({ title: 'Could not mark as consumed', description: 'Please try again.' })
+      toast.error({
+        title: messages?.consumedError ?? 'Could not mark as consumed',
+        description: messages?.consumedErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }

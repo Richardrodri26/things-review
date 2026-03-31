@@ -4,6 +4,7 @@
 
 import { useState } from 'react'
 import { useForm } from '@tanstack/react-form'
+import { useTranslations } from 'next-intl'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -24,7 +25,11 @@ interface CommentFormProps {
 
 export function CommentForm({ reviewId, groupId, parentId }: CommentFormProps) {
   const user = useUser()
-  const createComment = useCreateComment(reviewId)
+  const tToasts = useTranslations('toasts')
+  const createComment = useCreateComment(reviewId, {
+    postError: tToasts('comments.postError'),
+    postErrorDescription: tToasts('tryAgain'),
+  })
   const [focused, setFocused] = useState(false)
 
   const form = useForm({

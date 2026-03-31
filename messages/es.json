@@ -166,13 +166,24 @@
       "title": "Películas",
       "count": "{count, plural, one {# título} other {# títulos}}",
       "empty": "Sin películas en el catálogo",
-      "emptyDescription": "El catálogo se cargará en la próxima actualización."
+      "emptyDescription": "El catálogo se cargará en la próxima actualización.",
+      "noMatch": "Ninguna película coincide con los filtros",
+      "noMatchDescription": "Probá ajustando o limpiando los filtros."
     },
     "series": {
       "title": "Series",
       "count": "{count, plural, one {# título} other {# títulos}}",
       "empty": "Sin series en el catálogo",
-      "emptyDescription": "El catálogo se cargará en la próxima actualización."
+      "emptyDescription": "El catálogo se cargará en la próxima actualización.",
+      "noMatch": "Ninguna serie coincide con los filtros",
+      "noMatchDescription": "Probá ajustando o limpiando los filtros."
+    },
+    "filters": {
+      "genre": "Género:",
+      "reviewed": "Con reseña",
+      "notReviewed": "Sin reseña",
+      "count": "{filtered} de {total}",
+      "countAll": "{count, plural, one {# título} other {# títulos}}"
     },
     "detail": {
       "notFound": "Contenido no encontrado.",
@@ -261,7 +272,9 @@
       "selectType": "Seleccioná el tipo",
       "clearSelection": "Limpiar selección",
       "noResultsSearch": "Sin resultados",
-      "noResultsCatalog": "Sin {type}s en el catálogo"
+      "noResultsCatalog": "Sin {type}s en el catálogo",
+      "selectItem": "Seleccioná {type}...",
+      "searchItem": "Buscar {type}..."
     }
   },
   "watchlist": {
@@ -436,6 +449,48 @@
       "bioPlaceholder": "Una descripción breve sobre vos...",
       "submit": "Comenzar",
       "submitting": "Creando perfil..."
+    }
+  },
+  "toasts": {
+    "tryAgain": "Intentá de nuevo.",
+    "reviews": {
+      "saved": "Reseña guardada",
+      "savedError": "No se pudo guardar la reseña",
+      "updated": "Reseña actualizada",
+      "updatedError": "No se pudo actualizar la reseña",
+      "deleted": "Reseña eliminada",
+      "deletedError": "No se pudo eliminar la reseña",
+      "failedToSave": "Error al guardar la reseña",
+      "failedToSaveDescription": "Algo salió mal. Intentá de nuevo."
+    },
+    "watchlist": {
+      "added": "Agregado a la lista",
+      "addedError": "No se pudo agregar a la lista",
+      "updated": "Ítem de la lista actualizado",
+      "updatedError": "No se pudo actualizar el ítem",
+      "removed": "Quitado de la lista",
+      "removedError": "No se pudo quitar el ítem",
+      "consumed": "Marcado como consumido",
+      "consumedDescription": "Se creó una reseña — agregá tu puntaje y comentarios.",
+      "consumedError": "No se pudo marcar como consumido"
+    },
+    "groups": {
+      "created": "Grupo \"{name}\" creado",
+      "createdError": "No se pudo crear el grupo",
+      "updated": "Grupo actualizado",
+      "updatedError": "No se pudo actualizar el grupo",
+      "deleted": "Grupo eliminado",
+      "deletedError": "No se pudo eliminar el grupo",
+      "joined": "Te uniste a \"{name}\""
+    },
+    "profile": {
+      "updated": "Perfil actualizado",
+      "updatedError": "No se pudo actualizar el perfil"
+    },
+    "comments": {
+      "postError": "No se pudo publicar el comentario",
+      "updateError": "No se pudo actualizar el comentario",
+      "deleteError": "No se pudo eliminar el comentario"
     }
   }
 }

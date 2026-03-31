@@ -3,6 +3,7 @@
 // src/features/comments/components/CommentCard.tsx
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { PencilIcon, TrashIcon, CheckIcon, XIcon, MessageSquareIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -52,9 +53,16 @@ export function CommentCard({
   const [editBody, setEditBody] = useState(comment.body)
   const [showReplyForm, setShowReplyForm] = useState(false)
   const currentUser = useUser()
+  const tToasts = useTranslations('toasts')
 
-  const updateComment = useUpdateComment(comment.reviewId)
-  const deleteComment = useDeleteComment(comment.reviewId)
+  const updateComment = useUpdateComment(comment.reviewId, {
+    updateError: tToasts('comments.updateError'),
+    updateErrorDescription: tToasts('tryAgain'),
+  })
+  const deleteComment = useDeleteComment(comment.reviewId, {
+    deleteError: tToasts('comments.deleteError'),
+    deleteErrorDescription: tToasts('tryAgain'),
+  })
 
   const handleSave = async () => {
     if (!editBody.trim()) return

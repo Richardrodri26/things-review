@@ -42,13 +42,18 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
   const user = useUser()
   const reviews = useStore((s) => s.reviews)
   const { data: group, isLoading } = useGroup(groupId)
-  const deleteGroup = useDeleteGroup()
   const [copied, setCopied] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
   const t = useTranslations('groups.detail')
   const tCard = useTranslations('groups.card')
   const tCommon = useTranslations('common')
   const tContentType = useTranslations('contentType')
+  const tToasts = useTranslations('toasts')
+  const deleteGroup = useDeleteGroup({
+    deleted: tToasts('groups.deleted'),
+    deletedError: tToasts('groups.deletedError'),
+    deletedErrorDescription: tToasts('tryAgain'),
+  })
 
   if (isLoading) {
     return (

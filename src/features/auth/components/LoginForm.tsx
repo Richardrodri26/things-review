@@ -39,7 +39,7 @@ export function LoginForm() {
   const t = useTranslations('auth')
   const tCommon = useTranslations('common')
 
-  const form = useForm<FormData>({
+  const form = useForm({
     defaultValues: { email: '', password: '' },
     validators: { onChange: loginSchema },
     onSubmit: async ({ value }) => {

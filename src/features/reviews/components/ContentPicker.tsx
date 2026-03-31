@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { CoverImage } from '@/shared/ui/atoms/CoverImage'
 import { cn } from '@/lib/utils'
 import { useCatalogByType } from '@/features/catalog/hooks/useCatalog'
 import type { ContentType } from '@/shared/types'
@@ -125,18 +126,51 @@ export function ContentPicker({
           type="button"
           onClick={() => setOpen((v) => !v)}
           className={cn(
-            'flex w-full items-center justify-between rounded-md border border-input bg-background px-3 text-left',
+            'flex w-full items-center justify-between rounded-md border border-input bg-background px-2 text-left',
             'ring-offset-background transition-colors',
             'hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-            compact ? 'h-8 text-xs' : 'h-9 text-sm',
+            compact ? 'h-8 gap-1.5 text-xs' : 'h-10 gap-2 text-sm',
           )}
         >
-          <span className={cn('truncate', !selectedItem && 'text-muted-foreground')}>
-            {selectedItem
-              ? `${icon} ${selectedItem.title}`
-              : `Select ${typeLabel.toLowerCase()}...`}
-          </span>
-          <span className="flex items-center gap-1 shrink-0 ml-1">
+          {selectedItem ? (
+            /* Item seleccionado — thumbnail + título */
+            <span className="flex min-w-0 flex-1 items-center gap-2">
+              <span className={cn(
+                'relative shrink-0 overflow-hidden rounded-sm',
+                compact ? 'size-5' : 'h-8 w-[22px]',
+              )}>
+                <CoverImage
+                  src={selectedItem.coverImageUrl}
+                  alt={selectedItem.title}
+                  contentType={contentType}
+                  sizes="32px"
+                  className="object-cover"
+                  iconSize={compact ? 'text-[10px]' : 'text-xs'}
+                  showTitle={false}
+                />
+              </span>
+              <span className="truncate font-medium">{selectedItem.title}</span>
+            </span>
+          ) : (
+            /* Sin selección — placeholder con CoverImage igual que las cards */
+            <span className="flex min-w-0 flex-1 items-center gap-2 text-muted-foreground">
+              <span className={cn(
+                'relative shrink-0 overflow-hidden rounded-sm',
+                compact ? 'size-5' : 'h-8 w-[22px]',
+              )}>
+                <CoverImage
+                  src={null}
+                  alt=""
+                  contentType={contentType}
+                  sizes="32px"
+                  iconSize={compact ? 'text-[10px]' : 'text-xs'}
+                  showTitle={false}
+                />
+              </span>
+              <span className="truncate">{t('selectItem', { type: typeLabel.toLowerCase() })}</span>
+            </span>
+          )}
+          <span className="flex items-center gap-1 shrink-0">
             {selectedItem && (
               <span
                 role="button"
@@ -163,7 +197,7 @@ export function ContentPicker({
                 autoFocus
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder={`Search ${typeLabel.toLowerCase()}...`}
+                placeholder={t('searchItem', { type: typeLabel.toLowerCase() })}
                 className="flex-1 bg-transparent text-xs outline-none placeholder:text-muted-foreground"
               />
             </div>
@@ -190,18 +224,17 @@ export function ContentPicker({
                       item.id === contentId && 'bg-accent/60 font-medium',
                     )}
                   >
-                    {item.coverImageUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                    <span className="relative size-7 shrink-0 overflow-hidden rounded-sm">
+                      <CoverImage
                         src={item.coverImageUrl}
                         alt=""
-                        className="size-7 shrink-0 rounded-sm object-cover"
+                        contentType={contentType}
+                        sizes="28px"
+                        className="object-cover"
+                        iconSize="text-sm"
+                        showTitle={false}
                       />
-                    ) : (
-                      <span className="flex size-7 shrink-0 items-center justify-center rounded-sm bg-muted text-base">
-                        {icon}
-                      </span>
-                    )}
+                    </span>
                     <span className="flex flex-col min-w-0">
                       <span className="truncate font-medium leading-tight">{item.title}</span>
                       <span className="truncate text-[10px] text-muted-foreground leading-tight">{item.year}</span>

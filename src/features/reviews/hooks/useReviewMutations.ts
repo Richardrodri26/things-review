@@ -6,7 +6,19 @@ import { toast } from '@/shared/lib/toast'
 import type { CreateReviewDTO, UpdateReviewDTO } from '@/entities/review/types'
 import { REVIEWS_QUERY_KEY } from './useReviews'
 
-export function useCreateReview() {
+export interface ReviewToastMessages {
+  saved?: string
+  savedError?: string
+  savedErrorDescription?: string
+  updated?: string
+  updatedError?: string
+  updatedErrorDescription?: string
+  deleted?: string
+  deletedError?: string
+  deletedErrorDescription?: string
+}
+
+export function useCreateReview(messages?: ReviewToastMessages) {
   const queryClient = useQueryClient()
   const addReview = useStore((s) => s.addReview)
 
@@ -15,15 +27,18 @@ export function useCreateReview() {
     onSuccess: (newReview) => {
       addReview(newReview)
       queryClient.invalidateQueries({ queryKey: REVIEWS_QUERY_KEY })
-      toast.success({ title: 'Review saved' })
+      toast.success({ title: messages?.saved ?? 'Review saved' })
     },
     onError: () => {
-      toast.error({ title: 'Could not save review', description: 'Please try again.' })
+      toast.error({
+        title: messages?.savedError ?? 'Could not save review',
+        description: messages?.savedErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }
 
-export function useUpdateReview() {
+export function useUpdateReview(messages?: ReviewToastMessages) {
   const queryClient = useQueryClient()
   const updateReview = useStore((s) => s.updateReview)
 
@@ -33,15 +48,18 @@ export function useUpdateReview() {
     onSuccess: (updatedReview) => {
       updateReview(updatedReview.id, updatedReview)
       queryClient.invalidateQueries({ queryKey: REVIEWS_QUERY_KEY })
-      toast.success({ title: 'Review updated' })
+      toast.success({ title: messages?.updated ?? 'Review updated' })
     },
     onError: () => {
-      toast.error({ title: 'Could not update review', description: 'Please try again.' })
+      toast.error({
+        title: messages?.updatedError ?? 'Could not update review',
+        description: messages?.updatedErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }
 
-export function useDeleteReview() {
+export function useDeleteReview(messages?: ReviewToastMessages) {
   const queryClient = useQueryClient()
   const removeReview = useStore((s) => s.removeReview)
 
@@ -50,10 +68,13 @@ export function useDeleteReview() {
     onSuccess: (_, id) => {
       removeReview(id)
       queryClient.invalidateQueries({ queryKey: REVIEWS_QUERY_KEY })
-      toast.success({ title: 'Review deleted' })
+      toast.success({ title: messages?.deleted ?? 'Review deleted' })
     },
     onError: () => {
-      toast.error({ title: 'Could not delete review', description: 'Please try again.' })
+      toast.error({
+        title: messages?.deletedError ?? 'Could not delete review',
+        description: messages?.deletedErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }

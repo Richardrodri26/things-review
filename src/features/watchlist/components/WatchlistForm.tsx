@@ -31,10 +31,11 @@ const watchlistFormSchema = z.object({
 type WatchlistFormData = z.input<typeof watchlistFormSchema>
 
 function getErrorMessage(error: unknown): string | undefined {
+  if (!error) return undefined
+  if (typeof error === 'string') return error
   if (error && typeof error === 'object' && 'message' in error) {
     return String((error as { message: unknown }).message)
   }
-  if (typeof error === 'string') return error
   return undefined
 }
 
@@ -57,8 +58,17 @@ export function WatchlistForm({
 }: WatchlistFormProps) {
   const t = useTranslations('watchlist.form')
   const tCommon = useTranslations('common')
-  const addToWatchlist = useAddToWatchlist()
-  const updateItem = useUpdateWatchlistItem()
+  const tToasts = useTranslations('toasts')
+  const addToWatchlist = useAddToWatchlist({
+    added: tToasts('watchlist.added'),
+    addedError: tToasts('watchlist.addedError'),
+    addedErrorDescription: tToasts('tryAgain'),
+  })
+  const updateItem = useUpdateWatchlistItem({
+    updated: tToasts('watchlist.updated'),
+    updatedError: tToasts('watchlist.updatedError'),
+    updatedErrorDescription: tToasts('tryAgain'),
+  })
 
   const targetDateStr = item?.targetDate
     ? new Date(item.targetDate).toISOString().split('T')[0]
@@ -74,7 +84,7 @@ export function WatchlistForm({
 
   const form = useForm({
     defaultValues,
-    validators: { onChange: watchlistFormSchema },
+    validators: { onSubmit: watchlistFormSchema },
     onSubmit: async ({ value }) => {
       const targetDate = value.targetDate ? new Date(value.targetDate) : undefined
 

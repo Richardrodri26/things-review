@@ -20,4 +20,4 @@ export interface UserStats {
 }
 
 export type CreateUserDTO = Omit<User, 'id' | 'createdAt' | 'updatedAt'>
-export type UpdateUserDTO = Partial<Pick<User, 'displayName' | 'avatarUrl' | 'bio'>>
+export type UpdateUserDTO = Partial<Pick<User, 'username' | 'displayName' | 'avatarUrl' | 'bio'>>

@@ -41,10 +41,12 @@ const reviewFormSchema = z.object({
 type ReviewFormData = z.input<typeof reviewFormSchema>
 
 function getErrorMessage(error: unknown): string | undefined {
-  if (error && typeof error === 'object' && 'message' in error) {
-    return String((error as { message: unknown }).message)
-  }
+  if (!error) return undefined
   if (typeof error === 'string') return error
+  if (error && typeof error === 'object') {
+    // ZodIssue from @tanstack/react-form + zod validator
+    if ('message' in error) return String((error as { message: unknown }).message)
+  }
   return undefined
 }
 
@@ -78,19 +80,20 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
 
   const form = useForm({
     defaultValues,
+    validators: {
+      onSubmit: reviewFormSchema,
+    },
     onSubmit: async ({ value }) => {
       if (!user) return
 
-      const validation = reviewFormSchema.safeParse(value)
-
-      if (!validation.success) {
-        const contentIdIssue = validation.error.issues.find((i) => i.path[0] === 'contentId')
-        setContentIdError(contentIdIssue?.message)
+      // contentId manual check (ContentPicker doesn't trigger field validators)
+      if (!value.contentId) {
+        setContentIdError('Content is required')
         return
       }
 
       setContentIdError(undefined)
-      const formValues = validation.data as ReviewFormValues
+      const formValues = value as ReviewFormValues
 
       try {
         if (mode === 'create') {

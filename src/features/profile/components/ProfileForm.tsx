@@ -41,9 +41,14 @@ interface ProfileFormProps {
 }
 
 export function ProfileForm({ user, onSuccess, onCancel }: ProfileFormProps) {
-  const updateProfile = useUpdateProfile()
   const t = useTranslations('profile.form')
   const tCommon = useTranslations('common')
+  const tToasts = useTranslations('toasts')
+  const updateProfile = useUpdateProfile({
+    updated: tToasts('profile.updated'),
+    updatedError: tToasts('profile.updatedError'),
+    updatedErrorDescription: tToasts('tryAgain'),
+  })
 
   const defaultValues: FormData = {
     displayName: user.displayName,

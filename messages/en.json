@@ -166,13 +166,24 @@
       "title": "Movies",
       "count": "{count, plural, one {# title} other {# titles}}",
       "empty": "No movies in catalog",
-      "emptyDescription": "The catalog will populate on next load."
+      "emptyDescription": "The catalog will populate on next load.",
+      "noMatch": "No movies match your filters",
+      "noMatchDescription": "Try adjusting or clearing the filters."
     },
     "series": {
       "title": "Series",
       "count": "{count, plural, one {# title} other {# titles}}",
       "empty": "No series in catalog",
-      "emptyDescription": "The catalog will populate on next load."
+      "emptyDescription": "The catalog will populate on next load.",
+      "noMatch": "No series match your filters",
+      "noMatchDescription": "Try adjusting or clearing the filters."
+    },
+    "filters": {
+      "genre": "Genre:",
+      "reviewed": "Reviewed",
+      "notReviewed": "Not reviewed",
+      "count": "{filtered} of {total}",
+      "countAll": "{count, plural, one {# title} other {# titles}}"
     },
     "detail": {
       "notFound": "Content not found.",
@@ -261,7 +272,9 @@
       "selectType": "Select type",
       "clearSelection": "Clear selection",
       "noResultsSearch": "No results found",
-      "noResultsCatalog": "No {type}s in catalog"
+      "noResultsCatalog": "No {type}s in catalog",
+      "selectItem": "Select {type}...",
+      "searchItem": "Search {type}..."
     }
   },
   "watchlist": {
@@ -436,6 +449,48 @@
       "bioPlaceholder": "A short description about yourself...",
       "submit": "Get Started",
       "submitting": "Creating profile..."
+    }
+  },
+  "toasts": {
+    "tryAgain": "Please try again.",
+    "reviews": {
+      "saved": "Review saved",
+      "savedError": "Could not save review",
+      "updated": "Review updated",
+      "updatedError": "Could not update review",
+      "deleted": "Review deleted",
+      "deletedError": "Could not delete review",
+      "failedToSave": "Failed to save review",
+      "failedToSaveDescription": "Something went wrong. Please try again."
+    },
+    "watchlist": {
+      "added": "Added to watchlist",
+      "addedError": "Could not add to watchlist",
+      "updated": "Watchlist item updated",
+      "updatedError": "Could not update item",
+      "removed": "Removed from watchlist",
+      "removedError": "Could not remove item",
+      "consumed": "Marked as consumed",
+      "consumedDescription": "A review was created — add your rating and thoughts.",
+      "consumedError": "Could not mark as consumed"
+    },
+    "groups": {
+      "created": "Group \"{name}\" created",
+      "createdError": "Could not create group",
+      "updated": "Group updated",
+      "updatedError": "Could not update group",
+      "deleted": "Group deleted",
+      "deletedError": "Could not delete group",
+      "joined": "Joined \"{name}\""
+    },
+    "profile": {
+      "updated": "Profile updated",
+      "updatedError": "Could not update profile"
+    },
+    "comments": {
+      "postError": "Could not post comment",
+      "updateError": "Could not update comment",
+      "deleteError": "Could not delete comment"
     }
   }
 }

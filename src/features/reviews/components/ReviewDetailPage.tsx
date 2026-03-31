@@ -49,10 +49,15 @@ interface ReviewDetailPageProps {
 export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
   const t = useTranslations('reviews.detail')
   const tCommon = useTranslations('common')
+  const tToasts = useTranslations('toasts')
   const router = useRouter()
   const { data: review, isLoading } = useReviewById(reviewId)
   const itemTitle = useCatalogItemTitle(review?.contentId ?? '')
-  const deleteReview = useDeleteReview()
+  const deleteReview = useDeleteReview({
+    deleted: tToasts('reviews.deleted'),
+    deletedError: tToasts('reviews.deletedError'),
+    deletedErrorDescription: tToasts('tryAgain'),
+  })
   const [showSpoilers, setShowSpoilers] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)

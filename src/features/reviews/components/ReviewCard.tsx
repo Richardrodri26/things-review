@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
-import { PencilIcon, TrashIcon, ArrowRightIcon, MessageSquareIcon } from 'lucide-react'
+import { PencilIcon, TrashIcon, MessageSquareIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { RatingStars, ContentTypeBadge, StatusBadge } from '@/shared/ui/atoms'
 import { CoverImage } from '@/shared/ui/atoms/CoverImage'
@@ -26,11 +26,15 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
   const catalogItem = useCatalogItem(review.contentType, review.contentId)
   const { data: comments = [] } = useComments(review.id)
 
+  // Only top-level comments (no replies) count toward the badge
   const commentCount = comments.filter((c) => !c.parentId).length
   const bodyPreview = review.body ? extractPlainText(review.body) : undefined
 
   return (
-    <div className="group relative flex flex-col rounded-xl border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-md transition-all duration-200">
+    <Link
+      href={ROUTES.REVIEW_DETAIL(review.id)}
+      className="group relative flex flex-col rounded-xl border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer"
+    >
 
       {/* ── Poster area ─────────────────────────────────────────────── */}
       <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted">
@@ -59,7 +63,7 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
             <Button
               variant="secondary"
               size="icon-sm"
-              onClick={() => onEdit(review)}
+              onClick={(e) => { e.preventDefault(); onEdit(review) }}
               aria-label={t('editAriaLabel')}
               className="size-7 shadow-sm"
             >
@@ -70,7 +74,7 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
             <Button
               variant="secondary"
               size="icon-sm"
-              onClick={() => onDelete(review)}
+              onClick={(e) => { e.preventDefault(); onDelete(review) }}
               aria-label={t('deleteAriaLabel')}
               className="size-7 shadow-sm text-destructive hover:text-destructive"
             >
@@ -85,15 +89,6 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
             <RatingStars value={review.rating} readonly size="sm" showValue />
           </div>
         )}
-
-        {/* View link — bottom-right */}
-        <Link
-          href={ROUTES.REVIEW_DETAIL(review.id)}
-          className="absolute bottom-2.5 right-2.5 inline-flex items-center justify-center size-6 rounded-full bg-white/20 backdrop-blur-sm text-white hover:bg-white/35 transition-colors"
-          aria-label={t('viewAriaLabel')}
-        >
-          <ArrowRightIcon className="size-3.5" />
-        </Link>
       </div>
 
       {/* ── Info area ───────────────────────────────────────────────── */}
@@ -128,6 +123,6 @@ export function ReviewCard({ review, onEdit, onDelete }: ReviewCardProps) {
           )}
         </div>
       </div>
-    </div>
+    </Link>
   )
 }

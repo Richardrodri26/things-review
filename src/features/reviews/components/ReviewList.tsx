@@ -31,8 +31,13 @@ type UIMode =
 export function ReviewList() {
   const t = useTranslations('reviews')
   const tCommon = useTranslations('common')
+  const tToasts = useTranslations('toasts')
   const { data: reviews = [], isLoading } = useReviews()
-  const deleteReview = useDeleteReview()
+  const deleteReview = useDeleteReview({
+    deleted: tToasts('reviews.deleted'),
+    deletedError: tToasts('reviews.deletedError'),
+    deletedErrorDescription: tToasts('tryAgain'),
+  })
   const [mode, setMode] = useState<UIMode>({ type: 'idle' })
 
   // Filter state — URL-persisted via nuqs
@@ -121,7 +126,7 @@ export function ReviewList() {
 
       {/* List */}
       {isLoading ? (
-        <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(180px,220px))]">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-3">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="rounded-xl bg-muted animate-pulse aspect-[3/4]" />
           ))}
@@ -150,7 +155,7 @@ export function ReviewList() {
           }
         />
       ) : (
-        <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(180px,220px))]">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] gap-3">
           {filteredReviews.map((review) => (
             <ReviewCard
               key={review.id}

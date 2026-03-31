@@ -5,7 +5,7 @@ import { uuidSchema, userIdSchema } from '@/shared/schemas'
 export const commentSchema = z.object({
   id: uuidSchema,
   reviewId: uuidSchema,
-  groupId: z.string().min(1),
+  groupId: z.string().nullable(),
   authorId: userIdSchema,
   body: z.string().min(1).max(500),
   parentId: uuidSchema.nullable(),

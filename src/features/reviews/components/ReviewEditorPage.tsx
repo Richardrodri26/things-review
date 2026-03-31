@@ -68,9 +68,18 @@ export function ReviewEditorPage({
 }: ReviewEditorPageProps) {
   const t = useTranslations('reviews.editor')
   const tCommon = useTranslations('common')
+  const tToasts = useTranslations('toasts')
   const user = useUser()
-  const createReview = useCreateReview()
-  const updateReview = useUpdateReview()
+  const createReview = useCreateReview({
+    saved: tToasts('reviews.saved'),
+    savedError: tToasts('reviews.savedError'),
+    savedErrorDescription: tToasts('tryAgain'),
+  })
+  const updateReview = useUpdateReview({
+    updated: tToasts('reviews.updated'),
+    updatedError: tToasts('reviews.updatedError'),
+    updatedErrorDescription: tToasts('tryAgain'),
+  })
 
   // ── Refs para los campos de escritura libre ──────────────
   const titleRef = useRef<HTMLInputElement>(null)
@@ -155,8 +164,8 @@ export function ReviewEditorPage({
       }
     } catch {
       toast.error({
-        title: 'Failed to save review',
-        description: 'Something went wrong. Please try again.',
+        title: tToasts('reviews.failedToSave'),
+        description: tToasts('reviews.failedToSaveDescription'),
       })
     } finally {
       setIsSubmitting(false)

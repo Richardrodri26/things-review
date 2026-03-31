@@ -7,7 +7,24 @@ import { toast } from '@/shared/lib/toast'
 import type { CreateGroupDTO, UpdateGroupDTO } from '@/entities/group/types'
 import { GROUPS_QUERY_KEY } from './useGroups'
 
-export function useCreateGroup() {
+export interface GroupToastMessages {
+  created?: string | ((name: string) => string)
+  createdError?: string
+  createdErrorDescription?: string
+  updated?: string
+  updatedError?: string
+  updatedErrorDescription?: string
+  deleted?: string
+  deletedError?: string
+  deletedErrorDescription?: string
+  joined?: string | ((name: string) => string)
+  joinedInvalidCode?: string
+  joinedInvalidCodeDescription?: string
+  joinedError?: string
+  joinedErrorDescription?: string
+}
+
+export function useCreateGroup(messages?: GroupToastMessages) {
   const queryClient = useQueryClient()
   const addGroup = useStore((s) => s.addGroup)
   const user = useUser()
@@ -20,15 +37,22 @@ export function useCreateGroup() {
     onSuccess: (newGroup) => {
       addGroup(newGroup)
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
-      toast.success({ title: `Group "${newGroup.name}" created` })
+      const title =
+        typeof messages?.created === 'function'
+          ? messages.created(newGroup.name)
+          : messages?.created ?? `Group "${newGroup.name}" created`
+      toast.success({ title })
     },
     onError: () => {
-      toast.error({ title: 'Could not create group', description: 'Please try again.' })
+      toast.error({
+        title: messages?.createdError ?? 'Could not create group',
+        description: messages?.createdErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }
 
-export function useUpdateGroup() {
+export function useUpdateGroup(messages?: GroupToastMessages) {
   const queryClient = useQueryClient()
   const updateGroup = useStore((s) => s.updateGroup)
 
@@ -38,15 +62,18 @@ export function useUpdateGroup() {
     onSuccess: (updatedGroup) => {
       updateGroup(updatedGroup.id, updatedGroup)
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
-      toast.success({ title: 'Group updated' })
+      toast.success({ title: messages?.updated ?? 'Group updated' })
     },
     onError: () => {
-      toast.error({ title: 'Could not update group', description: 'Please try again.' })
+      toast.error({
+        title: messages?.updatedError ?? 'Could not update group',
+        description: messages?.updatedErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }
 
-export function useDeleteGroup() {
+export function useDeleteGroup(messages?: GroupToastMessages) {
   const queryClient = useQueryClient()
   const removeGroup = useStore((s) => s.removeGroup)
 
@@ -55,15 +82,18 @@ export function useDeleteGroup() {
     onSuccess: (_, id) => {
       removeGroup(id)
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
-      toast.success({ title: 'Group deleted' })
+      toast.success({ title: messages?.deleted ?? 'Group deleted' })
     },
     onError: () => {
-      toast.error({ title: 'Could not delete group', description: 'Please try again.' })
+      toast.error({
+        title: messages?.deletedError ?? 'Could not delete group',
+        description: messages?.deletedErrorDescription ?? 'Please try again.',
+      })
     },
   })
 }
 
-export function useJoinGroup() {
+export function useJoinGroup(messages?: GroupToastMessages) {
   const queryClient = useQueryClient()
   const addGroup = useStore((s) => s.addGroup)
   const user = useUser()
@@ -79,14 +109,22 @@ export function useJoinGroup() {
     onSuccess: (group) => {
       addGroup(group)
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
-      toast.success({ title: `Joined "${group.name}"` })
+      const title =
+        typeof messages?.joined === 'function'
+          ? messages.joined(group.name)
+          : messages?.joined ?? `Joined "${group.name}"`
+      toast.success({ title })
     },
     onError: (err) => {
       const isInvalidCode =
         err instanceof Error && err.message === 'Invalid invite code'
       toast.error({
-        title: isInvalidCode ? 'Invalid invite code' : 'Could not join group',
-        description: isInvalidCode ? 'Check the code and try again.' : 'Please try again.',
+        title: isInvalidCode
+          ? (messages?.joinedInvalidCode ?? 'Invalid invite code')
+          : (messages?.joinedError ?? 'Could not join group'),
+        description: isInvalidCode
+          ? (messages?.joinedInvalidCodeDescription ?? 'Check the code and try again.')
+          : (messages?.joinedErrorDescription ?? 'Please try again.'),
       })
     },
   })

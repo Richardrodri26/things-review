@@ -3,6 +3,7 @@
 // src/features/comments/components/ReplyForm.tsx
 
 import { useForm } from '@tanstack/react-form'
+import { useTranslations } from 'next-intl'
 import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -22,7 +23,11 @@ interface ReplyFormProps {
 
 export function ReplyForm({ reviewId, groupId, parentId, onCancel }: ReplyFormProps) {
   const user = useUser()
-  const createComment = useCreateComment(reviewId)
+  const tToasts = useTranslations('toasts')
+  const createComment = useCreateComment(reviewId, {
+    postError: tToasts('comments.postError'),
+    postErrorDescription: tToasts('tryAgain'),
+  })
 
   const form = useForm({
     defaultValues: { body: '' },

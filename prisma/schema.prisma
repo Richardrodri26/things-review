@@ -95,7 +95,7 @@ model Review {
 model Comment {
   id        String   @id @default(uuid())
   reviewId  String
-  groupId   String
+  groupId   String?
   authorId  String
   body      String   @db.VarChar(500)
   parentId  String?
@@ -103,7 +103,7 @@ model Comment {
   updatedAt DateTime @updatedAt
 
   review  Review    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  group   Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  group   Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
   author  User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   parent  Comment?  @relation("CommentThread", fields: [parentId], references: [id])
   replies Comment[] @relation("CommentThread")

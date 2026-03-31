@@ -48,10 +48,15 @@ interface GroupFormProps {
 }
 
 export function GroupForm({ onSuccess, onCancel }: GroupFormProps) {
-  const createGroup = useCreateGroup()
   const t = useTranslations('groups.form')
   const tCommon = useTranslations('common')
   const tContentType = useTranslations('contentType')
+  const tToasts = useTranslations('toasts')
+  const createGroup = useCreateGroup({
+    created: (name) => tToasts('groups.created', { name }),
+    createdError: tToasts('groups.createdError'),
+    createdErrorDescription: tToasts('tryAgain'),
+  })
 
   const defaultValues: FormData = {
     name: '',

@@ -25,11 +25,16 @@ export function MovieDetailPage({ movieId }: MovieDetailPageProps) {
   const router = useRouter()
   const { data: movie, isLoading } = useMovie(movieId)
   const reviews = useStore((s) => s.reviews)
-  const deleteReview = useDeleteReview()
   const [dialog, setDialog] = useState<DialogMode>('none')
   const t = useTranslations('catalog.detail')
   const tNav = useTranslations('nav')
   const tCommon = useTranslations('common')
+  const tToasts = useTranslations('toasts')
+  const deleteReview = useDeleteReview({
+    deleted: tToasts('reviews.deleted'),
+    deletedError: tToasts('reviews.deletedError'),
+    deletedErrorDescription: tToasts('tryAgain'),
+  })
 
   const existingReview = reviews.find((r) => r.contentId === movieId)
 
@@ -136,12 +141,14 @@ export function MovieDetailPage({ movieId }: MovieDetailPageProps) {
           </div>
 
           {existingReview ? (
-            <ReviewCard
-              review={existingReview}
-              onDelete={async (r) => {
-                await deleteReview.mutateAsync(r.id)
-              }}
-            />
+            <div className="max-w-[220px]">
+              <ReviewCard
+                review={existingReview}
+                onDelete={async (r) => {
+                  await deleteReview.mutateAsync(r.id)
+                }}
+              />
+            </div>
           ) : (
             <p className="text-sm text-muted-foreground">{t('noReview')}</p>
           )}

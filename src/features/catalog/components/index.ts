@@ -1,5 +1,7 @@
 // src/features/catalog/components/index.ts
 export { CatalogItemCard } from './CatalogItemCard'
+export { CatalogFilters } from './CatalogFilters'
+export type { ReviewedFilter } from './CatalogFilters'
 export { MovieDetailPage } from './MovieDetailPage'
 export { MoviesPage } from './MoviesPage'
 export { SeriesDetailPage } from './SeriesDetailPage'

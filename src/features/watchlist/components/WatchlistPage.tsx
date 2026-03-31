@@ -53,9 +53,9 @@ import {
 type UIMode =
   | { type: 'idle' }
   | { type: 'add' }
-  | { type: 'edit'; item: WatchlistItem }
-  | { type: 'remove'; item: WatchlistItem }
-  | { type: 'consume'; item: WatchlistItem }
+  | { type: 'edit'; item: WatchlistItem; title: string }
+  | { type: 'remove'; item: WatchlistItem; title: string }
+  | { type: 'consume'; item: WatchlistItem; title: string }
 
 type SortOption = 'priority' | 'date_added' | 'target_date'
 type FilterContentType = ContentType | 'all'
@@ -64,10 +64,20 @@ type FilterPriority = WatchlistPriority | 'all'
 export function WatchlistPage() {
   const t = useTranslations('watchlist')
   const tCommon = useTranslations('common')
+  const tToasts = useTranslations('toasts')
   const { data: items = [], isLoading } = useWatchlistItems()
   const { data: stats } = useWatchlistStats()
-  const removeItem = useRemoveFromWatchlist()
-  const convertToReview = useConvertWatchlistItemToReview()
+  const removeItem = useRemoveFromWatchlist({
+    removed: tToasts('watchlist.removed'),
+    removedError: tToasts('watchlist.removedError'),
+    removedErrorDescription: tToasts('tryAgain'),
+  })
+  const convertToReview = useConvertWatchlistItemToReview({
+    consumed: tToasts('watchlist.consumed'),
+    consumedDescription: tToasts('watchlist.consumedDescription'),
+    consumedError: tToasts('watchlist.consumedError'),
+    consumedErrorDescription: tToasts('tryAgain'),
+  })
 
   const [mode, setMode] = useState<UIMode>({ type: 'idle' })
   const [sortBy, setSortBy] = useState<SortOption>('priority')
@@ -182,9 +192,9 @@ export function WatchlistPage() {
 
       {/* Content */}
       {isLoading ? (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {[...Array(4)].map((_, i) => (
-            <Skeleton key={i} className="h-36 rounded-lg" />
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {[...Array(8)].map((_, i) => (
+            <Skeleton key={i} className="aspect-[3/4] rounded-xl" />
           ))}
         </div>
       ) : items.length === 0 ? (
@@ -231,14 +241,14 @@ export function WatchlistPage() {
           </EmptyContent>
         </Empty>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {processedItems.map((item) => (
             <WatchlistCard
               key={item.id}
               item={item}
-              onEdit={(i) => setMode({ type: 'edit', item: i })}
-              onRemove={(i) => setMode({ type: 'remove', item: i })}
-              onMarkAsConsumed={(i) => setMode({ type: 'consume', item: i })}
+              onEdit={(i, title) => setMode({ type: 'edit', item: i, title })}
+              onRemove={(i, title) => setMode({ type: 'remove', item: i, title })}
+              onMarkAsConsumed={(i, title) => setMode({ type: 'consume', item: i, title })}
             />
           ))}
         </div>
@@ -273,7 +283,7 @@ export function WatchlistPage() {
             <AlertDialogTitle>{t('removeDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
               {mode.type === 'remove'
-                ? t('removeDialog.description', { title: '' })
+                ? t('removeDialog.description', { title: mode.title })
                 : ''}
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -303,7 +313,7 @@ export function WatchlistPage() {
             <AlertDialogTitle>{t('consumeDialog.title')}</AlertDialogTitle>
             <AlertDialogDescription>
               {mode.type === 'consume'
-                ? t('consumeDialog.description', { title: '' })
+                ? t('consumeDialog.description', { title: mode.title })
                 : ''}
             </AlertDialogDescription>
           </AlertDialogHeader>

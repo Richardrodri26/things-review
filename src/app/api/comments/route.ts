@@ -15,25 +15,30 @@ export async function POST(req: NextRequest) {
   }
 
   // Verificar que el usuario es miembro del grupo (omitir para comentarios personales)
-  if (parsed.data.groupId !== 'personal') {
+  const resolvedGroupId = parsed.data.groupId === 'personal' ? null : parsed.data.groupId
+  if (resolvedGroupId) {
     const isMember = await prisma.groupMembership.findUnique({
-      where: { userId_groupId: { userId: session.user.id, groupId: parsed.data.groupId } },
+      where: { userId_groupId: { userId: session.user.id, groupId: resolvedGroupId } },
     })
     if (!isMember) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const comment = await prisma.comment.create({
-    data: {
-      reviewId: parsed.data.reviewId,
-      groupId: parsed.data.groupId,
-      authorId: session.user.id,
-      body: parsed.data.body,
-      parentId: parsed.data.parentId ?? null,
-    },
-    include: {
-      author: { select: { id: true, username: true, displayName: true, image: true } },
-    },
-  })
-
-  return NextResponse.json(comment, { status: 201 })
+  try {
+    const comment = await prisma.comment.create({
+      data: {
+        reviewId: parsed.data.reviewId,
+        groupId: resolvedGroupId,
+        authorId: session.user.id,
+        body: parsed.data.body,
+        parentId: parsed.data.parentId ?? null,
+      },
+      include: {
+        author: { select: { id: true, username: true, displayName: true, image: true } },
+      },
+    })
+    return NextResponse.json(comment, { status: 201 })
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e)
+    return NextResponse.json({ error: msg }, { status: 500 })
+  }
 }

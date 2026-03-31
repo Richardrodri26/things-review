@@ -55,7 +55,7 @@ export function RegisterForm() {
   const t = useTranslations('auth')
   const tCommon = useTranslations('common')
 
-  const form = useForm<FormData>({
+  const form = useForm({
     defaultValues: { email: '', password: '', confirmPassword: '', displayName: '', username: '' },
     validators: { onChange: registerSchema },
     onSubmit: async ({ value }) => {
