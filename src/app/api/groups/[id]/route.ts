@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireSession } from '@/lib/auth-server'
+import { checkRateLimit } from '@/lib/rate-limiter'
 import { prisma } from '@/lib/prisma'
 import { updateGroupDTOSchema } from '@/entities/group/schema'
 
@@ -32,6 +33,17 @@ export async function PATCH(req: NextRequest, { params }: Params) {
   const { session, response } = await requireSession()
   if (response) return response
 
+  const { allowed, retryAfter } = checkRateLimit(session.user.id, 'write')
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too Many Requests' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(retryAfter) },
+      }
+    )
+  }
+
   const { id } = await params
   const membership = await prisma.groupMembership.findUnique({
     where: { userId_groupId: { userId: session.user.id, groupId: id } },
@@ -59,6 +71,17 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 export async function DELETE(_req: NextRequest, { params }: Params) {
   const { session, response } = await requireSession()
   if (response) return response
+
+  const { allowed, retryAfter } = checkRateLimit(session.user.id, 'write')
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too Many Requests' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(retryAfter) },
+      }
+    )
+  }
 
   const { id } = await params
   const group = await prisma.group.findUnique({ where: { id } })

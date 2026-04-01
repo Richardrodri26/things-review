@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireSession } from '@/lib/auth-server'
+import { checkRateLimit } from '@/lib/rate-limiter'
 import { prisma } from '@/lib/prisma'
 import { createGroupDTOSchema } from '@/entities/group/schema'
 import { generateInviteCode } from '@/lib/server-utils'
@@ -40,6 +41,17 @@ export async function POST(req: NextRequest) {
   const { session, response } = await requireSession()
   if (response) return response
 
+  const { allowed, retryAfter } = checkRateLimit(session.user.id, 'write')
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too Many Requests' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(retryAfter) },
+      }
+    )
+  }
+
   const body = await req.json()
   const parsed = createGroupDTOSchema.safeParse({ ...body, ownerId: session.user.id })
 
@@ -49,7 +61,6 @@ export async function POST(req: NextRequest) {
 
   const { name, description, avatarUrl, visibility, focusContentTypes } = parsed.data
 
-  // Generar código único
   let inviteCode = generateInviteCode()
   let tries = 0
   while (await prisma.group.findUnique({ where: { inviteCode } })) {
