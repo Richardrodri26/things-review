@@ -1,11 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireSession } from '@/lib/auth-server'
+import { checkRateLimit } from '@/lib/rate-limiter'
 import { prisma } from '@/lib/prisma'
 import { createCommentDTOSchema } from '@/entities/comment/schema'
 
 export async function POST(req: NextRequest) {
   const { session, response } = await requireSession()
   if (response) return response
+
+  const { allowed, retryAfter } = checkRateLimit(session.user.id, 'write')
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too Many Requests' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(retryAfter) },
+      }
+    )
+  }
 
   const body = await req.json()
   const parsed = createCommentDTOSchema.safeParse({ ...body, authorId: session.user.id })
@@ -14,7 +26,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 })
   }
 
-  // Verificar que el usuario es miembro del grupo (omitir para comentarios personales)
   const resolvedGroupId = parsed.data.groupId === 'personal' ? null : parsed.data.groupId
   if (resolvedGroupId) {
     const isMember = await prisma.groupMembership.findUnique({

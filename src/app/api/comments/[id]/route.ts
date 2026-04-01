@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireSession } from '@/lib/auth-server'
+import { checkRateLimit } from '@/lib/rate-limiter'
 import { prisma } from '@/lib/prisma'
 import { updateCommentDTOSchema } from '@/entities/comment/schema'
 
@@ -8,6 +9,17 @@ type Params = { params: Promise<{ id: string }> }
 export async function PATCH(req: NextRequest, { params }: Params) {
   const { session, response } = await requireSession()
   if (response) return response
+
+  const { allowed, retryAfter } = checkRateLimit(session.user.id, 'write')
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too Many Requests' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(retryAfter) },
+      }
+    )
+  }
 
   const { id } = await params
   const existing = await prisma.comment.findUnique({ where: { id } })
@@ -38,6 +50,17 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
   const { session, response } = await requireSession()
   if (response) return response
 
+  const { allowed, retryAfter } = checkRateLimit(session.user.id, 'write')
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too Many Requests' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(retryAfter) },
+      }
+    )
+  }
+
   const { id } = await params
   const existing = await prisma.comment.findUnique({ where: { id } })
 
@@ -46,7 +69,6 @@ export async function DELETE(_req: NextRequest, { params }: Params) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  // Eliminar replies primero (cascade manual — parentId self-reference)
   await prisma.comment.deleteMany({ where: { parentId: id } })
   await prisma.comment.delete({ where: { id } })
 

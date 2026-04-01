@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { requireSession } from '@/lib/auth-server'
+import { checkRateLimit } from '@/lib/rate-limiter'
 import { prisma } from '@/lib/prisma'
 import { updateReviewDTOSchema } from '@/entities/review/schema'
 
@@ -26,9 +27,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
 
   if (!review) return NextResponse.json({ error: 'Review not found' }, { status: 404 })
 
-  // Owner can always see their own review
   if (review.userId !== session.user.id) {
-    // Allow if the viewer shares at least one group with the review's author
     const sharedGroup = await prisma.groupMembership.findFirst({
       where: {
         userId: session.user.id,
@@ -51,6 +50,17 @@ export async function GET(_req: NextRequest, { params }: Params) {
 export async function PATCH(req: NextRequest, { params }: Params) {
   const { session, response } = await requireSession()
   if (response) return response
+
+  const { allowed, retryAfter } = checkRateLimit(session.user.id, 'write')
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too Many Requests' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(retryAfter) },
+      }
+    )
+  }
 
   const { id } = await params
   const existing = await prisma.review.findUnique({ where: { id } })
@@ -83,6 +93,17 @@ export async function PATCH(req: NextRequest, { params }: Params) {
 export async function DELETE(_req: NextRequest, { params }: Params) {
   const { session, response } = await requireSession()
   if (response) return response
+
+  const { allowed, retryAfter } = checkRateLimit(session.user.id, 'write')
+  if (!allowed) {
+    return NextResponse.json(
+      { error: 'Too Many Requests' },
+      {
+        status: 429,
+        headers: { 'Retry-After': String(retryAfter) },
+      }
+    )
+  }
 
   const { id } = await params
   const existing = await prisma.review.findUnique({ where: { id } })
