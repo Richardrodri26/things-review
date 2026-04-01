@@ -3,9 +3,11 @@ import { ReviewDetailPage } from '@/features/reviews/components'
 
 interface ReviewDetailRouteProps {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ from?: string }>
 }
 
-export default async function ReviewDetailRoute({ params }: ReviewDetailRouteProps) {
+export default async function ReviewDetailRoute({ params, searchParams }: ReviewDetailRouteProps) {
   const { id } = await params
-  return <ReviewDetailPage reviewId={id} />
+  const { from } = await searchParams
+  return <ReviewDetailPage reviewId={id} backHref={from} />
 }

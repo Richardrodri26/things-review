@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { RatingStars, ContentTypeBadge, StatusBadge } from '@/shared/ui/atoms'
+import { CoverImage } from '@/shared/ui/atoms/CoverImage'
 import { EditorRenderer } from '@/components/editor/editor-renderer'
 import { CommentList } from '@/features/comments/components'
 import { ReviewEditorPage } from './ReviewEditorPage'
@@ -45,15 +46,20 @@ const DEFAULT_GROUP_ID = 'personal'
 
 interface ReviewDetailPageProps {
   reviewId: string
+  backHref?: string
 }
 
-export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
+export function ReviewDetailPage({ reviewId, backHref }: ReviewDetailPageProps) {
   const t = useTranslations('reviews.detail')
   const tCommon = useTranslations('common')
   const tToasts = useTranslations('toasts')
   const router = useRouter()
   const { data: review, isLoading } = useReviewById(reviewId)
-  const itemTitle = useCatalogItemTitle(review?.contentId ?? '', review?.contentType)
+  // Use catalogItem embedded in the review as primary source (always available).
+  // Fall back to useCatalogItemTitle only if catalogItem is missing (e.g. old data).
+  const fallbackTitle = useCatalogItemTitle(review?.contentId ?? '', review?.contentType)
+  const itemTitle = review?.catalogItem?.title ?? fallbackTitle
+  const coverImageUrl = review?.catalogItem?.coverImageUrl
   const deleteReview = useDeleteReview({
     deleted: tToasts('reviews.deleted'),
     deletedError: tToasts('reviews.deletedError'),
@@ -97,7 +103,7 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
       <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-sm border-b border-border/50">
         <div className="max-w-3xl mx-auto px-6 h-12 flex items-center justify-between">
           <Link
-            href={ROUTES.REVIEWS}
+            href={backHref ?? ROUTES.REVIEWS}
             className={cn(
               buttonVariants({ variant: 'ghost', size: 'sm' }),
               '-ml-2 text-muted-foreground hover:text-foreground',
@@ -156,52 +162,71 @@ export function ReviewDetailPage({ reviewId }: ReviewDetailPageProps) {
       <article className="max-w-3xl mx-auto px-6 pt-12 pb-28">
 
         {/* Header */}
-        <header className="space-y-5 mb-10">
-          {/* Badges row */}
-          <div className="flex flex-wrap items-center gap-2">
-            <ContentTypeBadge contentType={review.contentType} />
-            <StatusBadge status={review.status} contentType={review.contentType} />
-            {review.containsSpoilers && (
-              <Badge
-                variant="outline"
-                className="gap-1 text-amber-600 border-amber-400/50 text-xs"
-              >
-                <EyeOffIcon className="size-3" />
-                {t('spoilers')}
-              </Badge>
-            )}
-          </div>
-
-          {/* Content subtitle */}
-          {itemTitle && (
-            <p className="text-xs font-semibold text-muted-foreground tracking-widest uppercase">
-              {itemTitle}
-            </p>
-          )}
-
-          {/* Review title — large, editorial */}
-          <h1 className="text-4xl font-bold leading-[1.15] tracking-tight text-foreground">
-            {review.title ?? `Review of ${itemTitle ?? review.contentId}`}
-          </h1>
-
-          {/* Rating */}
-          {review.rating && (
-            <div className="pt-1">
-              <RatingStars value={review.rating} readonly size="lg" showValue />
+        <header className="mb-10">
+          {/* Poster + Info layout */}
+          <div className="flex gap-5 sm:gap-7">
+            {/* Poster */}
+            <div className="relative shrink-0 w-24 sm:w-32 aspect-[2/3] rounded-xl overflow-hidden border border-border/60 shadow-lg">
+              <CoverImage
+                src={coverImageUrl}
+                alt={itemTitle ?? ''}
+                contentType={review.contentType}
+                sizes="128px"
+                className="object-cover"
+                iconSize="text-3xl"
+                title={itemTitle ?? review.contentId}
+              />
             </div>
-          )}
 
-          {/* Meta row */}
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <CalendarIcon className="size-3" />
-              {formatDate(review.createdAt)}
-            </span>
-            {review.updatedAt > review.createdAt && (
-              <span className="italic">
-                {t('editedAt', { date: formatDate(review.updatedAt) })}
-              </span>
-            )}
+            {/* Info */}
+            <div className="flex-1 min-w-0 space-y-4 pt-1">
+              {/* Badges row */}
+              <div className="flex flex-wrap items-center gap-2">
+                <ContentTypeBadge contentType={review.contentType} />
+                <StatusBadge status={review.status} contentType={review.contentType} />
+                {review.containsSpoilers && (
+                  <Badge
+                    variant="outline"
+                    className="gap-1 text-amber-600 border-amber-400/50 text-xs"
+                  >
+                    <EyeOffIcon className="size-3" />
+                    {t('spoilers')}
+                  </Badge>
+                )}
+              </div>
+
+              {/* Content subtitle */}
+              {itemTitle && (
+                <p className="text-xs font-semibold text-muted-foreground tracking-widest uppercase">
+                  {itemTitle}
+                </p>
+              )}
+
+              {/* Review title — large, editorial */}
+              <h1 className="text-2xl sm:text-4xl font-bold leading-[1.15] tracking-tight text-foreground">
+                {review.title ?? `Review of ${itemTitle ?? review.contentId}`}
+              </h1>
+
+              {/* Rating */}
+              {review.rating && (
+                <div className="pt-1">
+                  <RatingStars value={review.rating} readonly size="lg" showValue />
+                </div>
+              )}
+
+              {/* Meta row */}
+              <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <CalendarIcon className="size-3" />
+                  {formatDate(review.createdAt)}
+                </span>
+                {review.updatedAt > review.createdAt && (
+                  <span className="italic">
+                    {t('editedAt', { date: formatDate(review.updatedAt) })}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </header>
 
@@ -268,14 +293,20 @@ function ReviewDetailSkeleton() {
     <div className="min-h-screen bg-background">
       <div className="border-b border-border/50 h-12" />
       <div className="max-w-3xl mx-auto px-6 pt-12 space-y-5">
-        <div className="flex gap-2">
-          <Skeleton className="h-5 w-16 rounded-full" />
-          <Skeleton className="h-5 w-20 rounded-full" />
+        {/* Poster + info skeleton */}
+        <div className="flex gap-5 sm:gap-7">
+          <Skeleton className="w-24 sm:w-32 aspect-[2/3] rounded-xl shrink-0" />
+          <div className="flex-1 space-y-4 pt-1">
+            <div className="flex gap-2">
+              <Skeleton className="h-5 w-16 rounded-full" />
+              <Skeleton className="h-5 w-20 rounded-full" />
+            </div>
+            <Skeleton className="h-3.5 w-28" />
+            <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-6 w-28" />
+            <Skeleton className="h-3 w-40" />
+          </div>
         </div>
-        <Skeleton className="h-3.5 w-28" />
-        <Skeleton className="h-11 w-3/4" />
-        <Skeleton className="h-6 w-28" />
-        <Skeleton className="h-3 w-40" />
         <Separator className="opacity-50" />
         <div className="space-y-3 pt-2">
           <Skeleton className="h-5 w-full" />

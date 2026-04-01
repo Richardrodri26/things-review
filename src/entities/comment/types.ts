@@ -25,8 +25,8 @@ export interface CommentWithAuthor extends Comment {
  * Comentario raíz con sus replies directas (1 nivel).
  * Para hilos infinitos, cambiar `replies` a `CommentThread[]` y hacerlo recursivo.
  */
-export interface CommentThread extends Comment {
-  replies: Comment[]
+export interface CommentThread extends CommentWithAuthor {
+  replies: CommentWithAuthor[]
 }
 
 export type CreateCommentDTO = Omit<Comment, 'id' | 'createdAt' | 'updatedAt'>

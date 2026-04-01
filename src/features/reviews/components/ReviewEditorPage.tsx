@@ -174,7 +174,7 @@ export function ReviewEditorPage({
     } finally {
       setIsSubmitting(false)
     }
-  }, [user, isSubmitting, form, mode, review, createReview, updateReview, onSuccess])
+  }, [user, isSubmitting, form, mode, review, createReview, updateReview, onSuccess, tToasts])
 
   // ── onChange del editor ──────────────────────────────────
   const handleEditorChange = useCallback((data: OutputData) => {
@@ -284,7 +284,7 @@ export function ReviewEditorPage({
                     type="button"
                     onClick={() => setContentLocked(false)}
                     className="shrink-0 rounded p-0.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-                    title="Change content"
+                    title={t('changeContent')}
                   >
                     <PencilIcon className="size-3" />
                   </button>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useDebouncer } from '@tanstack/react-pacer'
 import { apiPost } from '@/shared/services/api/api-client'
@@ -22,11 +22,13 @@ export function useProviderSearch(query: string, contentType: ContentType, enabl
     (state) => ({ isPending: state.isPending })
   )
 
-  // Fire debouncer on every query change (caller passes the raw input value)
-  // This replaces the old useEffect + setTimeout pattern
-  if (enabled) {
-    debouncer.maybeExecute(query)
-  }
+  // Fire debouncer inside an effect — never during render
+  useEffect(() => {
+    if (enabled) {
+      debouncer.maybeExecute(query)
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, enabled])
 
   const shouldFetch = enabled && debouncedQuery.trim().length >= MIN_QUERY_LENGTH
 

@@ -1,20 +1,23 @@
 // src/features/reviews/hooks/useReviews.ts
 import { useQuery } from '@tanstack/react-query'
 import { services } from '@/shared/services'
-import { useUser } from '@/shared/lib/store'
+import { useSession } from '@/lib/auth-client'
 
 export const REVIEWS_QUERY_KEY = ['reviews'] as const
 
 export function useReviews() {
-  const user = useUser()
+  // Use the session directly instead of the Zustand store to avoid a race condition
+  // where the store's user is populated asynchronously via useEffect after first render.
+  const { data: session } = useSession()
+  const userId = session?.user?.id
 
   return useQuery({
-    queryKey: [...REVIEWS_QUERY_KEY, user?.id],
+    queryKey: [...REVIEWS_QUERY_KEY, userId],
     queryFn: async () => {
-      if (!user?.id) return []
-      return services.reviews.getByUserId(user.id)
+      if (!userId) return []
+      return services.reviews.getByUserId(userId)
     },
-    enabled: !!user?.id,
+    enabled: !!userId,
   })
 }
 

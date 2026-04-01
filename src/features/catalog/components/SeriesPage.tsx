@@ -6,7 +6,7 @@ import { useQueryState, parseAsArrayOf, parseAsString } from 'nuqs'
 import { TvIcon } from 'lucide-react'
 import { EmptyState } from '@/shared/ui/atoms'
 import { useTranslations } from 'next-intl'
-import { useStore } from '@/shared/lib/store'
+import { useReviews } from '@/features/reviews/hooks'
 import { useSeriesList } from '../hooks'
 import { CatalogItemCard } from './CatalogItemCard'
 import { AddContentDialog } from './AddContentDialog'
@@ -15,10 +15,13 @@ import type { Genre } from '@/shared/types'
 
 export function SeriesPage() {
   const { data: seriesList = [], isLoading } = useSeriesList()
-  const reviews = useStore((s) => s.reviews)
+  const { data: reviews = [] } = useReviews()
   const t = useTranslations('catalog.series')
 
-  const reviewedContentIds = new Set(reviews.map((r) => r.contentId))
+  const reviewedContentIds = useMemo(
+    () => new Set(reviews.map((r) => r.contentId)),
+    [reviews]
+  )
 
   // Filter state — URL-persisted via nuqs
   const [selectedGenresRaw, setSelectedGenres] = useQueryState(

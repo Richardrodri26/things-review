@@ -12,17 +12,17 @@ import { formatDate } from '@/shared/utils'
 import { useUpdateComment, useDeleteComment } from '../hooks/useComments'
 import { useUser } from '@/shared/lib/store'
 import { ReplyForm } from './ReplyForm'
-import type { Comment } from '@/entities/comment/types'
+import type { CommentWithAuthor } from '@/entities/comment/types'
 
 interface CommentCardProps {
-  comment: Comment
+  comment: CommentWithAuthor
   isOwn?: boolean
   /**
    * Replies directas de este comentario (solo aplica a comentarios raíz, depth === 0).
    * Para hilos infinitos, `replies` sería `CommentThread[]` y se renderizaría recursivamente.
    * Ver docs/plans/2026-03-30-comment-replies.md para la guía de escalado.
    */
-  replies?: Comment[]
+  replies?: CommentWithAuthor[]
   /**
    * Profundidad actual del comentario. 0 = raíz, 1 = reply.
    * El botón "Reply" solo aparece en depth === 0 (1 nivel de profundidad).
@@ -81,7 +81,7 @@ export function CommentCard({
 
   const authorName = isOwn && currentUser
     ? (currentUser.displayName ?? currentUser.username)
-    : comment.authorId.slice(0, 8)
+    : (comment.author?.displayName ?? comment.author?.username ?? comment.authorId.slice(0, 8))
 
   const initials = getInitials(authorName)
 

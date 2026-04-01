@@ -25,9 +25,9 @@ export function generateId(): string {
  */
 export function generateInviteCode(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  return Array.from({ length: 8 }, () =>
-    chars[Math.floor(Math.random() * chars.length)]
-  ).join('')
+  // Security: getRandomValues() uses the platform CSPRNG — Math.random() is not cryptographically secure
+  const bytes = crypto.getRandomValues(new Uint8Array(8))
+  return Array.from(bytes, (b) => chars[b % chars.length]).join('')
 }
 
 /**

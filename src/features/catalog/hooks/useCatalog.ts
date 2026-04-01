@@ -13,7 +13,7 @@ export const GAMES_QUERY_KEY    = ['catalog', 'games']    as const
 export const BOOKS_QUERY_KEY    = ['catalog', 'books']    as const
 export const PODCASTS_QUERY_KEY = ['catalog', 'podcasts'] as const
 
-const CONTENT_TYPE_QUERY_KEY: Record<string, readonly string[]> = {
+export const CONTENT_TYPE_QUERY_KEY: Record<string, readonly string[]> = {
   movie:   MOVIES_QUERY_KEY,
   series:  SERIES_QUERY_KEY,
   music:   MUSIC_QUERY_KEY,

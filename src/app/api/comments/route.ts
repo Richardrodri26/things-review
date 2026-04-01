@@ -49,7 +49,8 @@ export async function POST(req: NextRequest) {
     })
     return NextResponse.json(comment, { status: 201 })
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e)
-    return NextResponse.json({ error: msg }, { status: 500 })
+    // Security: never leak internal error details to the client
+    console.error('[POST /api/comments]', e)
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

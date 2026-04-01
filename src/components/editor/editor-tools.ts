@@ -1,28 +1,19 @@
 // src/components/editor/editor-tools.ts
 // Configuración de tools para EditorJS
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 import Header from '@editorjs/header'
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 import List from '@editorjs/list'
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 import Quote from '@editorjs/quote'
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 import Code from '@editorjs/code'
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 import Delimiter from '@editorjs/delimiter'
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 import InlineCode from '@editorjs/inline-code'
-
-// Estos paquetes no tienen tipos — usamos require para evitar el error TS7016
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Checklist = require('@editorjs/checklist') as any
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Marker = require('@editorjs/marker') as any
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Embed = require('@editorjs/embed') as any
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const Image = require('@editorjs/image') as any
+// @ts-expect-error — @editorjs/checklist no tiene tipos declarados válidos
+import Checklist from '@editorjs/checklist'
+// @ts-expect-error — @editorjs/marker no tiene tipos declarados válidos
+import Marker from '@editorjs/marker'
+// @ts-expect-error — @editorjs/embed no tiene tipos declarados
+import Embed from '@editorjs/embed'
+import Image from '@editorjs/image'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const EDITOR_JS_TOOLS: Record<string, any> = {

@@ -12,8 +12,7 @@ import { useTranslations } from 'next-intl'
 import { ReviewCard } from '@/features/reviews/components/ReviewCard'
 import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage'
 import { ContentReviewTabs } from '@/features/reviews/components/ContentReviewTabs'
-import { useStore } from '@/shared/lib/store'
-import { useDeleteReview } from '@/features/reviews/hooks'
+import { useDeleteReview, useReviews } from '@/features/reviews/hooks'
 import { useMovie } from '../hooks'
 
 interface MovieDetailPageProps {
@@ -27,7 +26,7 @@ type DialogMode = 'none' | 'create' | 'edit'
 export function MovieDetailPage({ movieId, defaultGroupId }: MovieDetailPageProps) {
   const router = useRouter()
   const { data: movie, isLoading } = useMovie(movieId)
-  const reviews = useStore((s) => s.reviews)
+  const { data: reviews = [] } = useReviews()
   const [dialog, setDialog] = useState<DialogMode>('none')
   const t = useTranslations('catalog.detail')
   const tNav = useTranslations('nav')

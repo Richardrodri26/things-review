@@ -11,11 +11,13 @@ import { useUser } from '@/shared/lib/store'
 import { useCatalogItem, useCatalogItemTitle } from '@/features/catalog/hooks'
 import { CoverImage } from '@/shared/ui/atoms/CoverImage'
 import { CONTENT_TYPE_LABELS } from '@/shared/types'
+import { ROUTES } from '@/shared/constants'
 import type { ReviewWithUser } from '@/entities/review/types'
 import type { ContentType } from '@/shared/types'
 
 interface ContentReviewGroupProps {
   reviews: ReviewWithUser[]
+  groupId?: string
 }
 
 /**
@@ -23,7 +25,7 @@ interface ContentReviewGroupProps {
  * Cada contenido tiene un cluster con: poster thumb, título, promedio del grupo,
  * y todas las ReviewCards de los miembros.
  */
-export function ContentReviewGroup({ reviews }: ContentReviewGroupProps) {
+export function ContentReviewGroup({ reviews, groupId }: ContentReviewGroupProps) {
   const t = useTranslations('groups.detail')
   const user = useUser()
 
@@ -60,6 +62,7 @@ export function ContentReviewGroup({ reviews }: ContentReviewGroupProps) {
             contentType={first.contentType}
             reviews={groupReviews}
             currentUserId={user?.id}
+            groupId={groupId}
           />
         )
       })}
@@ -73,9 +76,10 @@ interface ContentClusterProps {
   contentType: ContentType
   reviews: ReviewWithUser[]
   currentUserId?: string
+  groupId?: string
 }
 
-function ContentCluster({ contentId, contentType, reviews, currentUserId }: ContentClusterProps) {
+function ContentCluster({ contentId, contentType, reviews, currentUserId, groupId }: ContentClusterProps) {
   const t = useTranslations('groups.detail')
   const catalogItem = useCatalogItem(contentType, contentId)
   const title = useCatalogItemTitle(contentId, contentType)
@@ -153,6 +157,11 @@ function ContentCluster({ contentId, contentType, reviews, currentUserId }: Cont
             review={review}
             author={review.user}
             isOwn={review.userId === currentUserId}
+            detailHref={
+              groupId
+                ? `${ROUTES.REVIEW_DETAIL(review.id)}?from=${ROUTES.GROUP_DETAIL(groupId)}`
+                : undefined
+            }
           />
         ))}
       </div>

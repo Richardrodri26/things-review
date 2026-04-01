@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'
 
 // GET /api/comments/by-review?reviewId=xxx
 export async function GET(req: NextRequest) {
-  const { session, response } = await requireSession()
+  const { response } = await requireSession()
   if (response) return response
 
   const { searchParams } = req.nextUrl

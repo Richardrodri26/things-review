@@ -252,6 +252,7 @@
       "reassignWarning": "Esto va a reasignar la reseña a otro contenido.",
       "cancelChange": "Cancelar cambio",
       "selectContent": "Seleccioná el contenido a reseñar",
+      "changeContent": "Cambiar contenido",
       "statusOptions": {
         "consumed": "Consumido",
         "want_to_consume": "Quiero consumir",
@@ -280,7 +281,11 @@
       "title": "Título",
       "review": "Reseña",
       "addReview": "Agregar Reseña",
-      "saveChanges": "Guardar Cambios"
+      "saveChanges": "Guardar Cambios",
+      "titlePlaceholder": "Dale un título a tu reseña...",
+      "bodyPlaceholder": "Escribí tus pensamientos...",
+      "contentRequired": "Seleccioná un contenido",
+      "changeContent": "Cambiar contenido"
     },
     "contentPicker": {
       "selectType": "Seleccioná el tipo",
@@ -288,7 +293,17 @@
       "noResultsSearch": "Sin resultados",
       "noResultsCatalog": "Sin {type}s en el catálogo",
       "selectItem": "Seleccioná {type}...",
-      "searchItem": "Buscar {type}..."
+      "searchItem": "Buscar {type}...",
+      "tabCatalog": "Mi Catálogo",
+      "tabDiscover": "Descubrí",
+      "discoverPlaceholder": "Buscá {type} en fuentes externas...",
+      "discoverEmpty": "Escribí para buscar en fuentes externas",
+      "discoverNoResults": "Sin resultados en fuentes externas",
+      "discoverSearching": "Buscando...",
+      "addingToCatalog": "Agregando...",
+      "providerBadge": "{provider}",
+      "streamingOn": "Disponible en",
+      "providerErrors": "{count, plural, one {# fuente no disponible} other {# fuentes no disponibles}}"
     }
   },
   "watchlist": {

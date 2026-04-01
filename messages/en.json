@@ -252,6 +252,7 @@
       "reassignWarning": "This will reassign the review to a different piece of content.",
       "cancelChange": "Cancel change",
       "selectContent": "Select content to review",
+      "changeContent": "Change content",
       "statusOptions": {
         "consumed": "Consumed",
         "want_to_consume": "Want to consume",
@@ -280,7 +281,11 @@
       "title": "Title",
       "review": "Review",
       "addReview": "Add Review",
-      "saveChanges": "Save Changes"
+      "saveChanges": "Save Changes",
+      "titlePlaceholder": "Give your review a title...",
+      "bodyPlaceholder": "Write your thoughts...",
+      "contentRequired": "Content is required",
+      "changeContent": "Change content"
     },
     "contentPicker": {
       "selectType": "Select type",
@@ -288,7 +293,17 @@
       "noResultsSearch": "No results found",
       "noResultsCatalog": "No {type}s in catalog",
       "selectItem": "Select {type}...",
-      "searchItem": "Search {type}..."
+      "searchItem": "Search {type}...",
+      "tabCatalog": "My Catalog",
+      "tabDiscover": "Discover",
+      "discoverPlaceholder": "Search {type} from external sources...",
+      "discoverEmpty": "Type to search external sources",
+      "discoverNoResults": "No results found in external sources",
+      "discoverSearching": "Searching...",
+      "addingToCatalog": "Adding...",
+      "providerBadge": "{provider}",
+      "streamingOn": "Streaming on",
+      "providerErrors": "{count, plural, one {# source unavailable} other {# sources unavailable}}"
     }
   },
   "watchlist": {

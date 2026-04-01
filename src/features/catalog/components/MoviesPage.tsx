@@ -6,7 +6,7 @@ import { useQueryState, parseAsArrayOf, parseAsString } from 'nuqs'
 import { FilmIcon } from 'lucide-react'
 import { EmptyState } from '@/shared/ui/atoms'
 import { useTranslations } from 'next-intl'
-import { useStore } from '@/shared/lib/store'
+import { useReviews } from '@/features/reviews/hooks'
 import { useMovies } from '../hooks'
 import { CatalogItemCard } from './CatalogItemCard'
 import { AddContentDialog } from './AddContentDialog'
@@ -15,10 +15,13 @@ import type { Genre } from '@/shared/types'
 
 export function MoviesPage() {
   const { data: movies = [], isLoading } = useMovies()
-  const reviews = useStore((s) => s.reviews)
+  const { data: reviews = [] } = useReviews()
   const t = useTranslations('catalog.movies')
 
-  const reviewedContentIds = new Set(reviews.map((r) => r.contentId))
+  const reviewedContentIds = useMemo(
+    () => new Set(reviews.map((r) => r.contentId)),
+    [reviews]
+  )
 
   // Filter state — URL-persisted via nuqs
   const [selectedGenresRaw, setSelectedGenres] = useQueryState(
@@ -74,8 +77,6 @@ export function MoviesPage() {
     setSelectedGenres(null)
     setReviewedFilter(null)
   }
-
-  const hasFilters = selectedGenres.length > 0 || reviewedFilter !== null
 
   return (
     <div className="flex flex-1 flex-col gap-4 p-4">

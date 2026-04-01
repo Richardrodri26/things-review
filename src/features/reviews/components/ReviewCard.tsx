@@ -21,9 +21,11 @@ interface ReviewCardProps {
   onDelete?: (review: Review) => void
   author?: Pick<User, 'id' | 'username' | 'displayName' | 'avatarUrl'>
   isOwn?: boolean
+  /** Href override for the card link. Defaults to ROUTES.REVIEW_DETAIL(review.id) */
+  detailHref?: string
 }
 
-export function ReviewCard({ review, onEdit, onDelete, author, isOwn }: ReviewCardProps) {
+export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref }: ReviewCardProps) {
   const t = useTranslations('reviews.card')
   const localCatalogItem = useCatalogItem(review.contentType, review.contentId)
   const resolvedItem = review.catalogItem ?? localCatalogItem
@@ -36,7 +38,7 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn }: ReviewCa
 
   return (
     <Link
-      href={ROUTES.REVIEW_DETAIL(review.id)}
+      href={detailHref ?? ROUTES.REVIEW_DETAIL(review.id)}
       className="group relative flex flex-col rounded-xl border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer"
     >
 

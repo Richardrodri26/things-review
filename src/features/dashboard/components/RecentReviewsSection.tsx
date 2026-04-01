@@ -2,7 +2,7 @@
 'use client'
 
 import Link from 'next/link'
-import { StarIcon, ArrowRightIcon, BookOpenIcon } from 'lucide-react'
+import { ArrowRightIcon, BookOpenIcon } from 'lucide-react'
 import { buttonVariants } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 import { RatingStars, ContentTypeBadge, StatusBadge } from '@/shared/ui/atoms'

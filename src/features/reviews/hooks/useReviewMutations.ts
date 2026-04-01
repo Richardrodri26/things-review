@@ -1,10 +1,10 @@
 // src/features/reviews/hooks/useReviewMutations.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { services } from '@/shared/services'
-import { useStore } from '@/shared/lib/store'
 import { toast } from '@/shared/lib/toast'
 import type { CreateReviewDTO, UpdateReviewDTO } from '@/entities/review/types'
 import { REVIEWS_QUERY_KEY } from './useReviews'
+import { GROUPS_QUERY_KEY } from '@/features/groups/hooks/useGroups'
 
 export interface ReviewToastMessages {
   saved?: string
@@ -20,13 +20,12 @@ export interface ReviewToastMessages {
 
 export function useCreateReview(messages?: ReviewToastMessages) {
   const queryClient = useQueryClient()
-  const addReview = useStore((s) => s.addReview)
 
   return useMutation({
     mutationFn: (data: CreateReviewDTO) => services.reviews.create(data),
-    onSuccess: (newReview) => {
-      addReview(newReview)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: REVIEWS_QUERY_KEY })
+      queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
       toast.success({ title: messages?.saved ?? 'Review saved' })
     },
     onError: () => {
@@ -40,14 +39,13 @@ export function useCreateReview(messages?: ReviewToastMessages) {
 
 export function useUpdateReview(messages?: ReviewToastMessages) {
   const queryClient = useQueryClient()
-  const updateReview = useStore((s) => s.updateReview)
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateReviewDTO }) =>
       services.reviews.update(id, data),
-    onSuccess: (updatedReview) => {
-      updateReview(updatedReview.id, updatedReview)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: REVIEWS_QUERY_KEY })
+      queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
       toast.success({ title: messages?.updated ?? 'Review updated' })
     },
     onError: () => {
@@ -61,13 +59,12 @@ export function useUpdateReview(messages?: ReviewToastMessages) {
 
 export function useDeleteReview(messages?: ReviewToastMessages) {
   const queryClient = useQueryClient()
-  const removeReview = useStore((s) => s.removeReview)
 
   return useMutation({
     mutationFn: (id: string) => services.reviews.delete(id),
-    onSuccess: (_, id) => {
-      removeReview(id)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: REVIEWS_QUERY_KEY })
+      queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
       toast.success({ title: messages?.deleted ?? 'Review deleted' })
     },
     onError: () => {

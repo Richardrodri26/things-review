@@ -12,6 +12,7 @@ export function ThemeToggle() {
   const t = useTranslations('theme')
 
   // Evita hydration mismatch — solo renderiza el ícono correcto en el cliente
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), [])
 
   if (!mounted) {

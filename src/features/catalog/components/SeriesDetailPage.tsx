@@ -12,8 +12,7 @@ import { useTranslations } from 'next-intl'
 import { ReviewCard } from '@/features/reviews/components/ReviewCard'
 import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage'
 import { ContentReviewTabs } from '@/features/reviews/components/ContentReviewTabs'
-import { useStore } from '@/shared/lib/store'
-import { useDeleteReview } from '@/features/reviews/hooks'
+import { useDeleteReview, useReviews } from '@/features/reviews/hooks'
 import { useSeriesItem } from '../hooks'
 
 interface SeriesDetailPageProps {
@@ -27,7 +26,7 @@ type DialogMode = 'none' | 'create' | 'edit'
 export function SeriesDetailPage({ seriesId, defaultGroupId }: SeriesDetailPageProps) {
   const router = useRouter()
   const { data: series, isLoading } = useSeriesItem(seriesId)
-  const reviews = useStore((s) => s.reviews)
+  const { data: reviews = [] } = useReviews()
   const [dialog, setDialog] = useState<DialogMode>('none')
   const t = useTranslations('catalog.detail')
   const tNav = useTranslations('nav')
@@ -154,7 +153,7 @@ export function SeriesDetailPage({ seriesId, defaultGroupId }: SeriesDetailPageP
           </div>
 
           {existingReview ? (
-            <div className="mb-6">
+            <div className="max-w-[220px] mb-6">
               <ReviewCard
                 review={existingReview}
                 onDelete={async (r) => {

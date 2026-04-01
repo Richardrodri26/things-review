@@ -52,6 +52,7 @@ function getErrorMessage(error: unknown): string | undefined {
 
 export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }: ReviewFormProps) {
   const t = useTranslations('reviews')
+  const tForm = useTranslations('reviews.form')
   const tCommon = useTranslations('common')
   const tStatusOptions = useTranslations('reviews.editor.statusOptions')
   const user = useUser()
@@ -92,7 +93,7 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
 
       // contentId manual check (ContentPicker doesn't trigger field validators)
       if (!value.contentId) {
-        setContentIdError('Content is required')
+        setContentIdError(tForm('contentRequired'))
         return
       }
 
@@ -146,7 +147,7 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
               type="button"
               onClick={() => setContentLocked(false)}
               className="shrink-0 rounded p-0.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              title="Change content"
+              title={tForm('changeContent')}
             >
               <PencilIcon className="size-3" />
             </button>
@@ -284,7 +285,7 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
             </Label>
             <Input
               id={field.name}
-              placeholder="Give your review a title..."
+              placeholder={tForm('titlePlaceholder')}
               value={field.state.value ?? ''}
               onChange={(e) => field.handleChange(e.target.value)}
               onBlur={field.handleBlur}
@@ -309,7 +310,7 @@ export function ReviewForm({ mode, initialValues, review, onSuccess, onCancel }:
               <EditorClient
                 defaultValue={field.state.value as OutputData | undefined}
                 onChange={(data) => field.handleChange(data)}
-                placeholder="Write your thoughts..."
+                placeholder={tForm('bodyPlaceholder')}
               />
             </div>
           </div>

@@ -5,7 +5,6 @@ import type {
   GroupRole,
   Rating,
 } from '@/shared/types'
-import type { User } from '@/entities/user/types'
 import type { ReviewWithUser } from '@/entities/review/types'
 import type { ReviewableItem } from '@/shared/types'
 import type { Review } from '@/entities/review/types'

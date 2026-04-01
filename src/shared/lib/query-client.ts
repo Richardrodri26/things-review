@@ -9,8 +9,7 @@ export function makeQueryClient() {
         staleTime: QUERY_CONFIG.STALE_TIME,
         gcTime: QUERY_CONFIG.GC_TIME,
         retry: QUERY_CONFIG.RETRY,
-        // Con localStorage no hay loading states reales — pero los dejamos para cuando sea HTTP
-        refetchOnWindowFocus: false,
+        refetchOnWindowFocus: true,
       },
     },
   })

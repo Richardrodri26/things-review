@@ -1,5 +1,5 @@
 // shared/services/comment.service.ts
-import type { Comment, CommentThread, CreateCommentDTO, UpdateCommentDTO } from '@/entities/comment/types'
+import type { Comment, CommentWithAuthor, CommentThread, CreateCommentDTO, UpdateCommentDTO } from '@/entities/comment/types'
 import { STORAGE_KEYS } from '@/shared/constants'
 import { generateId } from '@/shared/utils'
 import { getFromStorage, setToStorage } from './localStorage.service'
@@ -19,7 +19,19 @@ export interface ICommentService {
  *   - Cambiar el tipo de retorno a un tipo árbol recursivo
  *   - Iterar sobre todos los nodos, no solo las raíces
  * Ver docs/plans/2026-03-30-comment-replies.md para la guía completa.
+ *
+ * NOTE: This local (localStorage) implementation doesn't have real author data.
+ * The API implementation (ApiCommentService) returns full author info from the DB.
  */
+function toCommentWithAuthor(c: Comment): CommentWithAuthor {
+  return {
+    ...c,
+    // Local service doesn't have author info — provide a minimal placeholder.
+    // In production the API service is used and returns real author data.
+    author: { id: c.authorId, username: c.authorId, displayName: c.authorId, avatarUrl: undefined },
+  }
+}
+
 function buildCommentThreads(comments: Comment[]): CommentThread[] {
   const roots = comments.filter((c) => c.parentId === null)
   const byParent = new Map<string, Comment[]>()
@@ -33,8 +45,8 @@ function buildCommentThreads(comments: Comment[]): CommentThread[] {
   }
 
   return roots.map((root) => ({
-    ...root,
-    replies: byParent.get(root.id) ?? [],
+    ...toCommentWithAuthor(root),
+    replies: (byParent.get(root.id) ?? []).map(toCommentWithAuthor),
   }))
 }
 

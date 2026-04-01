@@ -1,9 +1,9 @@
 // src/features/profile/hooks/useUserStats.ts
 import { useMemo } from 'react'
-import { useStore } from '@/shared/lib/store'
+import { useReviews } from '@/features/reviews/hooks'
 import { computeUserStats } from '../lib/computeUserStats'
 
 export function useUserStats() {
-  const reviews = useStore((s) => s.reviews)
+  const { data: reviews = [] } = useReviews()
   return useMemo(() => computeUserStats(reviews), [reviews])
 }

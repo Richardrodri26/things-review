@@ -36,7 +36,7 @@ export const STORAGE_KEYS = {
 
 // Configuración de TanStack Query
 export const QUERY_CONFIG = {
-  STALE_TIME: 1000 * 60 * 5,      // 5 minutos
+  STALE_TIME: 1000 * 60 * 2,      // 2 minutos
   GC_TIME: 1000 * 60 * 60,        // 1 hora
   RETRY: 1,
 } as const

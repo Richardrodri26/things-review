@@ -6,14 +6,15 @@ import { PlusIcon, Sparkles } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useTranslations } from 'next-intl'
 import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage'
-import { useUser, useStore } from '@/shared/lib/store'
+import { useUser } from '@/shared/lib/store'
+import { useReviews } from '@/features/reviews/hooks'
 import { QuickStatsSection } from './QuickStatsSection'
 import { RecentReviewsSection } from './RecentReviewsSection'
 import { CatalogHighlightsSection } from './CatalogHighlightsSection'
 
 export function DashboardPage() {
   const user = useUser()
-  const reviews = useStore((s) => s.reviews)
+  const { data: reviews = [] } = useReviews()
   const [isAddingReview, setIsAddingReview] = useState(false)
   const t = useTranslations('dashboard')
 

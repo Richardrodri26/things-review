@@ -173,7 +173,7 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
             <div className="size-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
           </div>
         ) : (
-          <ContentReviewGroup reviews={groupReviews} />
+          <ContentReviewGroup reviews={groupReviews} groupId={groupId} />
         )}
       </div>
 

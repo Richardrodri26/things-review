@@ -11,5 +11,8 @@ export async function setLocale(locale: Locale): Promise<void> {
     path: '/',
     sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 365, // 1 year
+    // Security: next-intl reads this cookie server-side only — httpOnly prevents
+    // client-side JS from reading or tampering with the locale preference
+    httpOnly: true,
   })
 }

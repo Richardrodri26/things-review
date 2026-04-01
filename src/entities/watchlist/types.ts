@@ -1,5 +1,5 @@
 // entities/watchlist/types.ts
-import type { ContentType, Rating } from '@/shared/types'
+import type { ContentType } from '@/shared/types'
 import type { User } from '@/entities/user/types'
 
 export type WatchlistPriority = 'low' | 'medium' | 'high'

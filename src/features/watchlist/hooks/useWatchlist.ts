@@ -2,25 +2,19 @@
 import { useQuery } from '@tanstack/react-query'
 import { services } from '@/shared/services'
 import { useUser } from '@/shared/lib/store'
-import { useStore } from '@/shared/lib/store'
 
 export const WATCHLIST_QUERY_KEY = ['watchlist'] as const
 
 export function useWatchlistItems() {
   const user = useUser()
-  const watchlist = useStore((s) => s.watchlist)
-  const setWatchlist = useStore((s) => s.setWatchlist)
 
   return useQuery({
     queryKey: [...WATCHLIST_QUERY_KEY, user?.id],
     queryFn: async () => {
       if (!user?.id) return []
-      const items = await services.watchlist.getByUserId(user.id)
-      setWatchlist(items)
-      return items
+      return services.watchlist.getByUserId(user.id)
     },
     enabled: !!user?.id,
-    initialData: watchlist.length > 0 ? watchlist : undefined,
   })
 }
 

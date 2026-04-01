@@ -1,8 +1,7 @@
 // src/features/groups/hooks/useGroups.ts
 import { useQuery } from '@tanstack/react-query'
 import { services } from '@/shared/services'
-import { useUser, useGroups as useGroupsStore } from '@/shared/lib/store'
-import { useStore } from '@/shared/lib/store'
+import { useUser } from '@/shared/lib/store'
 import { apiGet } from '@/shared/services/api/api-client'
 import type { ReviewWithUser } from '@/entities/review/types'
 
@@ -10,18 +9,11 @@ export const GROUPS_QUERY_KEY = ['groups'] as const
 
 export function useGroups() {
   const user = useUser()
-  const groups = useGroupsStore()
-  const setGroups = useStore((s) => s.setGroups)
 
   return useQuery({
     queryKey: GROUPS_QUERY_KEY,
-    queryFn: async () => {
-      const all = await services.groups.getAll()
-      setGroups(all)
-      return all
-    },
+    queryFn: () => services.groups.getAll(),
     enabled: !!user,
-    initialData: groups.length > 0 ? groups : undefined,
   })
 }
 

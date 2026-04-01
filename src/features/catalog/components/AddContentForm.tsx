@@ -43,6 +43,7 @@ const baseSchema = z.object({
   coverImageUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
 })
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const addContentSchema = z.discriminatedUnion('contentType', [
   baseSchema.extend({
     contentType:      z.literal('movie'),

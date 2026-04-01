@@ -1,7 +1,6 @@
 // src/features/groups/hooks/useGroupMutations.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { services } from '@/shared/services'
-import { useStore } from '@/shared/lib/store'
 import { useUser } from '@/shared/lib/store'
 import { toast } from '@/shared/lib/toast'
 import type { CreateGroupDTO, UpdateGroupDTO } from '@/entities/group/types'
@@ -26,7 +25,6 @@ export interface GroupToastMessages {
 
 export function useCreateGroup(messages?: GroupToastMessages) {
   const queryClient = useQueryClient()
-  const addGroup = useStore((s) => s.addGroup)
   const user = useUser()
 
   return useMutation({
@@ -35,7 +33,6 @@ export function useCreateGroup(messages?: GroupToastMessages) {
       return services.groups.create(data, user.id)
     },
     onSuccess: (newGroup) => {
-      addGroup(newGroup)
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
       const title =
         typeof messages?.created === 'function'
@@ -54,13 +51,11 @@ export function useCreateGroup(messages?: GroupToastMessages) {
 
 export function useUpdateGroup(messages?: GroupToastMessages) {
   const queryClient = useQueryClient()
-  const updateGroup = useStore((s) => s.updateGroup)
 
   return useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateGroupDTO }) =>
       services.groups.update(id, data),
-    onSuccess: (updatedGroup) => {
-      updateGroup(updatedGroup.id, updatedGroup)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
       toast.success({ title: messages?.updated ?? 'Group updated' })
     },
@@ -75,12 +70,10 @@ export function useUpdateGroup(messages?: GroupToastMessages) {
 
 export function useDeleteGroup(messages?: GroupToastMessages) {
   const queryClient = useQueryClient()
-  const removeGroup = useStore((s) => s.removeGroup)
 
   return useMutation({
     mutationFn: (id: string) => services.groups.delete(id),
-    onSuccess: (_, id) => {
-      removeGroup(id)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
       toast.success({ title: messages?.deleted ?? 'Group deleted' })
     },
@@ -95,7 +88,6 @@ export function useDeleteGroup(messages?: GroupToastMessages) {
 
 export function useJoinGroup(messages?: GroupToastMessages) {
   const queryClient = useQueryClient()
-  const addGroup = useStore((s) => s.addGroup)
   const user = useUser()
 
   return useMutation({
@@ -104,7 +96,6 @@ export function useJoinGroup(messages?: GroupToastMessages) {
       return services.groups.joinByInviteCode(inviteCode)
     },
     onSuccess: (group) => {
-      addGroup(group)
       queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
       const title =
         typeof messages?.joined === 'function'

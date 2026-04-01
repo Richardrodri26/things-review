@@ -49,8 +49,8 @@ export function EditorClient({
 
     const initEditor = async () => {
       if (!EditorJS) {
-        const module = await import('@editorjs/editorjs')
-        EditorJS = module.default
+        const mod = await import('@editorjs/editorjs')
+        EditorJS = mod.default
       }
 
       if (!holderRef.current || editorRef.current) return
