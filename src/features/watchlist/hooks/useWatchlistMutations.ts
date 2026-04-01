@@ -1,7 +1,8 @@
 // src/features/watchlist/hooks/useWatchlistMutations.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useThrottler } from '@tanstack/react-pacer'
 import { services } from '@/shared/services'
-import { useStore, useUser } from '@/shared/lib/store'
+import { useUser } from '@/shared/lib/store'
 import { toast } from '@/shared/lib/toast'
 import type { CreateWatchlistItemDTO, UpdateWatchlistItemDTO } from '@/entities/watchlist/types'
 import { WATCHLIST_QUERY_KEY } from './useWatchlist'
@@ -22,18 +23,18 @@ export interface WatchlistToastMessages {
   consumedErrorDescription?: string
 }
 
+const THROTTLE_MS = 1000
+
 export function useAddToWatchlist(messages?: WatchlistToastMessages) {
   const queryClient = useQueryClient()
-  const addWatchlistItem = useStore((s) => s.addWatchlistItem)
   const user = useUser()
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: (data: Omit<CreateWatchlistItemDTO, 'userId'>) => {
       if (!user?.id) throw new Error('User not authenticated')
       return services.watchlist.create({ ...data, userId: user.id })
     },
-    onSuccess: (newItem) => {
-      addWatchlistItem(newItem)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: WATCHLIST_QUERY_KEY })
       toast.success({ title: messages?.added ?? 'Added to watchlist' })
     },
@@ -44,17 +45,25 @@ export function useAddToWatchlist(messages?: WatchlistToastMessages) {
       })
     },
   })
+
+  const throttler = useThrottler(
+    (data: Omit<CreateWatchlistItemDTO, 'userId'>) => mutation.mutate(data),
+    { wait: THROTTLE_MS, leading: true, trailing: false }
+  )
+
+  return {
+    ...mutation,
+    mutate: (data: Omit<CreateWatchlistItemDTO, 'userId'>) => throttler.maybeExecute(data),
+  }
 }
 
 export function useUpdateWatchlistItem(messages?: WatchlistToastMessages) {
   const queryClient = useQueryClient()
-  const updateWatchlistItem = useStore((s) => s.updateWatchlistItem)
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateWatchlistItemDTO }) =>
       services.watchlist.update(id, data),
-    onSuccess: (updated) => {
-      updateWatchlistItem(updated.id, updated)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: WATCHLIST_QUERY_KEY })
       toast.success({ title: messages?.updated ?? 'Watchlist item updated' })
     },
@@ -65,16 +74,24 @@ export function useUpdateWatchlistItem(messages?: WatchlistToastMessages) {
       })
     },
   })
+
+  const throttler = useThrottler(
+    ({ id, data }: { id: string; data: UpdateWatchlistItemDTO }) => mutation.mutate({ id, data }),
+    { wait: THROTTLE_MS, leading: true, trailing: false }
+  )
+
+  return {
+    ...mutation,
+    mutate: (args: { id: string; data: UpdateWatchlistItemDTO }) => throttler.maybeExecute(args),
+  }
 }
 
 export function useRemoveFromWatchlist(messages?: WatchlistToastMessages) {
   const queryClient = useQueryClient()
-  const removeWatchlistItem = useStore((s) => s.removeWatchlistItem)
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: (id: string) => services.watchlist.delete(id),
-    onSuccess: (_, id) => {
-      removeWatchlistItem(id)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: WATCHLIST_QUERY_KEY })
       toast.success({ title: messages?.removed ?? 'Removed from watchlist' })
     },
@@ -85,16 +102,23 @@ export function useRemoveFromWatchlist(messages?: WatchlistToastMessages) {
       })
     },
   })
+
+  const throttler = useThrottler(
+    (id: string) => mutation.mutate(id),
+    { wait: THROTTLE_MS, leading: true, trailing: false }
+  )
+
+  return {
+    ...mutation,
+    mutate: (id: string) => throttler.maybeExecute(id),
+  }
 }
 
-// Hook conveniente para saber si un item ya fue reviewed
-// y ofrecer marcarlo como "consumido" desde la watchlist
 export function useConvertWatchlistItemToReview(messages?: WatchlistToastMessages) {
   const queryClient = useQueryClient()
-  const removeWatchlistItem = useStore((s) => s.removeWatchlistItem)
   const user = useUser()
 
-  return useMutation({
+  const mutation = useMutation({
     mutationFn: async ({
       watchlistItemId,
       contentId,
@@ -106,7 +130,6 @@ export function useConvertWatchlistItemToReview(messages?: WatchlistToastMessage
     }) => {
       if (!user?.id) throw new Error('User not authenticated')
 
-      // Crear el review básico
       const review = await services.reviews.create({
         userId: user.id,
         contentId,
@@ -115,13 +138,11 @@ export function useConvertWatchlistItemToReview(messages?: WatchlistToastMessage
         status: 'consumed',
       })
 
-      // Eliminar de watchlist
       await services.watchlist.delete(watchlistItemId)
 
       return review
     },
-    onSuccess: (_, { watchlistItemId }) => {
-      removeWatchlistItem(watchlistItemId)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: WATCHLIST_QUERY_KEY })
       queryClient.invalidateQueries({ queryKey: ['reviews'] })
       toast.success({
@@ -136,4 +157,16 @@ export function useConvertWatchlistItemToReview(messages?: WatchlistToastMessage
       })
     },
   })
+
+  const throttler = useThrottler(
+    (args: { watchlistItemId: string; contentId: string; contentType: string }) =>
+      mutation.mutate(args),
+    { wait: THROTTLE_MS, leading: true, trailing: false }
+  )
+
+  return {
+    ...mutation,
+    mutate: (args: { watchlistItemId: string; contentId: string; contentType: string }) =>
+      throttler.maybeExecute(args),
+  }
 }
