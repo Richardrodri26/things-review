@@ -32,6 +32,31 @@ const nextConfig: NextConfig = {
         hostname: "image.tmdb.org",
         pathname: "/t/p/**",
       },
+      {
+        protocol: "https",
+        hostname: "images.igdb.com",
+        pathname: "/igdb/**",
+      },
+      {
+        protocol: "https",
+        hostname: "books.google.com",
+        pathname: "/books/**",
+      },
+      {
+        protocol: "https",
+        hostname: "lastfm.freetls.fastly.net",
+        pathname: "/i/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**.last.fm",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "coverartarchive.org",
+        pathname: "/**",
+      },
     ],
   },
 };

@@ -76,7 +76,6 @@ export function CoverImage({
       className={className}
       priority={priority}
       onError={() => setFailed(true)}
-      unoptimized
     />
   )
 }

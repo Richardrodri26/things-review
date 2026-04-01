@@ -29,7 +29,6 @@ export function BackdropImage({ src, alt, className, priority }: BackdropImagePr
       priority={priority}
       sizes="100vw"
       onError={() => setFailed(true)}
-      unoptimized
     />
   )
 }
