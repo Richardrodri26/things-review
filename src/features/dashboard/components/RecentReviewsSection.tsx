@@ -86,7 +86,7 @@ export function RecentReviewsSection({ reviews }: RecentReviewsSectionProps) {
   const recent = sorted.slice(0, MAX_RECENT)
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-4 min-w-0">
       {/* Section header */}
       <div className="flex items-center gap-3">
         <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground">

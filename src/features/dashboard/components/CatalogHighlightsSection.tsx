@@ -85,7 +85,7 @@ function PosterShelf({
   const highlights = items.slice(0, MAX_HIGHLIGHTS)
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 min-w-0">
       {/* shelf header */}
       <div className="flex items-center gap-3">
         <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground">
@@ -238,7 +238,7 @@ export function CatalogHighlightsSection({ reviews }: CatalogHighlightsSectionPr
   const reviewedContentIds = new Set(reviews.map((r) => r.contentId))
 
   return (
-    <section className="space-y-8">
+    <section className="space-y-8 min-w-0">
       <PosterShelf
         label={tNav('movies')}
         href={ROUTES.MOVIES}

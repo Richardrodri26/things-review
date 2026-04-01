@@ -24,7 +24,7 @@ export function DashboardPage() {
   const timeGreeting = t(`greeting.${greetingKey}`)
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col min-w-0">
       {/* ── Hero ─────────────────────────────────────────────────────── */}
       <div className="relative overflow-hidden border-b border-border">
         {/* Cinematic gradient backdrop */}
@@ -79,7 +79,7 @@ export function DashboardPage() {
       </div>
 
       {/* ── Content ──────────────────────────────────────────────────── */}
-      <div className="flex flex-col gap-10 p-6 sm:p-8 w-full">
+      <div className="flex flex-col gap-10 p-6 sm:p-8 w-full min-w-0">
         {reviews.length > 0 && <QuickStatsSection reviews={reviews} />}
         <CatalogHighlightsSection reviews={reviews} />
         <RecentReviewsSection reviews={reviews} />

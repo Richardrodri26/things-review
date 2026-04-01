@@ -24,7 +24,7 @@ export function QuickStatsSection({ reviews }: QuickStatsSectionProps) {
     .sort(([, a], [, b]) => b - a)
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-4 min-w-0">
       {/* Section label */}
       <div className="flex items-center gap-3">
         <span className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground">
