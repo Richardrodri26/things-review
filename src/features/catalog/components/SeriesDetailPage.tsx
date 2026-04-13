@@ -9,10 +9,9 @@ import { BackdropImage } from '@/shared/ui/atoms/BackdropImage'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { useTranslations } from 'next-intl'
-import { ReviewCard } from '@/features/reviews/components/ReviewCard'
 import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage'
 import { ContentReviewTabs } from '@/features/reviews/components/ContentReviewTabs'
-import { useDeleteReview, useReviews } from '@/features/reviews/hooks'
+import { useReviews } from '@/features/reviews/hooks'
 import { useSeriesItem } from '../hooks'
 
 interface SeriesDetailPageProps {
@@ -31,13 +30,6 @@ export function SeriesDetailPage({ seriesId, defaultGroupId }: SeriesDetailPageP
   const t = useTranslations('catalog.detail')
   const tNav = useTranslations('nav')
   const tCommon = useTranslations('common')
-  const tToasts = useTranslations('toasts')
-  const deleteReview = useDeleteReview({
-    deleted: tToasts('reviews.deleted'),
-    deletedError: tToasts('reviews.deletedError'),
-    deletedErrorDescription: tToasts('tryAgain'),
-  })
-
   const existingReview = reviews.find((r) => r.contentId === seriesId)
 
   if (isLoading) {
@@ -151,19 +143,6 @@ export function SeriesDetailPage({ seriesId, defaultGroupId }: SeriesDetailPageP
               </Button>
             )}
           </div>
-
-          {existingReview ? (
-            <div className="max-w-[220px] mb-6">
-              <ReviewCard
-                review={existingReview}
-                onDelete={async (r) => {
-                  await deleteReview.mutateAsync(r.id)
-                }}
-              />
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground mb-4">{t('noReview')}</p>
-          )}
 
           {/* Tabs: Todas / Mis Grupos */}
           <ContentReviewTabs

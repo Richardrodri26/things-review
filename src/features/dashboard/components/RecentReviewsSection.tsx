@@ -21,7 +21,7 @@ function RecentReviewCard({ review }: { review: Review }) {
 
   return (
     <Link
-      href={ROUTES.REVIEW_DETAIL(review.id)}
+      href={`${ROUTES.REVIEW_DETAIL(review.id)}?from=${encodeURIComponent(ROUTES.HOME)}`}
       className="group relative rounded-xl border border-border bg-card overflow-hidden hover:border-primary/30 transition-all duration-300 hover:shadow-md flex flex-col"
     >
       {/* Subtle left accent bar */}

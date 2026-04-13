@@ -2,6 +2,7 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { UsersIcon, StarIcon } from 'lucide-react'
 import {
@@ -17,6 +18,7 @@ import { EmptyState } from '@/shared/ui/atoms'
 import { ReviewCard } from './ReviewCard'
 import { useGroups, useGroupReviewsByContent } from '@/features/groups/hooks'
 import { useUser } from '@/shared/lib/store'
+import { ROUTES } from '@/shared/constants'
 import type { ReviewWithUser } from '@/entities/review/types'
 
 type Tab = 'all' | 'group'
@@ -32,6 +34,7 @@ export function ContentReviewTabs({
   defaultGroupId,
 }: ContentReviewTabsProps) {
   const t = useTranslations('catalog.reviewTabs')
+  const pathname = usePathname()
   const user = useUser()
   const { data: groups = [] } = useGroups()
 
@@ -43,8 +46,17 @@ export function ContentReviewTabs({
   // Fallback: si no hay selección pero hay grupos, usa el primero
   const resolvedGroupId = selectedGroupId || groups[0]?.id || ''
 
-  const { data: groupReviews = [], isLoading: groupLoading } =
+  const { data: rawGroupReviews = [], isLoading: groupLoading } =
     useGroupReviewsByContent(resolvedGroupId, contentId)
+
+  const groupReviews = useMemo(() => {
+    if (!user?.id) return rawGroupReviews
+    return [...rawGroupReviews].sort((a, b) => {
+      if (a.userId === user.id) return -1
+      if (b.userId === user.id) return 1
+      return 0
+    })
+  }, [rawGroupReviews, user?.id])
 
   const selectedGroup = useMemo(
     () => groups.find((g) => g.id === resolvedGroupId),
@@ -155,6 +167,7 @@ export function ContentReviewTabs({
                         review={review}
                         author={review.user}
                         isOwn={review.userId === user?.id}
+                        detailHref={`${ROUTES.REVIEW_DETAIL(review.id)}?from=${encodeURIComponent(pathname)}`}
                       />
                     ))}
                   </div>
