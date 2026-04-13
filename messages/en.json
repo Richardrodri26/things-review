@@ -426,7 +426,29 @@
       "memberCount": "{count, plural, one {# member} other {# members}}",
       "groupReviews": "Group Reviews",
       "reviewCount": "{count, plural, one {# review} other {# reviews}}",
-      "groupAvg": "group avg"
+      "groupAvg": "group avg",
+      "tabs": {
+        "reviews": "Reviews",
+        "ranking": "Ranking",
+        "members": "Members"
+      },
+      "ranking": {
+        "empty": "Not enough ratings yet",
+        "emptyDescription": "At least 2 members need to rate the same item to appear in the ranking.",
+        "groupScore": "group score"
+      },
+      "members": {
+        "empty": "No members found",
+        "emptyDescription": "Something went wrong loading members.",
+        "joined": "Joined {date}",
+        "leaveGroup": "Leave Group",
+        "leaveDialog": {
+          "title": "Leave Group",
+          "description": "Are you sure you want to leave \"{name}\"? You'll need an invite code to rejoin.",
+          "confirm": "Leave",
+          "ariaLabel": "Leave group"
+        }
+      }
     },
     "card": {
       "owner": "Owner",
@@ -550,7 +572,9 @@
       "updatedError": "Could not update group",
       "deleted": "Group deleted",
       "deletedError": "Could not delete group",
-      "joined": "Joined \"{name}\""
+      "joined": "Joined \"{name}\"",
+      "left": "You left the group",
+      "leftError": "Could not leave group"
     },
     "profile": {
       "updated": "Profile updated",

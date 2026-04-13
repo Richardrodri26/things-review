@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { services } from '@/shared/services'
 import { useUser } from '@/shared/lib/store'
 import { toast } from '@/shared/lib/toast'
+import { apiDelete } from '@/shared/services/api/api-client'
 import type { CreateGroupDTO, UpdateGroupDTO } from '@/entities/group/types'
 import { GROUPS_QUERY_KEY } from './useGroups'
 
@@ -81,6 +82,28 @@ export function useDeleteGroup(messages?: GroupToastMessages) {
       toast.error({
         title: messages?.deletedError ?? 'Could not delete group',
         description: messages?.deletedErrorDescription ?? 'Please try again.',
+      })
+    },
+  })
+}
+
+export function useLeaveGroup(messages?: {
+  left?: string
+  leftError?: string
+  leftErrorDescription?: string
+}) {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: (groupId: string) => apiDelete(`/groups/${groupId}/members`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: GROUPS_QUERY_KEY })
+      toast.success({ title: messages?.left ?? 'You left the group' })
+    },
+    onError: () => {
+      toast.error({
+        title: messages?.leftError ?? 'Could not leave group',
+        description: messages?.leftErrorDescription ?? 'Please try again.',
       })
     },
   })

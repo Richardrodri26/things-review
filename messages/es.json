@@ -426,7 +426,29 @@
       "memberCount": "{count, plural, one {# miembro} other {# miembros}}",
       "groupReviews": "Reseñas del grupo",
       "reviewCount": "{count, plural, one {# reseña} other {# reseñas}}",
-      "groupAvg": "prom. del grupo"
+      "groupAvg": "prom. del grupo",
+      "tabs": {
+        "reviews": "Reseñas",
+        "ranking": "Ranking",
+        "members": "Miembros"
+      },
+      "ranking": {
+        "empty": "Pocas calificaciones aún",
+        "emptyDescription": "Al menos 2 miembros necesitan calificar el mismo ítem para aparecer en el ranking.",
+        "groupScore": "prom. del grupo"
+      },
+      "members": {
+        "empty": "Sin miembros",
+        "emptyDescription": "Algo salió mal al cargar los miembros.",
+        "joined": "Se unió {date}",
+        "leaveGroup": "Salir del grupo",
+        "leaveDialog": {
+          "title": "Salir del Grupo",
+          "description": "¿Seguro que querés salir de \"{name}\"? Necesitarás un código de invitación para volver.",
+          "confirm": "Salir",
+          "ariaLabel": "Salir del grupo"
+        }
+      }
     },
     "card": {
       "owner": "Propietario",
@@ -550,7 +572,9 @@
       "updatedError": "No se pudo actualizar el grupo",
       "deleted": "Grupo eliminado",
       "deletedError": "No se pudo eliminar el grupo",
-      "joined": "Te uniste a \"{name}\""
+      "joined": "Te uniste a \"{name}\"",
+      "left": "Saliste del grupo",
+      "leftError": "No se pudo salir del grupo"
     },
     "profile": {
       "updated": "Perfil actualizado",

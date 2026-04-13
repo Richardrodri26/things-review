@@ -28,7 +28,12 @@ import { ContentReviewGroup } from '@/features/reviews/components/ContentReviewG
 import { useUser } from '@/shared/lib/store'
 import { CONTENT_TYPE_LABELS } from '@/shared/types'
 import { ROUTES } from '@/shared/constants'
+import { cn } from '@/lib/utils'
 import { useGroup, useGroupReviews, useDeleteGroup } from '../hooks'
+import { GroupRankingList } from './GroupRankingList'
+import { GroupMembersSection } from './GroupMembersSection'
+
+type Tab = 'reviews' | 'ranking' | 'members'
 
 interface GroupDetailPageProps {
   groupId: string
@@ -41,6 +46,7 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
   const { data: groupReviews = [], isLoading: reviewsLoading } = useGroupReviews(groupId)
   const [copied, setCopied] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [activeTab, setActiveTab] = useState<Tab>('reviews')
   const t = useTranslations('groups.detail')
   const tCard = useTranslations('groups.card')
   const tCommon = useTranslations('common')
@@ -163,17 +169,51 @@ export function GroupDetailPage({ groupId }: GroupDetailPageProps) {
 
       <Separator />
 
-      {/* Reviews Section */}
+      {/* Tabs */}
       <div>
-        <h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">
-          {t('groupReviews')}
-        </h2>
-        {reviewsLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="size-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
-          </div>
-        ) : (
-          <ContentReviewGroup reviews={groupReviews} groupId={groupId} />
+        <div className="flex gap-1 mb-4 border-b border-border">
+          {(['reviews', 'ranking', 'members'] as Tab[]).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={cn(
+                'px-3 py-2 text-sm font-medium transition-colors border-b-2 -mb-px',
+                activeTab === tab
+                  ? 'border-foreground text-foreground'
+                  : 'border-transparent text-muted-foreground hover:text-foreground',
+              )}
+            >
+              {t(`tabs.${tab}`)}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === 'reviews' && (
+          reviewsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="size-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            </div>
+          ) : (
+            <ContentReviewGroup reviews={groupReviews} groupId={groupId} />
+          )
+        )}
+
+        {activeTab === 'ranking' && (
+          reviewsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="size-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+            </div>
+          ) : (
+            <GroupRankingList reviews={groupReviews} />
+          )
+        )}
+
+        {activeTab === 'members' && (
+          <GroupMembersSection
+            groupId={groupId}
+            groupName={group.name}
+            isOwner={isOwner}
+          />
         )}
       </div>
 
