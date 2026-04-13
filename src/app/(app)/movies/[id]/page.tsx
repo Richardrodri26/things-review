@@ -1,6 +1,7 @@
 // src/app/(app)/movies/[id]/page.tsx
 import type { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
+import { prisma } from '@/lib/prisma'
 import { MovieDetailPage } from '@/features/catalog/components'
 
 interface MovieDetailRouteProps {
@@ -12,24 +13,16 @@ export async function generateMetadata({ params }: MovieDetailRouteProps): Promi
   const t = await getTranslations('seo')
 
   try {
-    const res = await fetch(
-      `https://api.themoviedb.org/3/movie/${id}?language=en-US`,
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.TMDB_READ_ACCESS_TOKEN}`,
-        },
-        next: { revalidate: 3600 },
-      }
-    )
-    if (!res.ok) throw new Error('Not found')
-    const movie = await res.json()
-    const year = movie.release_date ? new Date(movie.release_date).getFullYear() : ''
-    const posterUrl = movie.poster_path
-      ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
-      : '/opengraph-image.png'
+    const item = await prisma.catalogItem.findUnique({
+      where: { id },
+      select: { title: true, coverImageUrl: true, year: true },
+    })
 
-    const title = t('movieDetailTitle', { title: movie.title, year })
-    const description = t('movieDetailDescription', { title: movie.title, year })
+    if (!item) throw new Error('Not found')
+
+    const posterUrl = item.coverImageUrl ?? '/opengraph-image.png'
+    const title = t('movieDetailTitle', { title: item.title, year: item.year ?? '' })
+    const description = t('movieDetailDescription', { title: item.title, year: item.year ?? '' })
 
     return {
       title,
@@ -38,7 +31,7 @@ export async function generateMetadata({ params }: MovieDetailRouteProps): Promi
       openGraph: {
         title,
         description,
-        images: [{ url: posterUrl, width: 500, height: 750, alt: movie.title }],
+        images: [{ url: posterUrl, width: 500, height: 750, alt: item.title }],
         type: 'video.movie',
       },
       twitter: {
