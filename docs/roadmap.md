@@ -4,148 +4,114 @@
 
 **Things Review** evoluciona en 3 fases principales:
 
-1. **v1 — Client-only MVP**: Todo en el cliente, sin backend, sin auth
-2. **v2 — Social + Backend**: Backend real, autenticación, grupos en tiempo real  
+1. ~~**v1 — Client-only MVP**~~ ✅ **COMPLETADO** (superado — se migró a backend real)
+2. **v2 — Social + Backend**: Backend real, autenticación, storage de archivos ← *estamos aquí*
 3. **v3 — Plataforma multi-contenido**: Expansión a libros, videojuegos, música
 
 ---
 
-## Fase 1 — MVP Client-only
+## Fase 1 — MVP Client-only ✅ COMPLETADO
 
-**Objetivo:** Tener un producto funcional que demuestre el valor core de la app.  
-**Restricción:** Sin backend. Todo en localStorage.  
-**Duración estimada:** 6-8 semanas
+> La fase 1 fue completada y superada. El proyecto migró directamente a backend real
+> con Prisma + PostgreSQL antes de finalizar el plan original.
 
-### Sprint 1 — Fundaciones (Semanas 1-2)
-
-- [ ] Setup de arquitectura base (carpetas, aliases, providers)
-- [ ] Configurar i18n (next-intl) para EN/ES
-- [ ] Crear sistema de design tokens (colores, tipografía, espaciado)
-- [ ] Implementar atoms y molecules base del sistema de diseño
-- [ ] Configurar Zustand store con Immer (slices de todas las entidades)
-- [ ] Implementar capa de servicios localStorage
-- [ ] Crear schemas Zod para todas las entidades
-- [ ] Setup de TanStack Query con adapters para localStorage
-
-### Sprint 2 — Autenticación local y perfil (Semanas 2-3)
-
-- [ ] Pantalla de onboarding (crear perfil local)
-- [ ] Formulario de perfil con TanStack Form + Zod
-- [ ] Persistencia de usuario en localStorage
-- [ ] Página de perfil con estadísticas básicas
-
-### Sprint 3 — Catálogo de películas y series (Semanas 3-4)
-
-- [ ] Integración con TMDB API (búsqueda, detalle)
-- [ ] Página de catálogo con búsqueda y filtros
-- [ ] TanStack Table para listados
-- [ ] Página de detalle de película/serie
-- [ ] Caché de respuestas TMDB en localStorage
-
-### Sprint 4 — Sistema de Reviews (Semanas 4-5)
-
-- [ ] Formulario de crear review (TanStack Form + Zod)
-- [ ] Rating con estrellas (1-5)
-- [ ] Estados: watched, want_to_watch, watching, dropped
-- [ ] Editar y eliminar review
-- [ ] Página "Mis reviews" con filtros y tabla (TanStack Table)
-- [ ] Vista de reviews en detalle de película/serie
-
-### Sprint 5 — Grupos (Semanas 5-7)
-
-- [ ] Crear grupo
-- [ ] Invitar por código
-- [ ] Lista de grupos del usuario
-- [ ] Página de detalle del grupo
-- [ ] Ver reviews de todos los miembros sobre una película/serie
-- [ ] Cálculo de puntaje grupal (promedio)
-- [ ] Ranking de películas del grupo
-- [ ] Grupos públicos vs privados
-
-### Sprint 6 — Polish y QA (Semana 7-8)
-
-- [ ] Revisar UX completo (flows de usuario)
-- [ ] Loading states y error states en todos los flujos
-- [ ] Responsive design (mobile first)
-- [ ] Modo oscuro completo
-- [ ] Accesibilidad básica (aria labels, keyboard nav)
-- [ ] Performance audit (Lighthouse)
-- [ ] Traducir todos los textos a ES/EN
+- ✅ Arquitectura base (Feature-Sliced Design, aliases, providers)
+- ✅ i18n EN/ES con next-intl (cookie-based, sin prefijos en URL)
+- ✅ Design tokens + shadcn/ui + Tailwind 4
+- ✅ Zustand 5 + Immer (slices por entidad)
+- ✅ TanStack Query 5 + TanStack Form
+- ✅ Prisma + PostgreSQL (migrado desde localStorage)
+- ✅ Better Auth (email/password instalado y configurado)
+- ✅ Reviews CRUD completo con EditorJS
+- ✅ Grupos con invite code
+- ✅ Catálogo (películas, series) con provider registry
+- ✅ TMDB API integrada (detrás de `TMDB_READ_ACCESS_TOKEN`)
+- ✅ Content provider registry (TMDB, RAWG, OpenLibrary, MusicBrainz, iTunes)
+- ✅ Dashboard con stats
+- ✅ Comentarios con threading (1 nivel)
+- ✅ Watchlist
+- ✅ Perfil con estadísticas
 
 ---
 
-## Fase 2 — Backend + Auth
+## Fase 2 — Backend + Auth ← estamos aquí
 
-**Objetivo:** Hacer la app real con persistencia en servidor y usuarios reales.  
-**Requisito previo:** Completar Fase 1.
+**Objetivo:** Estabilizar el backend, completar auth real, agregar storage de archivos y polish.
 
-### Módulos a desarrollar
+### En progreso / Pendiente
 
-#### Backend (API)
-- [ ] Seleccionar stack backend (recomendado: **Next.js API Routes** para simplificar, o **Express/Fastify** + PostgreSQL)
-- [ ] Diseño de base de datos (PostgreSQL recomendado)
-- [ ] Autenticación con **Better Auth** (Google OAuth + email/password + magic link)
-- [ ] API REST para todas las entidades
-- [ ] Validaciones server-side con Zod
-- [ ] Configurar Datadog APM para monitoreo de la API
-- [ ] Configurar Datadog RUM para monitoreo del frontend
+#### 🐛 Bugs críticos
+- [ ] **Editor: bullet points rotos** — `@editorjs/list` v2 cambió formato de datos (`items: string[]` → `items: [{ content, items }]`). Afecta renderer, tipos y CSS. Ver plan: `docs/plans/2026-04-29-editor-list-fix.md`
 
-#### Frontend (migración de servicios)
-- [ ] Cambiar `LocalReviewService` → `ApiReviewService` (UN cambio en services.ts)
-- [ ] Configurar TanStack Query para HTTP (ya preparado en v1)
-- [ ] Integrar sesión de Better Auth en el cliente
-- [ ] Páginas de login/register/logout
-- [ ] Migrar `logger` de consola a Datadog Log Management
+#### 🗂️ Storage de archivos
+- [ ] **Storage provider abstraction** — Arquitectura Clean con `IStorageProvider` interface + `CloudinaryStorageProvider` (free tier) + `LocalStorageProvider` (dev). Ver plan: `docs/plans/2026-04-29-storage-provider.md`
+- [ ] Wiring del storage al editor de imágenes (reemplazar blob URLs temporales)
+- [ ] Avatar de usuario en perfil (upload real)
 
-#### Features nuevas de la fase
-- [ ] Invitaciones por email
-- [ ] Notificaciones in-app (alguien reviewó algo que vos viste)
+#### 🔐 Auth
+- [ ] Login / register pages completas (Better Auth ya instalado)
+- [ ] Google OAuth provider
+- [ ] Sesión persistente en el cliente (Zustand ← Better Auth session)
+- [ ] Protección de rutas server-side (middleware)
+
+#### 📬 Social
+- [ ] Invitaciones a grupos por email
+- [ ] Notificaciones in-app (alguien reviewó algo que viste)
 - [ ] Feed de actividad del grupo
 - [ ] Búsqueda de usuarios por username
+
+#### 🎨 Polish & QA
+- [ ] Loading states y error states en todos los flujos
+- [ ] Responsive design completo (mobile first)
+- [ ] Accesibilidad básica (aria labels, keyboard nav)
+- [ ] Performance audit (Lighthouse > 90)
+- [ ] 100% de textos en EN/ES (revisar keys faltantes)
+
+#### 📊 Observabilidad (cuando se despliegue)
+- [ ] Datadog RUM (frontend errors + Core Web Vitals)
+- [ ] Datadog APM (latencia API + queries lentas)
 
 ---
 
 ## Fase 3 — Multi-contenido
 
-**Objetivo:** Expandir más allá de películas y series.
+**Objetivo:** Expandir más allá de películas y series.  
+**Requisito previo:** Fase 2 estable.
 
-### Nuevos tipos de contenido
+### Providers ya preparados (sin UI)
 
-| Contenido | API de datos | Prioridad |
-|---|---|---|
-| Libros | Google Books API | Alta |
-| Videojuegos | RAWG API | Media |
-| Álbumes de música | Spotify API | Media |
-| Podcasts | Spotify Podcasts | Baja |
-| Juegos de mesa | BoardGameGeek API | Baja |
+| Contenido | Provider | API Key requerida | Estado |
+|---|---|---|---|
+| Libros | OpenLibrary | No | ✅ Provider creado |
+| Libros | Google Books | Sí (`GOOGLE_BOOKS_API_KEY`) | ✅ Provider creado |
+| Videojuegos | RAWG | Sí (`RAWG_API_KEY`) | ✅ Provider creado |
+| Música | MusicBrainz | No | ✅ Provider creado |
+| Música | Last.fm | Sí (`LASTFM_API_KEY`) | ✅ Provider creado |
+| Podcasts | iTunes Search | No | ✅ Provider creado |
 
 ### Features de la plataforma
 
-- [ ] Sistema de "Things" genérico (cualquier contenido reviewable)
+- [ ] UI para catálogo de libros (provider listo, falta página)
+- [ ] UI para catálogo de videojuegos (provider listo, falta página)
+- [ ] UI para catálogo de música (provider listo, falta página)
 - [ ] Listas personalizadas ("Top 10 de Terror", "Pendientes 2025")
 - [ ] Recomendaciones basadas en gustos del grupo
 - [ ] Exportar reviews (PDF, CSV)
 - [ ] Widgets embebibles para blogs/portfolios
-- [ ] API pública documentada
+- [ ] API pública documentada (OpenAPI/Swagger)
 
 ---
 
-## Métricas de éxito por fase
-
-### Fase 1
-- Usuario puede crear su perfil, registrar reviews y crear un grupo
-- Flujo completo funciona sin errores en Chrome, Firefox, Safari
-- Lighthouse performance score > 90
-- 100% de textos traducidos a EN/ES
+## Métricas de éxito
 
 ### Fase 2
-- Tiempo de registro < 2 minutos
-- Tiempo de carga inicial < 3 segundos
-- 0 pérdida de datos en migración desde localStorage
-- Auth funciona con Google OAuth
+- Auth completa: registro < 2 min, Google OAuth funciona
+- Storage: imágenes persisten entre sesiones, cambiar proveedor = 1 línea
+- Editor: bullet points, listas ordenadas y nested lists funcionan correctamente
+- Lighthouse performance score > 90
 
 ### Fase 3
-- El sistema de "Things" soporta al menos 3 tipos de contenido
+- El sistema soporta al menos 3 tipos de contenido con UI completa
 - API pública documentada con OpenAPI/Swagger
 
 ---
@@ -154,7 +120,7 @@
 
 | Riesgo | Impacto | Mitigación |
 |---|---|---|
-| TMDB API rate limiting | Alto | Caché agresivo en localStorage/React Query |
-| localStorage lleno (5MB límite) | Medio | Limpiar caché de películas, comprimir datos |
-| Migración a backend pierde datos | Alto | Export/import manual antes de migrar |
-| TMDB API cambia precios/términos | Medio | Abstraer con interface, fácil cambiar de proveedor |
+| TMDB API rate limiting | Alto | TanStack Query cachea; `next: { revalidate }` en Server Components |
+| Cloudinary free tier límites | Medio | 25GB/mes es suficiente para MVP; arquitectura permite cambiar de proveedor |
+| TMDB/Cloudinary cambian términos | Medio | Abstraídos detrás de interfaces — cambiar provider = nueva clase |
+| Better Auth breaking changes | Bajo | Versión fija en package.json; actualizar en Fase 3 |
