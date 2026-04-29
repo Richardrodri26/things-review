@@ -131,13 +131,17 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
             isOwn ? (
               <span className="font-medium text-primary">{t('you')}</span>
             ) : (
-              <span className="flex items-center gap-1 min-w-0">
+              <Link
+                href={ROUTES.PUBLIC_PROFILE(author.id)}
+                onClick={(e) => e.stopPropagation()}
+                className="flex items-center gap-1 min-w-0 hover:text-primary transition-colors"
+              >
                 <Avatar size="sm" className="size-4 shrink-0">
                   <AvatarImage src={author.avatarUrl} alt={author.displayName} />
                   <AvatarFallback>{author.displayName.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <span className="truncate">{author.displayName}</span>
-              </span>
+              </Link>
             )
           ) : (
             <span>{formatDate(review.createdAt)}</span>

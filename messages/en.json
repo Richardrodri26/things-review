@@ -303,7 +303,8 @@
       "spoilerHint": "Continue only if you've already experienced this content.",
       "revealAnyway": "Reveal anyway",
       "spoilers": "Spoilers",
-      "editedAt": "edited {date}"
+      "editedAt": "edited {date}",
+      "viewAuthorProfile": "View author profile"
     },
     "form": {
       "content": "Content",

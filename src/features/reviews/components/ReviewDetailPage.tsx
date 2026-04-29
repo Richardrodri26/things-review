@@ -29,7 +29,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
-import { RatingStars, ContentTypeBadge, StatusBadge, ReactionButton } from '@/shared/ui/atoms'
+import { RatingStars, ContentTypeBadge, StatusBadge, ReactionButton, FollowButton } from '@/shared/ui/atoms'
 import { CoverImage } from '@/shared/ui/atoms/CoverImage'
 import { EditorRenderer } from '@/components/editor/editor-renderer'
 import { CommentList } from '@/features/comments/components'
@@ -37,8 +37,10 @@ import { ReviewEditorPage } from './ReviewEditorPage'
 import { ROUTES } from '@/shared/constants'
 import { formatDate } from '@/shared/utils'
 import { useCatalogItemTitle } from '@/features/catalog/hooks'
+import Link from 'next/link'
 import { useReviewById, useDeleteReview } from '../hooks'
 import { useReviewReactions, useToggleReviewReaction } from '@/features/reactions'
+import { ROUTES } from '@/shared/constants'
 import { useSession } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
 
@@ -254,6 +256,21 @@ export function ReviewDetailPage({ reviewId, backHref }: ReviewDetailPageProps) 
                   </span>
                 )}
               </div>
+
+              {/* Author follow — only shown when viewing someone else's review */}
+              {!isOwner && (
+                <div className="flex items-center gap-2 pt-1">
+                  <Link
+                    href={ROUTES.PUBLIC_PROFILE(review.userId)}
+                    className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {t('viewAuthorProfile')}
+                  </Link>
+                  {isAuthenticated && (
+                    <FollowButton userId={review.userId} />
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </header>
