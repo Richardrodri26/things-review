@@ -8,7 +8,9 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { FollowButton, ReputationBadge } from '@/shared/ui/atoms'
 import { useUserProfile } from '@/features/follow'
 import { useReputation } from '@/features/reputation'
+import { useUserReviews } from '@/features/profile/hooks'
 import { useSession } from '@/lib/auth-client'
+import { ReviewCard } from '@/features/reviews/components/ReviewCard'
 
 interface PublicProfilePageProps {
   userId: string
@@ -16,11 +18,15 @@ interface PublicProfilePageProps {
 
 export function PublicProfilePage({ userId }: PublicProfilePageProps) {
   const t = useTranslations('follow')
+  const tProfile = useTranslations('profile')
   const { data: profile, isLoading, isError } = useUserProfile(userId)
   const { data: reputation } = useReputation(userId)
   const { data: session } = useSession()
   const isOwnProfile = session?.user?.id === userId
   const isAuthenticated = !!session?.user
+
+  const { data: reviewsData } = useUserReviews(userId)
+  const reviews = reviewsData?.reviews ?? []
 
   if (isLoading) return <PublicProfileSkeleton />
   if (isError || !profile) return <ProfileNotFound />
@@ -86,6 +92,24 @@ export function PublicProfilePage({ userId }: PublicProfilePageProps) {
       </div>
 
       <Separator />
+
+      {/* Reviews section */}
+      <section className="space-y-3">
+        <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">
+          {tProfile('reviews.title')}
+        </h2>
+        {reviews.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{tProfile('reviews.empty')}</p>
+        ) : (
+          <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory">
+            {reviews.map((review) => (
+              <div key={review.id} className="w-40 shrink-0 snap-start">
+                <ReviewCard review={review} />
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   )
 }

@@ -504,6 +504,10 @@
       "bio": "Bio",
       "submit": "Save Changes",
       "submitting": "Saving..."
+    },
+    "reviews": {
+      "title": "Reviews",
+      "empty": "No public reviews yet."
     }
   },
   "reputation": {

@@ -87,6 +87,7 @@ model Review {
   body             Json?
   containsSpoilers Boolean   @default(false)
   status           String
+  visibility       String    @default("public")
   metadata         Json?
   consumedAt       DateTime?
   catalogItemId    String?

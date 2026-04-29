@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { getSession } from '@/lib/auth-server'
 import type { ContentType } from '@/shared/types'
 
 const LIMIT = 20
@@ -27,10 +28,15 @@ export async function GET(req: NextRequest) {
   const contentType = searchParams.get('contentType') as ContentType | null
   const sort = searchParams.get('sort') ?? 'recent'
 
+  // Optional: exclude the logged-in user's own reviews from Explore
+  const session = await getSession()
+  const currentUserId = session?.user?.id
+
   // No status filter — all reviews are worth discovering.
   // The create API already prevents want_to_consume reviews.
   const where = {
     ...(contentType && { contentType }),
+    ...(currentUserId && { NOT: { userId: currentUserId } }),
   }
 
   const orderBy =

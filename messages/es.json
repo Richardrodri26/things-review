@@ -504,6 +504,10 @@
       "bio": "Biografía",
       "submit": "Guardar Cambios",
       "submitting": "Guardando..."
+    },
+    "reviews": {
+      "title": "Reseñas",
+      "empty": "Todavía no hay reseñas públicas."
     }
   },
   "reputation": {

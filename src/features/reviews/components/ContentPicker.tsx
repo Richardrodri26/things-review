@@ -143,13 +143,7 @@ export function ContentPicker({
       {!disableType && (
         <Select value={contentType} onValueChange={handleTypeChange}>
           <SelectTrigger className={cn('w-full', compact ? 'h-8 text-xs' : '')}>
-            <SelectValue placeholder={t('selectType')}>
-              {(v: string | null) => {
-                if (!v) return t('selectType')
-                const ct = CONTENT_TYPE_LABELS[v as ContentType]
-                return ct ? `${ct.icon} ${tContentType(v as ContentType)}` : v
-              }}
-            </SelectValue>
+            <SelectValue placeholder={t('selectType')} />
           </SelectTrigger>
           <SelectContent>
             {CONTENT_TYPES.map((type) => {

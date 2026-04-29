@@ -11,6 +11,8 @@ interface ReactionButtonProps {
   onClick: () => void
   disabled?: boolean
   label?: string
+  /** Always render the count span — use invisible when 0 to maintain consistent height */
+  showCountAlways?: boolean
 }
 
 const config = {
@@ -28,7 +30,7 @@ const config = {
   },
 }
 
-export function ReactionButton({ type, count, isActive, onClick, disabled, label }: ReactionButtonProps) {
+export function ReactionButton({ type, count, isActive, onClick, disabled, label, showCountAlways }: ReactionButtonProps) {
   const { Icon, activeClass, hoverClass, label: defaultLabel } = config[type]
   const resolvedLabel = label ?? defaultLabel
 
@@ -49,7 +51,9 @@ export function ReactionButton({ type, count, isActive, onClick, disabled, label
       )}
     >
       <Icon className="size-3.5" aria-hidden="true" />
-      {count > 0 && <span className="tabular-nums">{count}</span>}
+      {(count > 0 || showCountAlways) && (
+        <span className={cn('tabular-nums', count === 0 && showCountAlways && 'invisible')}>{count}</span>
+      )}
     </button>
   )
 }

@@ -51,13 +51,14 @@ export function FeedSection() {
         </Link>
       </div>
 
-      <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory">
         {reviews.slice(0, MAX_PREVIEW).map((review) => (
-          <ReviewCard
-            key={review.id}
-            review={review}
-            author={review.user}
-          />
+          <div key={review.id} className="w-40 shrink-0 snap-start">
+            <ReviewCard
+              review={review}
+              author={review.user}
+            />
+          </div>
         ))}
       </div>
     </section>

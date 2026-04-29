@@ -2,3 +2,4 @@
 export { useProfile, PROFILE_QUERY_KEY } from './useProfile'
 export { useUpdateProfile } from './useProfileMutations'
 export { useUserStats } from './useUserStats'
+export { useUserReviews } from './useUserReviews'

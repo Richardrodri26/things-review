@@ -66,12 +66,6 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
         {/* Gradient overlay — bottom for legibility */}
         <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none" />
 
-        {/* Badges — top-left, floating over image */}
-        <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
-          <ContentTypeBadge contentType={review.contentType} />
-          <StatusBadge status={review.status} contentType={review.contentType} />
-        </div>
-
         {/* Edit / Delete — top-right, floating */}
         <div className="absolute top-1.5 right-1.5 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
           {onEdit && (
@@ -98,12 +92,16 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
           )}
         </div>
 
-        {/* Rating — bottom-left, over gradient */}
-        {review.rating && (
-          <div className="absolute bottom-2.5 left-2.5">
-            <RatingStars value={review.rating} readonly size="sm" showValue />
+        {/* Badges + Rating — bottom-left, over gradient */}
+        <div className="absolute bottom-2.5 left-2.5 flex flex-col gap-1.5 items-start">
+          <div className="flex flex-wrap gap-1">
+            <ContentTypeBadge contentType={review.contentType} />
+            <StatusBadge status={review.status} contentType={review.contentType} />
           </div>
-        )}
+          {review.rating && (
+            <RatingStars value={review.rating} readonly size="sm" showValue />
+          )}
+        </div>
       </div>
 
       {/* ── Info area ───────────────────────────────────────────────── */}
@@ -175,6 +173,7 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
             onClick={() => toggleReaction.mutate('like')}
             disabled={!isAuthenticated}
             label={tReactions('like')}
+            showCountAlways
           />
           <ReactionButton
             type="dislike"
@@ -183,6 +182,7 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
             onClick={() => toggleReaction.mutate('dislike')}
             disabled={!isAuthenticated}
             label={tReactions('dislike')}
+            showCountAlways
           />
         </div>
       </div>
