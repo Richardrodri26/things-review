@@ -31,6 +31,8 @@ model User {
   groupMemberships GroupMembership[]
   ownedGroups      Group[]           @relation("GroupOwner")
   watchlistItems   WatchlistItem[]
+  reviewReactions  ReviewReaction[]  @relation("UserReviewReactions")
+  commentReactions CommentReaction[] @relation("UserCommentReactions")
 }
 
 model Session {
@@ -92,6 +94,7 @@ model Review {
   user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   comments    Comment[]
   catalogItem CatalogItem? @relation(fields: [catalogItemId], references: [id], onDelete: SetNull)
+  reactions   ReviewReaction[]
 }
 
 model Comment {
@@ -109,6 +112,7 @@ model Comment {
   author  User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
   parent  Comment?  @relation("CommentThread", fields: [parentId], references: [id])
   replies Comment[] @relation("CommentThread")
+  reactions CommentReaction[]
 }
 
 model Group {
@@ -172,4 +176,30 @@ model CatalogItem {
   reviews Review[]
 
   @@unique([externalId, provider])
+}
+
+model ReviewReaction {
+  id        String   @id @default(uuid())
+  reviewId  String
+  userId    String
+  type      String   // 'like' | 'dislike'
+  createdAt DateTime @default(now())
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user   User   @relation("UserReviewReactions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([reviewId, userId])
+}
+
+model CommentReaction {
+  id        String   @id @default(uuid())
+  commentId String
+  userId    String
+  type      String   // 'like' | 'dislike'
+  createdAt DateTime @default(now())
+
+  comment Comment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User    @relation("UserCommentReactions", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
 }
