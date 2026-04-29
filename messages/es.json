@@ -543,6 +543,17 @@
     "dislikeCount": "{count, plural, one {# no me gusta} other {# no me gusta}}",
     "loginToReact": "Iniciá sesión para reaccionar"
   },
+  "follow": {
+    "follow": "Seguir",
+    "following": "Siguiendo",
+    "unfollow": "Dejar de seguir",
+    "followers": "Seguidores",
+    "followersCount": "{count, plural, one {# seguidor} other {# seguidores}}",
+    "followingCount": "{count} siguiendo",
+    "noFollowers": "Aún no hay seguidores",
+    "noFollowing": "Aún no seguís a nadie",
+    "cannotFollowSelf": "No podés seguirte a vos mismo"
+  },
   "toasts": {
     "tryAgain": "Intentá de nuevo.",
     "auth": {

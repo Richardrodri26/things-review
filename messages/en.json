@@ -543,8 +543,20 @@
     "dislikeCount": "{count, plural, one {# dislike} other {# dislikes}}",
     "loginToReact": "Sign in to react"
   },
+  "follow": {
+    "follow": "Follow",
+    "following": "Following",
+    "unfollow": "Unfollow",
+    "followers": "Followers",
+    "followersCount": "{count, plural, one {# follower} other {# followers}}",
+    "followingCount": "{count} following",
+    "noFollowers": "No followers yet",
+    "noFollowing": "Not following anyone yet",
+    "cannotFollowSelf": "You can't follow yourself"
+  },
   "toasts": {
     "tryAgain": "Please try again.",
+    "auth": {
       "loginError": "Could not sign in",
       "registerError": "Could not create account",
       "updateProfileError": "Could not save profile data"
