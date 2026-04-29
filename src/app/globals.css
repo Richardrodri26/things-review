@@ -479,13 +479,28 @@
   margin-top: 0.25rem;
 }
 
-/* List block */
+/* List block — restaurar estilos que Tailwind preflight elimina */
 .cdx-list {
   color: var(--foreground);
+  padding-inline-start: 1.5rem;
+}
+
+.cdx-list--unordered {
+  list-style-type: disc;
+}
+
+.cdx-list--ordered {
+  list-style-type: decimal;
 }
 
 .cdx-list__item {
   line-height: 1.75rem;
+  padding-left: 0.25rem;
+}
+
+/* Nested lists dentro del editor (v2 soporta anidamiento) */
+.cdx-list__item .cdx-list {
+  margin-top: 0.25rem;
 }
 
 /* Checklist */
