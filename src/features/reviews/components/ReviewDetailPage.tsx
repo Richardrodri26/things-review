@@ -29,7 +29,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Skeleton } from '@/components/ui/skeleton'
-import { RatingStars, ContentTypeBadge, StatusBadge } from '@/shared/ui/atoms'
+import { RatingStars, ContentTypeBadge, StatusBadge, ReactionButton } from '@/shared/ui/atoms'
 import { CoverImage } from '@/shared/ui/atoms/CoverImage'
 import { EditorRenderer } from '@/components/editor/editor-renderer'
 import { CommentList } from '@/features/comments/components'
@@ -38,6 +38,7 @@ import { ROUTES } from '@/shared/constants'
 import { formatDate } from '@/shared/utils'
 import { useCatalogItemTitle } from '@/features/catalog/hooks'
 import { useReviewById, useDeleteReview } from '../hooks'
+import { useReviewReactions, useToggleReviewReaction } from '@/features/reactions'
 import { useSession } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
 
@@ -53,10 +54,9 @@ export function ReviewDetailPage({ reviewId, backHref }: ReviewDetailPageProps) 
   const t = useTranslations('reviews.detail')
   const tCommon = useTranslations('common')
   const tToasts = useTranslations('toasts')
+  const tReactions = useTranslations('reactions')
   const router = useRouter()
   const { data: review, isLoading } = useReviewById(reviewId)
-  // Use catalogItem embedded in the review as primary source (always available).
-  // Fall back to useCatalogItemTitle only if catalogItem is missing (e.g. old data).
   const fallbackTitle = useCatalogItemTitle(review?.contentId ?? '', review?.contentType)
   const itemTitle = review?.catalogItem?.title ?? fallbackTitle
   const coverImageUrl = review?.catalogItem?.coverImageUrl
@@ -67,6 +67,9 @@ export function ReviewDetailPage({ reviewId, backHref }: ReviewDetailPageProps) 
   })
   const { data: session } = useSession()
   const isOwner = session?.user?.id === review?.userId
+  const isAuthenticated = !!session?.user
+  const { data: reactions } = useReviewReactions(reviewId)
+  const toggleReaction = useToggleReviewReaction(reviewId)
   const [showSpoilers, setShowSpoilers] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -213,6 +216,31 @@ export function ReviewDetailPage({ reviewId, backHref }: ReviewDetailPageProps) 
                   <RatingStars value={review.rating} readonly size="lg" showValue />
                 </div>
               )}
+
+              {/* Reactions */}
+              <div className="flex items-center gap-2 pt-1">
+                <ReactionButton
+                  type="like"
+                  count={reactions?.likeCount ?? 0}
+                  isActive={reactions?.userReaction === 'like'}
+                  onClick={() => toggleReaction.mutate('like')}
+                  disabled={!isAuthenticated}
+                  label={tReactions('like')}
+                />
+                <ReactionButton
+                  type="dislike"
+                  count={reactions?.dislikeCount ?? 0}
+                  isActive={reactions?.userReaction === 'dislike'}
+                  onClick={() => toggleReaction.mutate('dislike')}
+                  disabled={!isAuthenticated}
+                  label={tReactions('dislike')}
+                />
+                {!isAuthenticated && (
+                  <span className="text-xs text-muted-foreground">
+                    {tReactions('loginToReact')}
+                  </span>
+                )}
+              </div>
 
               {/* Meta row */}
               <div className="flex items-center gap-4 text-xs text-muted-foreground">

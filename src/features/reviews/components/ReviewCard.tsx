@@ -5,13 +5,15 @@ import { useTranslations } from 'next-intl'
 import { PencilIcon, TrashIcon, MessageSquareIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { RatingStars, ContentTypeBadge, StatusBadge } from '@/shared/ui/atoms'
+import { RatingStars, ContentTypeBadge, StatusBadge, ReactionButton } from '@/shared/ui/atoms'
 import { CoverImage } from '@/shared/ui/atoms/CoverImage'
 import { formatDate } from '@/shared/utils'
 import { useCatalogItem } from '@/features/catalog/hooks/useCatalog'
 import { useComments } from '@/features/comments/hooks/useComments'
+import { useReviewReactions, useToggleReviewReaction } from '@/features/reactions'
 import { ROUTES } from '@/shared/constants'
 import { extractPlainText } from '@/components/editor/editor-client'
+import { useSession } from '@/lib/auth-client'
 import type { Review } from '@/entities/review/types'
 import type { User } from '@/entities/user/types'
 
@@ -27,14 +29,19 @@ interface ReviewCardProps {
 
 export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref }: ReviewCardProps) {
   const t = useTranslations('reviews.card')
+  const tReactions = useTranslations('reactions')
   const localCatalogItem = useCatalogItem(review.contentType, review.contentId)
   const resolvedItem = review.catalogItem ?? localCatalogItem
   const itemTitle = resolvedItem?.title ?? review.contentId
   const { data: comments = [] } = useComments(review.id)
+  const { data: session } = useSession()
+  const { data: reactions } = useReviewReactions(review.id)
+  const toggleReaction = useToggleReviewReaction(review.id)
 
   // Only top-level comments (no replies) count toward the badge
   const commentCount = comments.filter((c) => !c.parentId).length
   const bodyPreview = review.body ? extractPlainText(review.body) : undefined
+  const isAuthenticated = !!session?.user
 
   return (
     <Link
@@ -144,6 +151,29 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
               </span>
             )}
           </span>
+        </div>
+
+        {/* Reactions */}
+        <div
+          className="flex items-center gap-1.5 mt-2"
+          onClick={(e) => e.preventDefault()}
+        >
+          <ReactionButton
+            type="like"
+            count={reactions?.likeCount ?? 0}
+            isActive={reactions?.userReaction === 'like'}
+            onClick={() => toggleReaction.mutate('like')}
+            disabled={!isAuthenticated}
+            label={tReactions('like')}
+          />
+          <ReactionButton
+            type="dislike"
+            count={reactions?.dislikeCount ?? 0}
+            isActive={reactions?.userReaction === 'dislike'}
+            onClick={() => toggleReaction.mutate('dislike')}
+            disabled={!isAuthenticated}
+            label={tReactions('dislike')}
+          />
         </div>
       </div>
     </Link>

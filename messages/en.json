@@ -536,9 +536,15 @@
       "submitting": "Creating profile..."
     }
   },
+  "reactions": {
+    "like": "Like",
+    "dislike": "Dislike",
+    "likeCount": "{count, plural, one {# like} other {# likes}}",
+    "dislikeCount": "{count, plural, one {# dislike} other {# dislikes}}",
+    "loginToReact": "Sign in to react"
+  },
   "toasts": {
     "tryAgain": "Please try again.",
-    "auth": {
       "loginError": "Could not sign in",
       "registerError": "Could not create account",
       "updateProfileError": "Could not save profile data"

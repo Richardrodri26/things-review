@@ -536,6 +536,13 @@
       "submitting": "Creando perfil..."
     }
   },
+  "reactions": {
+    "like": "Me gusta",
+    "dislike": "No me gusta",
+    "likeCount": "{count, plural, one {# me gusta} other {# me gusta}}",
+    "dislikeCount": "{count, plural, one {# no me gusta} other {# no me gusta}}",
+    "loginToReact": "Iniciá sesión para reaccionar"
+  },
   "toasts": {
     "tryAgain": "Intentá de nuevo.",
     "auth": {

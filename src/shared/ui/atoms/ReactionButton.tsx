@@ -10,6 +10,7 @@ interface ReactionButtonProps {
   isActive: boolean
   onClick: () => void
   disabled?: boolean
+  label?: string
 }
 
 const config = {
@@ -27,15 +28,16 @@ const config = {
   },
 }
 
-export function ReactionButton({ type, count, isActive, onClick, disabled }: ReactionButtonProps) {
-  const { Icon, activeClass, hoverClass, label } = config[type]
+export function ReactionButton({ type, count, isActive, onClick, disabled, label }: ReactionButtonProps) {
+  const { Icon, activeClass, hoverClass, label: defaultLabel } = config[type]
+  const resolvedLabel = label ?? defaultLabel
 
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      aria-label={`${label}${count > 0 ? ` (${count})` : ''}`}
+      aria-label={`${resolvedLabel}${count > 0 ? ` (${count})` : ''}`}
       aria-pressed={isActive}
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium',
