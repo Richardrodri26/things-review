@@ -242,6 +242,9 @@
       "noGroupReviews": "Sin reseñas en este grupo",
       "noGroupReviewsDescription": "Nadie en {group} reseñó esto todavía.",
       "groupAverage": "{count, plural, one {# puntaje} other {# puntajes}}"
+    },
+    "similar": {
+      "title": "También te puede gustar"
     }
   },
   "reviews": {

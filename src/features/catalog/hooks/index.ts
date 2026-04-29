@@ -1,4 +1,3 @@
-// src/features/catalog/hooks/index.ts
 export {
   useMovies,
   useMovie,
@@ -14,3 +13,4 @@ export {
   BOOKS_QUERY_KEY,
   PODCASTS_QUERY_KEY,
 } from './useCatalog'
+export { useSimilarContent } from './useSimilarContent'

@@ -13,6 +13,7 @@ import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage
 import { ContentReviewTabs } from '@/features/reviews/components/ContentReviewTabs'
 import { useReviews } from '@/features/reviews/hooks'
 import { useSeriesItem } from '../hooks'
+import { SimilarContentGrid } from './SimilarContentGrid'
 
 interface SeriesDetailPageProps {
   seriesId: string
@@ -150,6 +151,11 @@ export function SeriesDetailPage({ seriesId, defaultGroupId }: SeriesDetailPageP
             defaultGroupId={defaultGroupId}
           />
         </div>
+
+        {/* Similar series */}
+        {series.externalId && (
+          <SimilarContentGrid externalId={series.externalId} contentType="series" />
+        )}
       </div>
 
       {/* Review Editor — full-screen Notion-like */}

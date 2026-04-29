@@ -242,6 +242,9 @@
       "noGroupReviews": "No reviews in this group",
       "noGroupReviewsDescription": "No one in {group} has reviewed this yet.",
       "groupAverage": "{count, plural, one {# rating} other {# ratings}}"
+    },
+    "similar": {
+      "title": "You May Also Like"
     }
   },
   "reviews": {

@@ -13,6 +13,7 @@ import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage
 import { ContentReviewTabs } from '@/features/reviews/components/ContentReviewTabs'
 import { useReviews } from '@/features/reviews/hooks'
 import { useMovie } from '../hooks'
+import { SimilarContentGrid } from './SimilarContentGrid'
 
 interface MovieDetailPageProps {
   movieId: string
@@ -140,6 +141,11 @@ export function MovieDetailPage({ movieId, defaultGroupId }: MovieDetailPageProp
             defaultGroupId={defaultGroupId}
           />
         </div>
+
+        {/* Similar movies */}
+        {movie.externalId && (
+          <SimilarContentGrid externalId={movie.externalId} contentType="movie" />
+        )}
       </div>
 
       {/* Review Editor — full-screen Notion-like */}
