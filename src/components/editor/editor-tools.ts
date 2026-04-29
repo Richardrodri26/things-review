@@ -14,6 +14,7 @@ import Marker from '@editorjs/marker'
 // @ts-expect-error — @editorjs/embed no tiene tipos declarados
 import Embed from '@editorjs/embed'
 import Image from '@editorjs/image'
+import { storageProvider } from '@/shared/services/storage'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const EDITOR_JS_TOOLS: Record<string, any> = {
@@ -84,20 +85,28 @@ export const EDITOR_JS_TOOLS: Record<string, any> = {
     },
   },
 
-  // Imágenes (solo URL, sin backend de upload)
+  // Imágenes — upload vía storageProvider (Cloudinary o blob URL en dev)
   image: {
     class: Image,
     config: {
       uploader: {
         uploadByFile: async (file: File) => {
-          const url = URL.createObjectURL(file)
-          return {
-            success: 1,
-            file: { url, name: file.name, size: file.size },
+          try {
+            const result = await storageProvider.uploadFile(file, 'reviews')
+            return { success: 1, file: { url: result.url } }
+          } catch (error) {
+            console.error('[Editor] Image upload failed:', error)
+            return { success: 0, file: { url: '' } }
           }
         },
         uploadByUrl: async (url: string) => {
-          return { success: 1, file: { url } }
+          try {
+            const result = await storageProvider.uploadByUrl(url, 'reviews')
+            return { success: 1, file: { url: result.url } }
+          } catch (error) {
+            console.error('[Editor] Image import failed:', error)
+            return { success: 0, file: { url: '' } }
+          }
         },
       },
     },
