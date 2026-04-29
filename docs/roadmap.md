@@ -54,11 +54,38 @@
 - [ ] Sesión persistente en el cliente (Zustand ← Better Auth session)
 - [ ] Protección de rutas server-side (middleware)
 
-#### 📬 Social
+#### 📬 Social (Basics)
 - [ ] Invitaciones a grupos por email
 - [ ] Notificaciones in-app (alguien reviewó algo que viste)
 - [ ] Feed de actividad del grupo
 - [ ] Búsqueda de usuarios por username
+
+#### 🤝 Social v2 — Engagement & Discovery
+
+> **Orden de ejecución obligatorio.** Las features tienen dependencias entre sí.
+> El número indica el orden. Features con el mismo número pueden hacerse en paralelo.
+
+```
+① F1+F2 (Reactions) ─────────┐
+                              ├──→ ③ F3 (Reviewer Reputation)
+② F4   (Follow System) ──────┤
+                              └──→ ④ F6 (Social Feed & Global)
+② F5   (Similar Content) ──────── (independiente, en paralelo con F4)
+```
+
+| Orden | Feature | DB Impact | Plan |
+|:-----:|---------|-----------|------|
+| ① | **Reactions en Reviews** (like/dislike) | Nueva tabla `ReviewReaction` | [`2026-04-29-reactions.md`](plans/2026-04-29-reactions.md) |
+| ① | **Reactions en Comentarios** | Nueva tabla `CommentReaction` | Mismo plan ↑ |
+| ② | **Follow System** | Nueva tabla `UserFollow` | [`2026-04-29-follow-system.md`](plans/2026-04-29-follow-system.md) |
+| ② | **Contenido Similar** | Sin cambios en DB (TMDB API) | [`2026-04-29-similar-content.md`](plans/2026-04-29-similar-content.md) |
+| ③ | **Reviewer Reputation** | Sin tabla nueva (datos derivados) | [`2026-04-29-reviewer-reputation.md`](plans/2026-04-29-reviewer-reputation.md) |
+| ④ | **Social Feed & Reseñas Globales** | Sin tabla nueva (queries + joins) | [`2026-04-29-social-feed.md`](plans/2026-04-29-social-feed.md) |
+
+**Dependencias concretas:**
+- F3 (Reputation) requiere F1+F2 (calcula puntajes a partir de reacciones)
+- F6 (Feed) requiere F4 (el feed de "seguidos" necesita la tabla `UserFollow`)
+- F5 (Similar Content) es 100% independiente — puede ejecutarse en cualquier momento
 
 #### 🎨 Polish & QA
 - [ ] Loading states y error states en todos los flujos

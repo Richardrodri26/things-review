@@ -157,4 +157,42 @@ export class TMDBProvider implements ContentProvider {
       return []
     }
   }
+
+  async getSimilar(externalId: string, contentType: ContentType): Promise<ProviderSearchResult[]> {
+    if (!this.token) return []
+
+    const path = contentType === 'movie'
+      ? `movie/${externalId}/similar`
+      : `tv/${externalId}/similar`
+
+    const res = await fetch(`${BASE_URL}/${path}`, {
+      headers: this.headers,
+      next: { revalidate: 60 * 30 }, // 30 min — similar content rarely changes
+    })
+    if (!res.ok) return []
+
+    if (contentType === 'movie') {
+      const data = (await res.json()) as TMDBSearchResponse<TMDBSearchMovie>
+      return data.results.slice(0, 8).map((item) => ({
+        externalId: String(item.id),
+        providerId: this.id,
+        contentType: 'movie' as ContentType,
+        title: item.title,
+        year: item.release_date ? new Date(item.release_date).getFullYear() : undefined,
+        coverImageUrl: buildImageUrl(item.poster_path),
+        overview: item.overview || undefined,
+      }))
+    }
+
+    const data = (await res.json()) as TMDBSearchResponse<TMDBSearchSeries>
+    return data.results.slice(0, 8).map((item) => ({
+      externalId: String(item.id),
+      providerId: this.id,
+      contentType: 'series' as ContentType,
+      title: item.name,
+      year: item.first_air_date ? new Date(item.first_air_date).getFullYear() : undefined,
+      coverImageUrl: buildImageUrl(item.poster_path),
+      overview: item.overview || undefined,
+    }))
+  }
 }

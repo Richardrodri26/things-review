@@ -9,6 +9,7 @@ import {
   UsersIcon,
   UserCircleIcon,
   BookmarkIcon,
+  CompassIcon,
 } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 
@@ -33,6 +34,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     { title: t('nav.home'),      url: ROUTES.HOME,      icon: <HomeIcon />,       exact: true },
     { title: t('nav.movies'),    url: ROUTES.MOVIES,    icon: <FilmIcon /> },
     { title: t('nav.series'),    url: ROUTES.SERIES,    icon: <TvIcon /> },
+    { title: t('nav.explore'),   url: ROUTES.EXPLORE,   icon: <CompassIcon /> },
     { title: t('nav.reviews'),   url: ROUTES.REVIEWS,   icon: <StarIcon /> },
     { title: t('nav.watchlist'), url: ROUTES.WATCHLIST, icon: <BookmarkIcon /> },
     { title: t('nav.groups'),    url: ROUTES.GROUPS,    icon: <UsersIcon /> },

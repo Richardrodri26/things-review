@@ -4,6 +4,11 @@ import createNextIntlPlugin from 'next-intl/plugin'
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts')
 
 const nextConfig: NextConfig = {
+  // Prisma uses a custom output path which causes Turbopack to mangle
+  // the runtime import into "@prisma/client-{hash}/runtime/client".
+  // Marking these as external forces Node's native resolution instead.
+  // See: https://www.prisma.io/docs/guides/nextjs
+  serverExternalPackages: ['@prisma/client', '@prisma/adapter-pg', 'pg'],
   // Security: HTTP response headers that reduce common attack surface
   async headers() {
     return [

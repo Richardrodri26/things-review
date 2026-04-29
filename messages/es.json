@@ -37,6 +37,7 @@
   "nav": {
     "movies": "Películas",
     "series": "Series",
+    "explore": "Explorar",
     "reviews": "Mis Reseñas",
     "watchlist": "Lista de espera",
     "groups": "Grupos",
@@ -242,6 +243,14 @@
       "noGroupReviews": "Sin reseñas en este grupo",
       "noGroupReviewsDescription": "Nadie en {group} reseñó esto todavía.",
       "groupAverage": "{count, plural, one {# puntaje} other {# puntajes}}"
+    },
+    "similar": {
+      "title": "También te puede gustar"
+    },
+    "globalRating": {
+      "average": "Puntaje de la comunidad",
+      "fromReviews": "{count, plural, one {de # reseña} other {de # reseñas}}",
+      "noRatings": "Sin puntajes aún"
     }
   },
   "reviews": {
@@ -303,7 +312,8 @@
       "spoilerHint": "Continuá solo si ya experimentaste este contenido.",
       "revealAnyway": "Ver de todas formas",
       "spoilers": "Spoilers",
-      "editedAt": "editado {date}"
+      "editedAt": "editado {date}",
+      "viewAuthorProfile": "Ver perfil del autor"
     },
     "form": {
       "content": "Contenido",
@@ -478,6 +488,7 @@
   "profile": {
     "editProfile": "Editar Perfil",
     "overview": "Resumen",
+    "reputation": "Reputación",
     "ratingBreakdown": "Distribución de puntajes",
     "byType": "Por tipo",
     "stats": {
@@ -494,6 +505,43 @@
       "submit": "Guardar Cambios",
       "submitting": "Guardando..."
     }
+  },
+  "reputation": {
+    "title": "Reputación",
+    "score": "Puntaje",
+    "tier": {
+      "newbie": "Novato",
+      "contributor": "Colaborador",
+      "enthusiast": "Entusiasta",
+      "expert": "Experto",
+      "legend": "Leyenda"
+    },
+    "breakdown": {
+      "reviewLikes": "Likes en reseñas",
+      "reviewDislikes": "Dislikes en reseñas",
+      "commentLikes": "Likes en comentarios",
+      "commentDislikes": "Dislikes en comentarios",
+      "totalReviews": "Reseñas totales"
+    }
+  },
+  "feed": {
+    "title": "De personas que seguís",
+    "empty": "Seguí a reseñadores para ver sus reseñas acá",
+    "emptyAction": "Descubrí reseñadores",
+    "seeMore": "Ver más"
+  },
+  "explore": {
+    "title": "Explorar",
+    "subtitle": "Descubrí reseñas de la comunidad",
+    "filters": {
+      "all": "Todos",
+      "sortRecent": "Más recientes",
+      "sortPopular": "Más populares",
+      "sortRatingHigh": "Mayor puntaje",
+      "sortRatingLow": "Menor puntaje"
+    },
+    "empty": "Sin reseñas aún. ¡Sé el primero!",
+    "loadMore": "Cargar más"
   },
   "auth": {
     "login": {
@@ -535,6 +583,26 @@
       "submit": "Comenzar",
       "submitting": "Creando perfil..."
     }
+  },
+  "reactions": {
+    "like": "Me gusta",
+    "dislike": "No me gusta",
+    "likeCount": "{count, plural, one {# me gusta} other {# me gusta}}",
+    "dislikeCount": "{count, plural, one {# no me gusta} other {# no me gusta}}",
+    "loginToReact": "Iniciá sesión para reaccionar"
+  },
+  "follow": {
+    "follow": "Seguir",
+    "following": "Siguiendo",
+    "unfollow": "Dejar de seguir",
+    "followers": "Seguidores",
+    "followersCount": "{count, plural, one {# seguidor} other {# seguidores}}",
+    "followingCount": "{count} siguiendo",
+    "noFollowers": "Aún no hay seguidores",
+    "noFollowing": "Aún no seguís a nadie",
+    "cannotFollowSelf": "No podés seguirte a vos mismo",
+    "notFound": "Usuario no encontrado",
+    "notFoundDescription": "Este perfil no existe o fue eliminado."
   },
   "toasts": {
     "tryAgain": "Intentá de nuevo.",

@@ -13,6 +13,12 @@ const CATALOG_ITEM_SELECT = {
   year: true,
 } as const
 
+const REACTION_COUNT_INCLUDE = {
+  _count: {
+    select: { reactions: true },
+  },
+} as const
+
 export async function GET(req: NextRequest) {
   const { session, response } = await requireSession()
   if (response) return response
@@ -27,7 +33,10 @@ export async function GET(req: NextRequest) {
       ...(contentType && { contentType }),
       ...(status && { status }),
     },
-    include: { catalogItem: { select: CATALOG_ITEM_SELECT } },
+    include: {
+      catalogItem: { select: CATALOG_ITEM_SELECT },
+      ...REACTION_COUNT_INCLUDE,
+    },
     orderBy: { createdAt: 'desc' },
   })
 

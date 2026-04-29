@@ -37,6 +37,7 @@
   "nav": {
     "movies": "Movies",
     "series": "Series",
+    "explore": "Explore",
     "reviews": "My Reviews",
     "watchlist": "Watchlist",
     "groups": "Groups",
@@ -242,6 +243,14 @@
       "noGroupReviews": "No reviews in this group",
       "noGroupReviewsDescription": "No one in {group} has reviewed this yet.",
       "groupAverage": "{count, plural, one {# rating} other {# ratings}}"
+    },
+    "similar": {
+      "title": "You May Also Like"
+    },
+    "globalRating": {
+      "average": "Community Rating",
+      "fromReviews": "{count, plural, one {from # review} other {from # reviews}}",
+      "noRatings": "No ratings yet"
     }
   },
   "reviews": {
@@ -303,7 +312,8 @@
       "spoilerHint": "Continue only if you've already experienced this content.",
       "revealAnyway": "Reveal anyway",
       "spoilers": "Spoilers",
-      "editedAt": "edited {date}"
+      "editedAt": "edited {date}",
+      "viewAuthorProfile": "View author profile"
     },
     "form": {
       "content": "Content",
@@ -478,6 +488,7 @@
   "profile": {
     "editProfile": "Edit Profile",
     "overview": "Overview",
+    "reputation": "Reputation",
     "ratingBreakdown": "Rating Breakdown",
     "byType": "By Type",
     "stats": {
@@ -494,6 +505,43 @@
       "submit": "Save Changes",
       "submitting": "Saving..."
     }
+  },
+  "reputation": {
+    "title": "Reputation",
+    "score": "Score",
+    "tier": {
+      "newbie": "Newbie",
+      "contributor": "Contributor",
+      "enthusiast": "Enthusiast",
+      "expert": "Expert",
+      "legend": "Legend"
+    },
+    "breakdown": {
+      "reviewLikes": "Review likes",
+      "reviewDislikes": "Review dislikes",
+      "commentLikes": "Comment likes",
+      "commentDislikes": "Comment dislikes",
+      "totalReviews": "Total reviews"
+    }
+  },
+  "feed": {
+    "title": "From People You Follow",
+    "empty": "Follow reviewers to see their reviews here",
+    "emptyAction": "Discover reviewers",
+    "seeMore": "See more"
+  },
+  "explore": {
+    "title": "Explore",
+    "subtitle": "Discover reviews from the community",
+    "filters": {
+      "all": "All",
+      "sortRecent": "Most Recent",
+      "sortPopular": "Most Popular",
+      "sortRatingHigh": "Highest Rated",
+      "sortRatingLow": "Lowest Rated"
+    },
+    "empty": "No reviews yet. Be the first!",
+    "loadMore": "Load more"
   },
   "auth": {
     "login": {
@@ -535,6 +583,26 @@
       "submit": "Get Started",
       "submitting": "Creating profile..."
     }
+  },
+  "reactions": {
+    "like": "Like",
+    "dislike": "Dislike",
+    "likeCount": "{count, plural, one {# like} other {# likes}}",
+    "dislikeCount": "{count, plural, one {# dislike} other {# dislikes}}",
+    "loginToReact": "Sign in to react"
+  },
+  "follow": {
+    "follow": "Follow",
+    "following": "Following",
+    "unfollow": "Unfollow",
+    "followers": "Followers",
+    "followersCount": "{count, plural, one {# follower} other {# followers}}",
+    "followingCount": "{count} following",
+    "noFollowers": "No followers yet",
+    "noFollowing": "Not following anyone yet",
+    "cannotFollowSelf": "You can't follow yourself",
+    "notFound": "User not found",
+    "notFoundDescription": "This profile doesn't exist or may have been removed."
   },
   "toasts": {
     "tryAgain": "Please try again.",

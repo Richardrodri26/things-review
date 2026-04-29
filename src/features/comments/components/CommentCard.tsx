@@ -8,9 +8,12 @@ import { PencilIcon, TrashIcon, CheckIcon, XIcon, MessageSquareIcon } from 'luci
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { ReactionButton } from '@/shared/ui/atoms'
 import { formatDate } from '@/shared/utils'
 import { useUpdateComment, useDeleteComment } from '../hooks/useComments'
 import { useUser } from '@/shared/lib/store'
+import { useCommentReactions, useToggleCommentReaction } from '@/features/reactions'
+import { useSession } from '@/lib/auth-client'
 import { ReplyForm } from './ReplyForm'
 import type { CommentWithAuthor } from '@/entities/comment/types'
 
@@ -54,6 +57,12 @@ export function CommentCard({
   const [showReplyForm, setShowReplyForm] = useState(false)
   const currentUser = useUser()
   const tToasts = useTranslations('toasts')
+  const tReactions = useTranslations('reactions')
+  const tCommon = useTranslations('common')
+  const { data: session } = useSession()
+  const isAuthenticated = !!session?.user
+  const { data: reactions } = useCommentReactions(comment.id, { enabled: depth === 0 })
+  const toggleReaction = useToggleCommentReaction(comment.id)
 
   const updateComment = useUpdateComment(comment.reviewId, {
     updateError: tToasts('comments.updateError'),
@@ -131,11 +140,11 @@ export function CommentCard({
                 disabled={updateComment.isPending || !editBody.trim()}
               >
                 <CheckIcon className="size-3 mr-1" />
-                Save
+                {tCommon('save')}
               </Button>
               <Button size="xs" variant="ghost" onClick={handleCancel}>
                 <XIcon className="size-3 mr-1" />
-                Cancel
+                {tCommon('cancel')}
               </Button>
             </div>
           </div>
@@ -143,9 +152,9 @@ export function CommentCard({
           <p className="text-sm text-foreground leading-relaxed">{comment.body}</p>
         )}
 
-        {/* Botón Reply — solo en comentarios raíz (depth === 0) */}
+        {/* Botón Reply + Reactions — solo en comentarios raíz (depth === 0) */}
         {depth === 0 && !isEditing && (
-          <div className="mt-2">
+          <div className="mt-2 flex items-center gap-2">
             <Button
               variant="ghost"
               size="xs"
@@ -155,6 +164,22 @@ export function CommentCard({
               <MessageSquareIcon className="size-3" />
               {replies.length > 0 ? `Reply · ${replies.length}` : 'Reply'}
             </Button>
+            <ReactionButton
+              type="like"
+              count={reactions?.likeCount ?? 0}
+              isActive={reactions?.userReaction === 'like'}
+              onClick={() => toggleReaction.mutate('like')}
+              disabled={!isAuthenticated}
+              label={tReactions('like')}
+            />
+            <ReactionButton
+              type="dislike"
+              count={reactions?.dislikeCount ?? 0}
+              isActive={reactions?.userReaction === 'dislike'}
+              onClick={() => toggleReaction.mutate('dislike')}
+              disabled={!isAuthenticated}
+              label={tReactions('dislike')}
+            />
           </div>
         )}
 

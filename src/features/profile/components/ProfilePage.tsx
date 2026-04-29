@@ -13,14 +13,16 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Separator } from '@/components/ui/separator'
-import { StatsCard, RatingStars } from '@/shared/ui/atoms'
+import { StatsCard, RatingStars, ReputationBadge } from '@/shared/ui/atoms'
 import { CONTENT_TYPE_LABELS } from '@/shared/types'
 import { useProfile, useUserStats } from '../hooks'
 import { ProfileForm } from './ProfileForm'
+import { useReputation } from '@/features/reputation'
 
 export function ProfilePage() {
   const { data: user } = useProfile()
   const stats = useUserStats()
+  const { data: reputation } = useReputation(user?.id)
   const [isEditing, setIsEditing] = useState(false)
   const t = useTranslations('profile')
   const tContentType = useTranslations('contentType')
@@ -55,6 +57,19 @@ export function ProfilePage() {
       </div>
 
       <Separator />
+
+      {/* Reputation */}
+      {reputation && (
+        <>
+          <div>
+            <h2 className="text-sm font-medium text-muted-foreground mb-3 uppercase tracking-wide">
+              {t('reputation')}
+            </h2>
+            <ReputationBadge score={reputation.score} tier={reputation.tier} variant="card" />
+          </div>
+          <Separator />
+        </>
+      )}
 
       {/* Stats Overview */}
       <div>

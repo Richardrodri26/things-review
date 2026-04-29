@@ -22,7 +22,10 @@ export async function GET(_req: NextRequest, { params }: Params) {
   const { id } = await params
   const review = await prisma.review.findUnique({
     where: { id },
-    include: { catalogItem: { select: CATALOG_ITEM_SELECT } },
+    include: {
+      catalogItem: { select: CATALOG_ITEM_SELECT },
+      _count: { select: { reactions: true } },
+    },
   })
 
   if (!review) return NextResponse.json({ error: 'Review not found' }, { status: 404 })

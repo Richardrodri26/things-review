@@ -41,6 +41,7 @@ export interface ContentProvider {
 
   search(query: string, contentType: ContentType): Promise<ProviderSearchResult[]>
   getById(externalId: string, contentType: ContentType): Promise<ProviderItemDetail | null>
+  getSimilar?(externalId: string, contentType: ContentType): Promise<ProviderSearchResult[]>
 }
 
 // ─── Search response (API route shape) ───────────────────────────────────────

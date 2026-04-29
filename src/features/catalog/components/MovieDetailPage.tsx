@@ -12,7 +12,9 @@ import { useTranslations } from 'next-intl'
 import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage'
 import { ContentReviewTabs } from '@/features/reviews/components/ContentReviewTabs'
 import { useReviews } from '@/features/reviews/hooks'
-import { useMovie } from '../hooks'
+import { useMovie, useGlobalRating } from '../hooks'
+import { SimilarContentGrid } from './SimilarContentGrid'
+import { GlobalRatingBadge } from '@/shared/ui/atoms'
 
 interface MovieDetailPageProps {
   movieId: string
@@ -26,6 +28,7 @@ export function MovieDetailPage({ movieId, defaultGroupId }: MovieDetailPageProp
   const router = useRouter()
   const { data: movie, isLoading } = useMovie(movieId)
   const { data: reviews = [] } = useReviews()
+  const { data: globalRating } = useGlobalRating(movie?.id)
   const [dialog, setDialog] = useState<DialogMode>('none')
   const t = useTranslations('catalog.detail')
   const tNav = useTranslations('nav')
@@ -107,6 +110,13 @@ export function MovieDetailPage({ movieId, defaultGroupId }: MovieDetailPageProp
                 <Badge key={g.id} variant="outline" className="text-[10px]">{g.name}</Badge>
               ))}
             </div>
+            {globalRating && (
+              <GlobalRatingBadge
+                averageRating={globalRating.averageRating}
+                totalReviews={globalRating.totalReviews}
+                size="sm"
+              />
+            )}
           </div>
         </div>
 
@@ -140,6 +150,11 @@ export function MovieDetailPage({ movieId, defaultGroupId }: MovieDetailPageProp
             defaultGroupId={defaultGroupId}
           />
         </div>
+
+        {/* Similar movies */}
+        {movie.externalId && (
+          <SimilarContentGrid externalId={movie.externalId} contentType="movie" />
+        )}
       </div>
 
       {/* Review Editor — full-screen Notion-like */}

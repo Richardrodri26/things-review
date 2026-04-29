@@ -16,6 +16,8 @@ export const ROUTES = {
   GROUPS: '/groups',
   GROUP_DETAIL: (id: string) => `/groups/${id}`,
   PROFILE: '/profile',
+  PUBLIC_PROFILE: (id: string) => `/profile/${id}`,
+  EXPLORE: '/explore',
 } as const
 
 // Claves de localStorage
