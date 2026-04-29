@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
       include: {
         user: { select: USER_SELECT },
         catalogItem: { select: CATALOG_ITEM_SELECT },
-        _count: { select: { reactions: true, comments: true } },
+        _count: { select: { comments: true } },
       },
       orderBy: { createdAt: 'desc' },
       take: LIMIT,

@@ -600,7 +600,9 @@
     "followingCount": "{count} following",
     "noFollowers": "No followers yet",
     "noFollowing": "Not following anyone yet",
-    "cannotFollowSelf": "You can't follow yourself"
+    "cannotFollowSelf": "You can't follow yourself",
+    "notFound": "User not found",
+    "notFoundDescription": "This profile doesn't exist or may have been removed."
   },
   "toasts": {
     "tryAgain": "Please try again.",

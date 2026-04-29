@@ -167,10 +167,7 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
         </div>
 
         {/* Reactions */}
-        <div
-          className="flex items-center gap-1.5 mt-2"
-          onClick={(e) => e.preventDefault()}
-        >
+        <div className="flex items-center gap-1.5 mt-2">
           <ReactionButton
             type="like"
             count={reactions?.likeCount ?? 0}

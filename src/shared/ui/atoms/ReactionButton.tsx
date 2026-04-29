@@ -35,7 +35,7 @@ export function ReactionButton({ type, count, isActive, onClick, disabled, label
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={(e) => { e.stopPropagation(); e.preventDefault(); onClick() }}
       disabled={disabled}
       aria-label={`${resolvedLabel}${count > 0 ? ` (${count})` : ''}`}
       aria-pressed={isActive}

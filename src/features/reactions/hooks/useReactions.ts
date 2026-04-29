@@ -65,11 +65,11 @@ export function useToggleReviewReaction(reviewId: string) {
 
 // ─── Comment reactions ───────────────────────────────────────────────────────
 
-export function useCommentReactions(commentId: string) {
+export function useCommentReactions(commentId: string, options?: { enabled?: boolean }) {
   return useQuery({
     queryKey: commentReactionKey(commentId),
     queryFn: () => reactionService.getCommentReactions(commentId),
-    enabled: !!commentId,
+    enabled: !!commentId && (options?.enabled ?? true),
   })
 }
 

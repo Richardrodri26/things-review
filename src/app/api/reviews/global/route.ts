@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { requireSession } from '@/lib/auth-server'
+import { getSession } from '@/lib/auth-server'
 import { prisma } from '@/lib/prisma'
 import type { ContentType } from '@/shared/types'
 
@@ -22,9 +22,6 @@ const CATALOG_ITEM_SELECT = {
 } as const
 
 export async function GET(req: NextRequest) {
-  const { response } = await requireSession()
-  if (response) return response
-
   const { searchParams } = req.nextUrl
   const page = Math.max(1, Number(searchParams.get('page') ?? 1))
   const contentType = searchParams.get('contentType') as ContentType | null
@@ -50,7 +47,7 @@ export async function GET(req: NextRequest) {
       include: {
         user: { select: USER_SELECT },
         catalogItem: { select: CATALOG_ITEM_SELECT },
-        _count: { select: { reactions: true, comments: true } },
+        _count: { select: { comments: true } },
       },
       orderBy,
       take: LIMIT,

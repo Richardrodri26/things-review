@@ -1,7 +1,7 @@
 'use client'
 
 import { useTranslations } from 'next-intl'
-import { UsersIcon, BookOpenIcon } from 'lucide-react'
+import { UsersIcon, BookOpenIcon, UserXIcon } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -16,14 +16,14 @@ interface PublicProfilePageProps {
 
 export function PublicProfilePage({ userId }: PublicProfilePageProps) {
   const t = useTranslations('follow')
-  const { data: profile, isLoading } = useUserProfile(userId)
+  const { data: profile, isLoading, isError } = useUserProfile(userId)
   const { data: reputation } = useReputation(userId)
   const { data: session } = useSession()
   const isOwnProfile = session?.user?.id === userId
   const isAuthenticated = !!session?.user
 
   if (isLoading) return <PublicProfileSkeleton />
-  if (!profile) return null
+  if (isError || !profile) return <ProfileNotFound />
 
   const displayName = profile.displayName ?? profile.username ?? profile.id.slice(0, 8)
   const initials = displayName.slice(0, 2).toUpperCase()
@@ -90,6 +90,16 @@ export function PublicProfilePage({ userId }: PublicProfilePageProps) {
   )
 }
 
+function ProfileNotFound() {
+  const t = useTranslations('follow')
+  return (
+    <div className="flex flex-1 flex-col items-center justify-center gap-3 p-8 text-center max-w-2xl">
+      <UserXIcon className="size-12 text-muted-foreground/50" />
+      <h2 className="text-lg font-semibold">{t('notFound')}</h2>
+      <p className="text-sm text-muted-foreground">{t('notFoundDescription')}</p>
+    </div>
+  )
+}
 function PublicProfileSkeleton() {
   return (
     <div className="flex flex-1 flex-col gap-6 p-4 max-w-2xl">

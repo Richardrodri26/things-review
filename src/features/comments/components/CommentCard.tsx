@@ -58,9 +58,10 @@ export function CommentCard({
   const currentUser = useUser()
   const tToasts = useTranslations('toasts')
   const tReactions = useTranslations('reactions')
+  const tCommon = useTranslations('common')
   const { data: session } = useSession()
   const isAuthenticated = !!session?.user
-  const { data: reactions } = useCommentReactions(comment.id)
+  const { data: reactions } = useCommentReactions(comment.id, { enabled: depth === 0 })
   const toggleReaction = useToggleCommentReaction(comment.id)
 
   const updateComment = useUpdateComment(comment.reviewId, {
@@ -139,11 +140,11 @@ export function CommentCard({
                 disabled={updateComment.isPending || !editBody.trim()}
               >
                 <CheckIcon className="size-3 mr-1" />
-                Save
+                {tCommon('save')}
               </Button>
               <Button size="xs" variant="ghost" onClick={handleCancel}>
                 <XIcon className="size-3 mr-1" />
-                Cancel
+                {tCommon('cancel')}
               </Button>
             </div>
           </div>
