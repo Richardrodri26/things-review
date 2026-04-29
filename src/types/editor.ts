@@ -29,9 +29,18 @@ export interface ParagraphData {
   text: string
 }
 
+// Formato v2 de @editorjs/list (2.0.x+)
+export interface ListItemV2 {
+  content: string
+  meta: Record<string, unknown>
+  items: ListItemV2[]
+}
+
 export interface ListData {
   style: 'ordered' | 'unordered'
-  items: string[]
+  meta?: Record<string, unknown>
+  // v2: array de objetos; v1 legacy: array de strings
+  items: ListItemV2[] | string[]
 }
 
 export interface QuoteData {
