@@ -38,7 +38,10 @@ export async function GET(req: NextRequest) {
   }
 
   const followedIds = follows.map((f) => f.followingId)
-  const where = { userId: { in: followedIds }, status: 'published' }
+  const where = {
+    userId: { in: followedIds },
+    status: { not: 'want_to_consume' },
+  }
 
   const [reviews, total] = await Promise.all([
     prisma.review.findMany({
@@ -55,8 +58,19 @@ export async function GET(req: NextRequest) {
     prisma.review.count({ where }),
   ])
 
+  // Map Prisma User fields to the entity shape ReviewCard expects
+  const mapped = reviews.map((r) => ({
+    ...r,
+    user: {
+      id: r.user.id,
+      username: r.user.username ?? r.user.name,
+      displayName: r.user.displayName ?? r.user.name,
+      avatarUrl: r.user.image ?? undefined,
+    },
+  }))
+
   return NextResponse.json({
-    reviews,
+    reviews: mapped,
     total,
     page,
     hasMore: page * LIMIT < total,

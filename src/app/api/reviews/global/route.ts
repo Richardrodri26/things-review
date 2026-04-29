@@ -29,7 +29,8 @@ export async function GET(req: NextRequest) {
 
   const where = {
     ...(contentType && { contentType }),
-    status: 'published',
+    // Exclude wishlist-only entries — all real reviews use consumed/consuming/dropped
+    status: { not: 'want_to_consume' },
   }
 
   const orderBy =
@@ -56,8 +57,19 @@ export async function GET(req: NextRequest) {
     prisma.review.count({ where }),
   ])
 
+  // Map Prisma User fields to the entity shape ReviewCard expects
+  const mapped = reviews.map((r) => ({
+    ...r,
+    user: {
+      id: r.user.id,
+      username: r.user.username ?? r.user.name,
+      displayName: r.user.displayName ?? r.user.name,
+      avatarUrl: r.user.image ?? undefined,
+    },
+  }))
+
   return NextResponse.json({
-    reviews,
+    reviews: mapped,
     total,
     page,
     hasMore: page * LIMIT < total,

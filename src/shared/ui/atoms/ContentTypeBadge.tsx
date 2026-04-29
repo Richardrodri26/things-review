@@ -1,4 +1,7 @@
 // src/shared/ui/atoms/ContentTypeBadge.tsx
+'use client'
+
+import { useTranslations } from 'next-intl'
 import { cn } from '@/lib/utils'
 import { CONTENT_TYPE_LABELS } from '@/shared/types'
 import type { ContentType } from '@/shared/types'
@@ -10,6 +13,7 @@ interface ContentTypeBadgeProps {
 }
 
 export function ContentTypeBadge({ contentType, showIcon = true, className }: ContentTypeBadgeProps) {
+  const t = useTranslations('contentType')
   const label = CONTENT_TYPE_LABELS[contentType]
   return (
     <span
@@ -19,7 +23,7 @@ export function ContentTypeBadge({ contentType, showIcon = true, className }: Co
       )}
     >
       {showIcon && <span aria-hidden>{label.icon}</span>}
-      <span>{label.en}</span>
+      <span>{t(contentType)}</span>
     </span>
   )
 }

@@ -22,7 +22,7 @@ interface ReviewCardProps {
   review: Review
   onEdit?: (review: Review) => void
   onDelete?: (review: Review) => void
-  author?: Pick<User, 'id' | 'username' | 'displayName' | 'avatarUrl'>
+  author?: Pick<User, 'id' | 'username'> & { displayName?: string | null; avatarUrl?: string }
   isOwn?: boolean
   /** Href override for the card link. Defaults to ROUTES.REVIEW_DETAIL(review.id) */
   detailHref?: string
@@ -139,10 +139,10 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
                 className="flex items-center gap-1 min-w-0 hover:text-primary transition-colors"
               >
                 <Avatar size="sm" className="size-4 shrink-0">
-                  <AvatarImage src={author.avatarUrl} alt={author.displayName} />
-                  <AvatarFallback>{author.displayName.charAt(0).toUpperCase()}</AvatarFallback>
+                  <AvatarImage src={author.avatarUrl} alt={author.displayName ?? author.username} />
+                  <AvatarFallback>{(author.displayName ?? author.username ?? 'U').charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
-                <span className="truncate">{author.displayName}</span>
+                <span className="truncate">{author.displayName ?? author.username}</span>
                 {authorReputation && (
                   <ReputationBadge
                     score={authorReputation.score}
