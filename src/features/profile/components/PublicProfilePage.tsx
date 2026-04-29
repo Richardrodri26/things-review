@@ -5,8 +5,9 @@ import { UsersIcon, BookOpenIcon } from 'lucide-react'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Separator } from '@/components/ui/separator'
 import { Skeleton } from '@/components/ui/skeleton'
-import { FollowButton } from '@/shared/ui/atoms'
+import { FollowButton, ReputationBadge } from '@/shared/ui/atoms'
 import { useUserProfile } from '@/features/follow'
+import { useReputation } from '@/features/reputation'
 import { useSession } from '@/lib/auth-client'
 
 interface PublicProfilePageProps {
@@ -16,6 +17,7 @@ interface PublicProfilePageProps {
 export function PublicProfilePage({ userId }: PublicProfilePageProps) {
   const t = useTranslations('follow')
   const { data: profile, isLoading } = useUserProfile(userId)
+  const { data: reputation } = useReputation(userId)
   const { data: session } = useSession()
   const isOwnProfile = session?.user?.id === userId
   const isAuthenticated = !!session?.user
@@ -36,7 +38,12 @@ export function PublicProfilePage({ userId }: PublicProfilePageProps) {
         </Avatar>
 
         <div className="flex-1 space-y-1 min-w-0">
-          <h1 className="text-xl font-semibold truncate">{displayName}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-xl font-semibold truncate">{displayName}</h1>
+            {reputation && (
+              <ReputationBadge score={reputation.score} tier={reputation.tier} variant="inline" />
+            )}
+          </div>
           {profile.username && (
             <p className="text-sm text-muted-foreground">@{profile.username}</p>
           )}

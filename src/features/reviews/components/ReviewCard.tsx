@@ -5,12 +5,13 @@ import { useTranslations } from 'next-intl'
 import { PencilIcon, TrashIcon, MessageSquareIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { RatingStars, ContentTypeBadge, StatusBadge, ReactionButton } from '@/shared/ui/atoms'
+import { RatingStars, ContentTypeBadge, StatusBadge, ReactionButton, ReputationBadge } from '@/shared/ui/atoms'
 import { CoverImage } from '@/shared/ui/atoms/CoverImage'
 import { formatDate } from '@/shared/utils'
 import { useCatalogItem } from '@/features/catalog/hooks/useCatalog'
 import { useComments } from '@/features/comments/hooks/useComments'
 import { useReviewReactions, useToggleReviewReaction } from '@/features/reactions'
+import { useReputation } from '@/features/reputation'
 import { ROUTES } from '@/shared/constants'
 import { extractPlainText } from '@/components/editor/editor-client'
 import { useSession } from '@/lib/auth-client'
@@ -37,6 +38,7 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
   const { data: session } = useSession()
   const { data: reactions } = useReviewReactions(review.id)
   const toggleReaction = useToggleReviewReaction(review.id)
+  const { data: authorReputation } = useReputation(author?.id)
 
   // Only top-level comments (no replies) count toward the badge
   const commentCount = comments.filter((c) => !c.parentId).length
@@ -141,6 +143,13 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
                   <AvatarFallback>{author.displayName.charAt(0).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <span className="truncate">{author.displayName}</span>
+                {authorReputation && (
+                  <ReputationBadge
+                    score={authorReputation.score}
+                    tier={authorReputation.tier}
+                    variant="inline"
+                  />
+                )}
               </Link>
             )
           ) : (

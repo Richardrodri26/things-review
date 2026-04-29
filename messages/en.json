@@ -482,6 +482,7 @@
   "profile": {
     "editProfile": "Edit Profile",
     "overview": "Overview",
+    "reputation": "Reputation",
     "ratingBreakdown": "Rating Breakdown",
     "byType": "By Type",
     "stats": {
@@ -497,6 +498,24 @@
       "bio": "Bio",
       "submit": "Save Changes",
       "submitting": "Saving..."
+    }
+  },
+  "reputation": {
+    "title": "Reputation",
+    "score": "Score",
+    "tier": {
+      "newbie": "Newbie",
+      "contributor": "Contributor",
+      "enthusiast": "Enthusiast",
+      "expert": "Expert",
+      "legend": "Legend"
+    },
+    "breakdown": {
+      "reviewLikes": "Review likes",
+      "reviewDislikes": "Review dislikes",
+      "commentLikes": "Comment likes",
+      "commentDislikes": "Comment dislikes",
+      "totalReviews": "Total reviews"
     }
   },
   "auth": {
