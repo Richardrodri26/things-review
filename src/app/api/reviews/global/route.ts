@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getSession } from '@/lib/auth-server'
 import { prisma } from '@/lib/prisma'
 import type { ContentType } from '@/shared/types'
 
@@ -21,15 +20,17 @@ const CATALOG_ITEM_SELECT = {
   year: true,
 } as const
 
+// Public endpoint — no auth required. Global review discovery for the Explore page.
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl
   const page = Math.max(1, Number(searchParams.get('page') ?? 1))
   const contentType = searchParams.get('contentType') as ContentType | null
   const sort = searchParams.get('sort') ?? 'recent'
 
+  // No status filter — all reviews are worth discovering.
+  // The create API already prevents want_to_consume reviews.
   const where = {
     ...(contentType && { contentType }),
-    status: 'published',
   }
 
   const orderBy =
@@ -47,7 +48,7 @@ export async function GET(req: NextRequest) {
       include: {
         user: { select: USER_SELECT },
         catalogItem: { select: CATALOG_ITEM_SELECT },
-        _count: { select: { comments: true } },
+        _count: { select: { reactions: true, comments: true } },
       },
       orderBy,
       take: LIMIT,
@@ -56,8 +57,19 @@ export async function GET(req: NextRequest) {
     prisma.review.count({ where }),
   ])
 
+  // Map Prisma User fields to the entity shape ReviewCard expects
+  const mapped = reviews.map((r) => ({
+    ...r,
+    user: {
+      id: r.user.id,
+      username: r.user.username ?? r.user.name,
+      displayName: r.user.displayName ?? r.user.name,
+      avatarUrl: r.user.image ?? undefined,
+    },
+  }))
+
   return NextResponse.json({
-    reviews,
+    reviews: mapped,
     total,
     page,
     hasMore: page * LIMIT < total,
