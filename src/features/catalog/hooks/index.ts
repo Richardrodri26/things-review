@@ -14,3 +14,4 @@ export {
   PODCASTS_QUERY_KEY,
 } from './useCatalog'
 export { useSimilarContent } from './useSimilarContent'
+export { useGlobalRating } from './useGlobalRating'
