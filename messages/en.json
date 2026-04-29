@@ -37,6 +37,7 @@
   "nav": {
     "movies": "Movies",
     "series": "Series",
+    "explore": "Explore",
     "reviews": "My Reviews",
     "watchlist": "Watchlist",
     "groups": "Groups",
@@ -245,6 +246,11 @@
     },
     "similar": {
       "title": "You May Also Like"
+    },
+    "globalRating": {
+      "average": "Community Rating",
+      "fromReviews": "{count, plural, one {from # review} other {from # reviews}}",
+      "noRatings": "No ratings yet"
     }
   },
   "reviews": {
@@ -517,6 +523,25 @@
       "commentDislikes": "Comment dislikes",
       "totalReviews": "Total reviews"
     }
+  },
+  "feed": {
+    "title": "From People You Follow",
+    "empty": "Follow reviewers to see their reviews here",
+    "emptyAction": "Discover reviewers",
+    "seeMore": "See more"
+  },
+  "explore": {
+    "title": "Explore",
+    "subtitle": "Discover reviews from the community",
+    "filters": {
+      "all": "All",
+      "sortRecent": "Most Recent",
+      "sortPopular": "Most Popular",
+      "sortRatingHigh": "Highest Rated",
+      "sortRatingLow": "Lowest Rated"
+    },
+    "empty": "No reviews yet. Be the first!",
+    "loadMore": "Load more"
   },
   "auth": {
     "login": {

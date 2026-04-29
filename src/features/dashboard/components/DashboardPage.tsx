@@ -11,6 +11,7 @@ import { useReviews } from '@/features/reviews/hooks'
 import { QuickStatsSection } from './QuickStatsSection'
 import { RecentReviewsSection } from './RecentReviewsSection'
 import { CatalogHighlightsSection } from './CatalogHighlightsSection'
+import { FeedSection } from '@/features/feed/components'
 
 export function DashboardPage() {
   const user = useUser()
@@ -81,6 +82,7 @@ export function DashboardPage() {
       {/* ── Content ──────────────────────────────────────────────────── */}
       <div className="flex flex-col gap-10 p-6 sm:p-8 w-full min-w-0">
         {reviews.length > 0 && <QuickStatsSection reviews={reviews} />}
+        <FeedSection />
         <CatalogHighlightsSection reviews={reviews} />
         <RecentReviewsSection reviews={reviews} />
       </div>

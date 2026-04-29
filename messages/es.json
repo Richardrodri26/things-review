@@ -37,6 +37,7 @@
   "nav": {
     "movies": "Películas",
     "series": "Series",
+    "explore": "Explorar",
     "reviews": "Mis Reseñas",
     "watchlist": "Lista de espera",
     "groups": "Grupos",
@@ -245,6 +246,11 @@
     },
     "similar": {
       "title": "También te puede gustar"
+    },
+    "globalRating": {
+      "average": "Puntaje de la comunidad",
+      "fromReviews": "{count, plural, one {de # reseña} other {de # reseñas}}",
+      "noRatings": "Sin puntajes aún"
     }
   },
   "reviews": {
@@ -517,6 +523,25 @@
       "commentDislikes": "Dislikes en comentarios",
       "totalReviews": "Reseñas totales"
     }
+  },
+  "feed": {
+    "title": "De personas que seguís",
+    "empty": "Seguí a reseñadores para ver sus reseñas acá",
+    "emptyAction": "Descubrí reseñadores",
+    "seeMore": "Ver más"
+  },
+  "explore": {
+    "title": "Explorar",
+    "subtitle": "Descubrí reseñas de la comunidad",
+    "filters": {
+      "all": "Todos",
+      "sortRecent": "Más recientes",
+      "sortPopular": "Más populares",
+      "sortRatingHigh": "Mayor puntaje",
+      "sortRatingLow": "Menor puntaje"
+    },
+    "empty": "Sin reseñas aún. ¡Sé el primero!",
+    "loadMore": "Cargar más"
   },
   "auth": {
     "login": {

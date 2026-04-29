@@ -12,8 +12,9 @@ import { useTranslations } from 'next-intl'
 import { ReviewEditorPage } from '@/features/reviews/components/ReviewEditorPage'
 import { ContentReviewTabs } from '@/features/reviews/components/ContentReviewTabs'
 import { useReviews } from '@/features/reviews/hooks'
-import { useSeriesItem } from '../hooks'
+import { useSeriesItem, useGlobalRating } from '../hooks'
 import { SimilarContentGrid } from './SimilarContentGrid'
+import { GlobalRatingBadge } from '@/shared/ui/atoms'
 
 interface SeriesDetailPageProps {
   seriesId: string
@@ -27,6 +28,7 @@ export function SeriesDetailPage({ seriesId, defaultGroupId }: SeriesDetailPageP
   const router = useRouter()
   const { data: series, isLoading } = useSeriesItem(seriesId)
   const { data: reviews = [] } = useReviews()
+  const { data: globalRating } = useGlobalRating(series?.id)
   const [dialog, setDialog] = useState<DialogMode>('none')
   const t = useTranslations('catalog.detail')
   const tNav = useTranslations('nav')
@@ -118,6 +120,13 @@ export function SeriesDetailPage({ seriesId, defaultGroupId }: SeriesDetailPageP
                 <Badge key={g.id} variant="outline" className="text-[10px]">{g.name}</Badge>
               ))}
             </div>
+            {globalRating && (
+              <GlobalRatingBadge
+                averageRating={globalRating.averageRating}
+                totalReviews={globalRating.totalReviews}
+                size="sm"
+              />
+            )}
           </div>
         </div>
 
