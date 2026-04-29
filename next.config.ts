@@ -8,6 +8,13 @@ const nextConfig: NextConfig = {
   // the runtime import into "@prisma/client-{hash}/runtime/client".
   // Marking these as external forces Node's native resolution instead.
   serverExternalPackages: ['@prisma/client', '@prisma/adapter-pg', 'pg'],
+  turbopack: {
+    resolveAlias: {
+      // Redirect bare @prisma/client imports to our custom-output generated client.
+      // serverExternalPackages above handles the runtime sub-path issue.
+      '@prisma/client': './src/generated/prisma',
+    },
+  },
   // Security: HTTP response headers that reduce common attack surface
   async headers() {
     return [
