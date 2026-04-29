@@ -152,10 +152,14 @@ export function extractPlainText(data: OutputData): string {
         case 'paragraph':
         case 'header':
           return (blockData.text as string)?.replace(/<[^>]*>/g, '') ?? ''
-        case 'list':
-          return (blockData.items as string[])
-            .map((i) => (typeof i === 'string' ? i.replace(/<[^>]*>/g, '') : ''))
-            .join('\n')
+        case 'list': {
+          const listData = blockData as { items: Array<string | { content: string; items: unknown[] }> }
+          const extractItem = (item: string | { content: string; items: unknown[] }): string => {
+            if (typeof item === 'string') return item.replace(/<[^>]*>/g, '')
+            return item.content.replace(/<[^>]*>/g, '')
+          }
+          return listData.items.map(extractItem).join('\n')
+        }
         case 'quote':
           return `${(blockData.text as string)?.replace(/<[^>]*>/g, '') ?? ''}${blockData.caption ? `\n— ${blockData.caption}` : ''}`
         case 'code':
