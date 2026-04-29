@@ -28,6 +28,129 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.0] - 2026-04-29 — Social Engagement & Discovery
+
+Esta versión transforma la app en una experiencia social completa. Podés interactuar con las reviews de otros usuarios, seguir reviewers, explorar contenido de la comunidad y ver cómo progresa tu reputación como crítico.
+
+### Nuevas funciones
+
+#### 👍 Reacciones en reviews y comentarios
+
+Ahora podés expresar tu opinión sobre cualquier review o comentario con un 👍 o 👎, sin necesidad de escribir nada.
+
+**Cómo probarlo:**
+1. Abrí cualquier review desde `/reviews`
+2. En la página de detalle, usá los botones de reacción debajo del contenido
+3. El contador se actualiza al instante — sin recargar la página
+4. Hacé click de nuevo en el mismo botón para deshacer tu reacción
+5. Cambiá de 👍 a 👎 y la reacción anterior se reemplaza automáticamente
+6. En el listado `/reviews`, cada card también muestra los botones directamente
+
+> Necesitás estar logueado para reaccionar. Los botones están deshabilitados si no tenés sesión.
+
+---
+
+#### 👥 Seguir reviewers
+
+Podés seguir a tus críticos favoritos y armar tu propia red de recomendaciones.
+
+**Cómo probarlo:**
+1. Abrí cualquier review desde `/reviews`
+2. Junto al nombre del autor, hacé click en **Follow**
+3. El botón cambia a **Following** al instante
+4. Hover sobre **Following** para ver la opción **Unfollow**
+5. Hacé click en el nombre del autor para ir a su perfil público `/profile/[id]`
+6. Desde el perfil podés ver sus seguidores, a quién sigue y cuántas reviews escribió
+
+> El botón Follow no aparece en tu propio perfil.
+
+---
+
+#### 🏅 Reputación de reviewer
+
+Cada usuario tiene un score de reputación que sube con la actividad de la comunidad. El badge aparece junto a tu nombre en toda la app.
+
+**Tiers disponibles:**
+| Badge | Nivel | Condición |
+|-------|-------|-----------|
+| 🌱 | Newbie | Score inicial |
+| ⭐ | Contributor | Actividad moderada |
+| 🔥 | Enthusiast | Actividad alta |
+| 💎 | Expert | Muy activo |
+| 👑 | Legend | Top de la comunidad |
+
+**Cómo probarlo:**
+1. Andá a tu perfil en `/profile`
+2. Buscá la sección **Reputación** — muestra tu score, tier y desglose de puntos
+3. En perfiles públicos (`/profile/[id]`) el badge aparece inline junto al nombre
+4. En las cards del listado `/reviews`, el badge del autor es visible debajo de su nombre
+
+---
+
+#### 🎬 Contenido similar
+
+Al ver el detalle de una película o serie, ahora aparece una sección con títulos similares para que sigas descubriendo contenido.
+
+**Cómo probarlo:**
+1. Abrí cualquier película en `/movies/[id]` o serie en `/series/[id]`
+2. Scrolleá hacia abajo — vas a ver una sección **"Contenido similar"**
+3. Cada card muestra poster, título y año
+4. Hacé click en cualquier card para ir al detalle de ese contenido
+5. Si no hay similares disponibles, la sección no aparece
+
+---
+
+#### ⭐ Rating global de la comunidad
+
+Las páginas de detalle de películas y series ahora muestran el rating promedio calculado a partir de todas las reviews publicadas de ese contenido.
+
+**Cómo probarlo:**
+1. Abrí `/movies/[id]` o `/series/[id]` de un contenido que ya tenga reviews
+2. Buscá el badge de estrella con el promedio y el conteo de reviews
+3. Si el contenido no tiene reviews, el badge no aparece
+
+---
+
+#### 🧭 Página Explorar
+
+Nueva sección para descubrir reviews de toda la comunidad, sin importar a quién seguís.
+
+**Cómo probarlo:**
+1. En el sidebar, hacé click en **Explore** (ícono de brújula, entre Series y Reviews)
+2. O entrá directamente a `/explore`
+3. Usá los tabs para filtrar por tipo: **All / Movie / Series / Music / Game / Book**
+4. Cambiá el orden con el selector: **Recent / Popular / Rating ↑ / Rating ↓**
+5. Scrolleá hasta el fondo y hacé click en **Load More** para ver más reviews
+6. La página es pública — funciona sin estar logueado
+
+---
+
+#### 📰 Feed social en el dashboard
+
+El dashboard ahora incluye un feed con las últimas reviews de los usuarios que seguís.
+
+**Cómo probarlo:**
+1. Seguí al menos a un usuario que tenga reviews publicadas
+2. Andá al dashboard (`/`)
+3. La sección **Feed** muestra las reviews recientes de tus seguidos con avatar, nombre, contenido y rating
+4. Si no seguís a nadie, aparece un mensaje con un link directo a `/explore`
+
+---
+
+### Mejoras
+
+- El nombre del autor en el detalle de una review ahora es un link al perfil público
+- Los badges de tier aparecen en todas las ReviewCards del listado
+- Los botones de reacción en cards usan `stopPropagation` correcto — no navegan accidentalmente al detalle
+
+### Correcciones
+
+- Perfil de usuario inexistente (`/profile/id-inventado`) ya muestra "Usuario no encontrado" en lugar de pantalla en blanco
+- La página `/explore` era inaccesible para usuarios sin sesión — corregido, ahora es pública
+- Botones "Guardar" y "Cancelar" en comentarios ahora respetan el idioma seleccionado (EN/ES)
+
+---
+
 ## [0.1.0] - 2026-03-31
 
 ### Added
