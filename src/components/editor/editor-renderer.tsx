@@ -1,12 +1,14 @@
 // src/components/editor/editor-renderer.tsx
 // Renderiza el output de EditorJS en modo read-only (sin cargar el editor)
 
+import React from 'react'
 import type { OutputData } from '@editorjs/editorjs'
 import { cn } from '@/shared/utils'
 import type {
   HeaderData,
   ParagraphData,
   ListData,
+  ListItemV2,
   QuoteData,
   CodeData,
   ImageData,
@@ -70,20 +72,37 @@ function BlockRenderer({ block }: BlockRendererProps) {
 
     case 'list': {
       const { style, items } = data as ListData
+
+      const renderItems = (listItems: ListItemV2[] | string[], depth = 0): React.ReactNode => {
+        return listItems.map((item, i) => {
+          if (typeof item === 'string') {
+            return <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
+          }
+          return (
+            <li key={i}>
+              <span dangerouslySetInnerHTML={{ __html: item.content }} />
+              {item.items.length > 0 && (
+                style === 'ordered'
+                  ? <ol className="list-decimal list-outside ml-5 mt-1 space-y-1">{renderItems(item.items, depth + 1)}</ol>
+                  : <ul className="list-disc list-outside ml-5 mt-1 space-y-1">{renderItems(item.items, depth + 1)}</ul>
+              )}
+            </li>
+          )
+        })
+      }
+
+      const baseClass = 'list-outside ml-6 space-y-1.5 text-[17px] leading-[1.75] text-foreground'
+
       if (style === 'ordered') {
         return (
-          <ol className="list-decimal list-outside ml-6 space-y-1.5 text-[17px] leading-[1.75] text-foreground">
-            {items.map((item, i) => (
-              <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
-            ))}
+          <ol className={`list-decimal ${baseClass}`}>
+            {renderItems(items)}
           </ol>
         )
       }
       return (
-        <ul className="list-disc list-outside ml-6 space-y-1.5 text-[17px] leading-[1.75] text-foreground">
-          {items.map((item, i) => (
-            <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
-          ))}
+        <ul className={`list-disc ${baseClass}`}>
+          {renderItems(items)}
         </ul>
       )
     }
