@@ -48,7 +48,7 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
   return (
     <Link
       href={detailHref ?? ROUTES.REVIEW_DETAIL(review.id)}
-      className="group relative flex flex-col rounded-xl border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer"
+      className="group relative flex flex-col rounded-xl border border-border bg-card overflow-hidden hover:border-primary/40 hover:shadow-lg transition-all duration-200 cursor-pointer"
     >
 
       {/* ── Poster area ─────────────────────────────────────────────── */}
@@ -63,97 +63,118 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
           title={itemTitle ?? review.contentId}
         />
 
-        {/* Gradient overlay — bottom for legibility */}
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none" />
+        {/* Gradient overlay — taller so badges always have legible bg */}
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 via-black/40 to-transparent pointer-events-none" />
 
-        {/* Edit / Delete — top-right, floating */}
-        <div className="absolute top-1.5 right-1.5 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-          {onEdit && (
-            <Button
-              variant="secondary"
-              size="icon-sm"
-              onClick={(e) => { e.preventDefault(); onEdit(review) }}
-              aria-label={t('editAriaLabel')}
-              className="size-7 shadow-sm"
-            >
-              <PencilIcon className="size-3.5" />
-            </Button>
-          )}
-          {onDelete && (
-            <Button
-              variant="secondary"
-              size="icon-sm"
-              onClick={(e) => { e.preventDefault(); onDelete(review) }}
-              aria-label={t('deleteAriaLabel')}
-              className="size-7 shadow-sm text-destructive hover:text-destructive"
-            >
-              <TrashIcon className="size-3.5" />
-            </Button>
-          )}
-        </div>
-
-        {/* Badges + Rating — bottom-left, over gradient */}
-        <div className="absolute bottom-2.5 left-2.5 flex flex-col gap-1.5 items-start">
-          <div className="flex flex-wrap gap-1">
-            <ContentTypeBadge contentType={review.contentType} />
-            <StatusBadge status={review.status} contentType={review.contentType} />
+        {/* Edit / Delete — top-right, floating, revealed on hover */}
+        {(onEdit || onDelete) && (
+          <div className="absolute top-1.5 right-1.5 flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150 z-10">
+            {onEdit && (
+              <Button
+                variant="secondary"
+                size="icon-sm"
+                onClick={(e) => { e.preventDefault(); onEdit(review) }}
+                aria-label={t('editAriaLabel')}
+                className="size-7 shadow-sm"
+              >
+                <PencilIcon className="size-3.5" />
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="secondary"
+                size="icon-sm"
+                onClick={(e) => { e.preventDefault(); onDelete(review) }}
+                aria-label={t('deleteAriaLabel')}
+                className="size-7 shadow-sm text-destructive hover:text-destructive"
+              >
+                <TrashIcon className="size-3.5" />
+              </Button>
+            )}
           </div>
+        )}
+
+        {/* Badges + Rating — bottom of poster, single row, no wrapping */}
+        <div className="absolute bottom-2 inset-x-2 flex items-end justify-between gap-1 min-w-0">
+          {/* Left: type + status badges stacked vertically, both compact */}
+          <div className="flex flex-col gap-1 items-start min-w-0 overflow-hidden">
+            <ContentTypeBadge
+              contentType={review.contentType}
+              className="text-[10px] px-1.5 py-0 leading-5 border-white/20 bg-black/40 text-white backdrop-blur-sm"
+            />
+            <StatusBadge
+              status={review.status}
+              contentType={review.contentType}
+              className="text-[10px] px-1.5 py-0 leading-5"
+            />
+          </div>
+          {/* Right: rating */}
           {review.rating && (
-            <RatingStars value={review.rating} readonly size="sm" showValue />
+            <div className="shrink-0">
+              <RatingStars value={review.rating} readonly size="sm" showValue />
+            </div>
           )}
         </div>
       </div>
 
       {/* ── Info area ───────────────────────────────────────────────── */}
-      <div className="flex flex-col gap-1.5 p-3">
-        {/* Content title */}
+      <div className="flex flex-col gap-1 p-2.5">
+        {/* Content title — always 1 line */}
         <p className="text-xs font-semibold leading-snug line-clamp-1 text-foreground">
           {itemTitle ?? review.contentId}
         </p>
 
-        {/* Review title */}
-        {review.title && (
-          <p className="text-xs text-muted-foreground leading-snug line-clamp-1 italic">
-            &ldquo;{review.title}&rdquo;
-          </p>
-        )}
+        {/*
+          Subtitle slot — ALWAYS rendered with fixed height so all cards in a
+          grid stay the same height regardless of whether there's a review title
+          or body preview. h-8 ≈ 2 lines of text-[11px] leading-relaxed.
+        */}
+        <div className="h-8 overflow-hidden">
+          {review.title ? (
+            <p className="text-[11px] text-muted-foreground leading-snug line-clamp-2 italic">
+              &ldquo;{review.title}&rdquo;
+            </p>
+          ) : bodyPreview ? (
+            <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">
+              {bodyPreview}
+            </p>
+          ) : null}
+        </div>
 
-        {/* Body preview */}
-        {bodyPreview && (
-          <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2 mt-0.5">
-            {bodyPreview}
-          </p>
-        )}
-
-        {/* Footer meta */}
-        <div className="flex items-center justify-between mt-1 text-[10px] text-muted-foreground">
-          {author ? (
-            isOwn ? (
-              <span className="font-medium text-primary">{t('you')}</span>
+        {/* Footer: author/date + comment count + reactions — all in one compact row */}
+        <div className="flex items-center justify-between gap-1 mt-1 text-[10px] text-muted-foreground">
+          {/* Left: author or date */}
+          <span className="flex items-center gap-1 min-w-0 overflow-hidden">
+            {author ? (
+              isOwn ? (
+                <span className="font-medium text-primary shrink-0">{t('you')}</span>
+              ) : (
+                <Link
+                  href={ROUTES.PUBLIC_PROFILE(author.id)}
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-1 min-w-0 hover:text-primary transition-colors"
+                >
+                  <Avatar size="sm" className="size-4 shrink-0">
+                    <AvatarImage src={author.avatarUrl} alt={author.displayName ?? author.username} />
+                    <AvatarFallback>{(author.displayName ?? author.username ?? 'U').charAt(0).toUpperCase()}</AvatarFallback>
+                  </Avatar>
+                  <span className="truncate">{author.displayName ?? author.username}</span>
+                  {authorReputation && (
+                    <ReputationBadge
+                      score={authorReputation.score}
+                      tier={authorReputation.tier}
+                      variant="inline"
+                    />
+                  )}
+                </Link>
+              )
             ) : (
-              <Link
-                href={ROUTES.PUBLIC_PROFILE(author.id)}
-                onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 min-w-0 hover:text-primary transition-colors"
-              >
-                <Avatar size="sm" className="size-4 shrink-0">
-                  <AvatarImage src={author.avatarUrl} alt={author.displayName ?? author.username} />
-                  <AvatarFallback>{(author.displayName ?? author.username ?? 'U').charAt(0).toUpperCase()}</AvatarFallback>
-                </Avatar>
-                <span className="truncate">{author.displayName ?? author.username}</span>
-                {authorReputation && (
-                  <ReputationBadge
-                    score={authorReputation.score}
-                    tier={authorReputation.tier}
-                    variant="inline"
-                  />
-                )}
-              </Link>
-            )
-          ) : (
-            <span>{formatDate(review.createdAt)}</span>
-          )}
-          <span className="flex items-center gap-1.5 shrink-0">
+              <span className="truncate">{formatDate(review.createdAt)}</span>
+            )}
+          </span>
+
+          {/* Right: comment count */}
+          <span className="flex items-center gap-1 shrink-0">
             {author && <span>{formatDate(review.createdAt)}</span>}
             {commentCount > 0 && (
               <span className="flex items-center gap-0.5">
@@ -164,8 +185,8 @@ export function ReviewCard({ review, onEdit, onDelete, author, isOwn, detailHref
           </span>
         </div>
 
-        {/* Reactions */}
-        <div className="flex items-center gap-1.5 mt-2">
+        {/* Reactions — compact, always last */}
+        <div className="flex items-center gap-1 mt-1">
           <ReactionButton
             type="like"
             count={reactions?.likeCount ?? 0}

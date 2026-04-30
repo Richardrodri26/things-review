@@ -13,6 +13,7 @@ interface ReactionButtonProps {
   label?: string
   /** Always render the count span — use invisible when 0 to maintain consistent height */
   showCountAlways?: boolean
+  className?: string
 }
 
 const config = {
@@ -30,7 +31,7 @@ const config = {
   },
 }
 
-export function ReactionButton({ type, count, isActive, onClick, disabled, label, showCountAlways }: ReactionButtonProps) {
+export function ReactionButton({ type, count, isActive, onClick, disabled, label, showCountAlways, className }: ReactionButtonProps) {
   const { Icon, activeClass, hoverClass, label: defaultLabel } = config[type]
   const resolvedLabel = label ?? defaultLabel
 
@@ -42,15 +43,16 @@ export function ReactionButton({ type, count, isActive, onClick, disabled, label
       aria-label={`${resolvedLabel}${count > 0 ? ` (${count})` : ''}`}
       aria-pressed={isActive}
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium',
+        'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium',
         'transition-all duration-150',
         'text-muted-foreground border-border bg-transparent',
         !disabled && hoverClass,
         isActive && activeClass,
         disabled && 'cursor-not-allowed opacity-50',
+        className,
       )}
     >
-      <Icon className="size-3.5" aria-hidden="true" />
+      <Icon className="size-3" aria-hidden="true" />
       {(count > 0 || showCountAlways) && (
         <span className={cn('tabular-nums', count === 0 && showCountAlways && 'invisible')}>{count}</span>
       )}
