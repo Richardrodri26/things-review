@@ -6,6 +6,7 @@ import { SeriesDetailPage } from '@/features/catalog/components'
 
 interface SeriesDetailRouteProps {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ from?: string }>
 }
 
 export async function generateMetadata({ params }: SeriesDetailRouteProps): Promise<Metadata> {
@@ -50,7 +51,8 @@ export async function generateMetadata({ params }: SeriesDetailRouteProps): Prom
   }
 }
 
-export default async function SeriesDetailRoute({ params }: SeriesDetailRouteProps) {
+export default async function SeriesDetailRoute({ params, searchParams }: SeriesDetailRouteProps) {
   const { id } = await params
-  return <SeriesDetailPage seriesId={id} />
+  const { from } = await searchParams
+  return <SeriesDetailPage seriesId={id} backHref={from} />
 }

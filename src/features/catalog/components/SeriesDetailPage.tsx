@@ -2,7 +2,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { ArrowLeftIcon, PlusIcon, PencilIcon } from 'lucide-react'
 import { CoverImage } from '@/shared/ui/atoms/CoverImage'
 import { BackdropImage } from '@/shared/ui/atoms/BackdropImage'
@@ -15,17 +15,18 @@ import { useReviews } from '@/features/reviews/hooks'
 import { useSeriesItem, useGlobalRating } from '../hooks'
 import { SimilarContentGrid } from './SimilarContentGrid'
 import { GlobalRatingBadge } from '@/shared/ui/atoms'
+import { ROUTES } from '@/shared/constants'
 
 interface SeriesDetailPageProps {
   seriesId: string
   /** groupId pre-seleccionado (navegación desde GroupDetailPage) */
   defaultGroupId?: string
+  backHref?: string
 }
 
 type DialogMode = 'none' | 'create' | 'edit'
 
-export function SeriesDetailPage({ seriesId, defaultGroupId }: SeriesDetailPageProps) {
-  const router = useRouter()
+export function SeriesDetailPage({ seriesId, defaultGroupId, backHref }: SeriesDetailPageProps) {
   const { data: series, isLoading } = useSeriesItem(seriesId)
   const { data: reviews = [] } = useReviews()
   const { data: globalRating } = useGlobalRating(series?.id)
@@ -46,10 +47,10 @@ export function SeriesDetailPage({ seriesId, defaultGroupId }: SeriesDetailPageP
   if (!series) {
     return (
       <div className="flex flex-1 flex-col gap-4 p-4">
-        <Button variant="ghost" size="sm" onClick={() => router.back()} className="w-fit">
-          <ArrowLeftIcon />
+        <Link href={backHref ?? ROUTES.SERIES} className="inline-flex items-center gap-1.5 text-sm h-9 px-3 rounded-md hover:bg-accent transition-colors w-fit">
+          <ArrowLeftIcon className="size-4" />
           {tCommon('back')}
-        </Button>
+        </Link>
         <p className="text-muted-foreground">{t('notFound')}</p>
       </div>
     )
@@ -81,10 +82,10 @@ export function SeriesDetailPage({ seriesId, defaultGroupId }: SeriesDetailPageP
 
       <div className="flex flex-1 flex-col gap-6 p-4 max-w-3xl -mt-8 relative">
         {/* Back */}
-        <Button variant="ghost" size="sm" onClick={() => router.back()} className="w-fit">
-          <ArrowLeftIcon />
+        <Link href={backHref ?? ROUTES.SERIES} className="inline-flex items-center gap-1.5 text-sm h-9 px-3 rounded-md hover:bg-accent transition-colors w-fit">
+          <ArrowLeftIcon className="size-4" />
           {tNav('series')}
-        </Button>
+        </Link>
 
         {/* Header */}
         <div className="flex gap-4">

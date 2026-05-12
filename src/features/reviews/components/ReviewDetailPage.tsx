@@ -13,10 +13,12 @@ import {
   EyeOffIcon,
   CalendarIcon,
   MessageSquareIcon,
+  PlusIcon,
 } from 'lucide-react'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,7 +39,7 @@ import { ReviewEditorPage } from './ReviewEditorPage'
 import { ROUTES } from '@/shared/constants'
 import { formatDate } from '@/shared/utils'
 import { useCatalogItemTitle } from '@/features/catalog/hooks'
-import { useReviewById, useDeleteReview } from '../hooks'
+import { useReviewById, useDeleteReview, useReviews } from '../hooks'
 import { useReviewReactions, useToggleReviewReaction } from '@/features/reactions'
 import { useSession } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
@@ -70,8 +72,11 @@ export function ReviewDetailPage({ reviewId, backHref }: ReviewDetailPageProps) 
   const isAuthenticated = !!session?.user
   const { data: reactions } = useReviewReactions(reviewId)
   const toggleReaction = useToggleReviewReaction(reviewId)
+  const { data: reviews = [] } = useReviews()
+  const hasOwnReview = reviews.some(r => r.contentId === review?.contentId)
   const [showSpoilers, setShowSpoilers] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
+  const [isWritingReview, setIsWritingReview] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
 
   const handleDelete = async () => {
@@ -88,6 +93,12 @@ export function ReviewDetailPage({ reviewId, backHref }: ReviewDetailPageProps) 
   }
 
   const hasBody = review.body?.blocks && review.body.blocks.length > 0
+  const authorName = review.user?.displayName ?? review.user?.username ?? null
+  const contentHref = (() => {
+    if (review.contentType === 'movie') return `${ROUTES.MOVIE_DETAIL(review.contentId)}?from=${encodeURIComponent(ROUTES.REVIEW_DETAIL(reviewId))}`
+    if (review.contentType === 'series') return `${ROUTES.SERIES_DETAIL(review.contentId)}?from=${encodeURIComponent(ROUTES.REVIEW_DETAIL(reviewId))}`
+    return null
+  })()
 
   return (
     <div className="min-h-screen bg-background">
@@ -99,6 +110,20 @@ export function ReviewDetailPage({ reviewId, backHref }: ReviewDetailPageProps) 
           contentTitle={itemTitle ?? undefined}
           onSuccess={() => setIsEditing(false)}
           onCancel={() => setIsEditing(false)}
+        />
+      )}
+
+      {/* ── Write review overlay (non-owner, no own review) ── */}
+      {isWritingReview && (
+        <ReviewEditorPage
+          mode="create"
+          initialValues={{
+            contentId: review.contentId,
+            contentType: review.contentType as 'movie' | 'series' | 'music' | 'game' | 'book' | 'podcast',
+          }}
+          contentTitle={itemTitle ?? undefined}
+          onSuccess={() => setIsWritingReview(false)}
+          onCancel={() => setIsWritingReview(false)}
         />
       )}
 
@@ -116,7 +141,7 @@ export function ReviewDetailPage({ reviewId, backHref }: ReviewDetailPageProps) 
             {t('breadcrumb')}
           </Link>
 
-          {isOwner && (
+          {isOwner ? (
             <div className="flex items-center gap-0.5">
               <Button
                 variant="ghost"
@@ -157,6 +182,16 @@ export function ReviewDetailPage({ reviewId, backHref }: ReviewDetailPageProps) 
                 </AlertDialogContent>
               </AlertDialog>
             </div>
+          ) : isAuthenticated && !hasOwnReview && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => setIsWritingReview(true)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <PlusIcon className="size-3.5 mr-1.5" />
+              {t('writeYourReview')}
+            </Button>
           )}
         </div>
       </div>
@@ -169,17 +204,34 @@ export function ReviewDetailPage({ reviewId, backHref }: ReviewDetailPageProps) 
           {/* Poster + Info layout */}
           <div className="flex gap-5 sm:gap-7">
             {/* Poster */}
-            <div className="relative shrink-0 w-24 sm:w-32 aspect-[2/3] rounded-xl overflow-hidden border border-border/60 shadow-lg">
-              <CoverImage
-                src={coverImageUrl}
-                alt={itemTitle ?? ''}
-                contentType={review.contentType}
-                sizes="128px"
-                className="object-cover"
-                iconSize="text-3xl"
-                title={itemTitle ?? review.contentId}
-              />
-            </div>
+            {contentHref ? (
+              <Link
+                href={contentHref}
+                className="relative shrink-0 w-24 sm:w-32 aspect-[2/3] rounded-xl overflow-hidden border border-border/60 shadow-lg block hover:opacity-85 transition-opacity"
+              >
+                <CoverImage
+                  src={coverImageUrl}
+                  alt={itemTitle ?? ''}
+                  contentType={review.contentType}
+                  sizes="128px"
+                  className="object-cover"
+                  iconSize="text-3xl"
+                  title={itemTitle ?? review.contentId}
+                />
+              </Link>
+            ) : (
+              <div className="relative shrink-0 w-24 sm:w-32 aspect-[2/3] rounded-xl overflow-hidden border border-border/60 shadow-lg">
+                <CoverImage
+                  src={coverImageUrl}
+                  alt={itemTitle ?? ''}
+                  contentType={review.contentType}
+                  sizes="128px"
+                  className="object-cover"
+                  iconSize="text-3xl"
+                  title={itemTitle ?? review.contentId}
+                />
+              </div>
+            )}
 
             {/* Info */}
             <div className="flex-1 min-w-0 space-y-4 pt-1">
@@ -255,14 +307,20 @@ export function ReviewDetailPage({ reviewId, backHref }: ReviewDetailPageProps) 
                 )}
               </div>
 
-              {/* Author follow — only shown when viewing someone else's review */}
+              {/* Author info — only shown when viewing someone else's review */}
               {!isOwner && (
                 <div className="flex items-center gap-2 pt-1">
                   <Link
                     href={ROUTES.PUBLIC_PROFILE(review.userId)}
-                    className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-primary transition-colors"
                   >
-                    {t('viewAuthorProfile')}
+                    <Avatar className="size-5">
+                      <AvatarImage src={review.user?.image ?? undefined} alt={authorName ?? ''} />
+                      <AvatarFallback className="text-[9px]">
+                        {(authorName ?? '?')[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span>{t('by', { name: authorName ?? t('viewAuthorProfile') })}</span>
                   </Link>
                   {isAuthenticated && (
                     <FollowButton userId={review.userId} />

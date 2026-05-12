@@ -313,7 +313,9 @@
       "revealAnyway": "Ver de todas formas",
       "spoilers": "Spoilers",
       "editedAt": "editado {date}",
-      "viewAuthorProfile": "Ver perfil del autor"
+      "viewAuthorProfile": "Ver perfil del autor",
+      "writeYourReview": "Escribí tu reseña",
+      "by": "Por {name}"
     },
     "form": {
       "content": "Contenido",

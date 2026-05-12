@@ -6,6 +6,7 @@ import { MovieDetailPage } from '@/features/catalog/components'
 
 interface MovieDetailRouteProps {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ from?: string }>
 }
 
 export async function generateMetadata({ params }: MovieDetailRouteProps): Promise<Metadata> {
@@ -50,7 +51,8 @@ export async function generateMetadata({ params }: MovieDetailRouteProps): Promi
   }
 }
 
-export default async function MovieDetailRoute({ params }: MovieDetailRouteProps) {
+export default async function MovieDetailRoute({ params, searchParams }: MovieDetailRouteProps) {
   const { id } = await params
-  return <MovieDetailPage movieId={id} />
+  const { from } = await searchParams
+  return <MovieDetailPage movieId={id} backHref={from} />
 }

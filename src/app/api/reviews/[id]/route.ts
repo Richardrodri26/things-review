@@ -25,6 +25,7 @@ export async function GET(_req: NextRequest, { params }: Params) {
     include: {
       catalogItem: { select: CATALOG_ITEM_SELECT },
       _count: { select: { reactions: true } },
+      user: { select: { id: true, username: true, displayName: true, image: true } },
     },
   })
 

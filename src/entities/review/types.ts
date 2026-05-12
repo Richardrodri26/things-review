@@ -50,6 +50,13 @@ export interface CatalogItemSnapshot {
   year: number | null
 }
 
+export interface ReviewAuthor {
+  id: string
+  username: string | null
+  displayName: string | null
+  image?: string | null
+}
+
 export interface Review {
   id: string
   userId: string
@@ -63,6 +70,7 @@ export interface Review {
   metadata?: ReviewMetadata
   consumedAt?: Date
   catalogItem?: CatalogItemSnapshot | null
+  user?: ReviewAuthor | null
   createdAt: Date
   updatedAt: Date
 }

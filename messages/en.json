@@ -313,7 +313,9 @@
       "revealAnyway": "Reveal anyway",
       "spoilers": "Spoilers",
       "editedAt": "edited {date}",
-      "viewAuthorProfile": "View author profile"
+      "viewAuthorProfile": "View author profile",
+      "writeYourReview": "Write your review",
+      "by": "By {name}"
     },
     "form": {
       "content": "Content",
