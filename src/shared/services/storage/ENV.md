@@ -15,6 +15,7 @@ Agregá estas variables a tu `.env.local`:
 
 NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="tu-cloud-name"
 NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET="tu-unsigned-preset"
+NEXT_PUBLIC_CLOUDINARY_BASE_FOLDER="things-review"
 ```
 
 > **Sin estas variables** → el sistema usa `LocalStorageProvider` como fallback:

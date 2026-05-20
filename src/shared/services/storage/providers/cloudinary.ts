@@ -17,19 +17,28 @@ export class CloudinaryStorageProvider implements IStorageProvider {
 
   private readonly cloudName: string
   private readonly uploadPreset: string
+  private readonly baseFolder: string
   private readonly uploadUrl: string
 
-  constructor(cloudName?: string, uploadPreset?: string) {
+  constructor(cloudName?: string, uploadPreset?: string, baseFolder?: string) {
     this.cloudName = cloudName ?? process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? ''
     this.uploadPreset = uploadPreset ?? process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? ''
+    this.baseFolder = baseFolder ?? process.env.NEXT_PUBLIC_CLOUDINARY_BASE_FOLDER ?? ''
     this.uploadUrl = `https://api.cloudinary.com/v1_1/${this.cloudName}/upload`
+  }
+
+  private resolveFolder(folder?: string): string | undefined {
+    if (this.baseFolder && folder) return `${this.baseFolder}/${folder}`
+    if (this.baseFolder) return this.baseFolder
+    return folder
   }
 
   async uploadFile(file: File, folder?: string): Promise<StorageUploadResult> {
     const form = new FormData()
     form.append('file', file)
     form.append('upload_preset', this.uploadPreset)
-    if (folder) form.append('folder', folder)
+    const resolved = this.resolveFolder(folder)
+    if (resolved) form.append('folder', resolved)
 
     return this.doUpload(form)
   }
@@ -38,7 +47,8 @@ export class CloudinaryStorageProvider implements IStorageProvider {
     const form = new FormData()
     form.append('file', url)
     form.append('upload_preset', this.uploadPreset)
-    if (folder) form.append('folder', folder)
+    const resolved = this.resolveFolder(folder)
+    if (resolved) form.append('folder', resolved)
 
     return this.doUpload(form)
   }
