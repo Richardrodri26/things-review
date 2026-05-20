@@ -23,7 +23,7 @@ export class CloudinaryStorageProvider implements IStorageProvider {
   constructor(cloudName?: string, uploadPreset?: string, baseFolder?: string) {
     this.cloudName = cloudName ?? process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? ''
     this.uploadPreset = uploadPreset ?? process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? ''
-    this.baseFolder = baseFolder ?? process.env.NEXT_PUBLIC_CLOUDINARY_BASE_FOLDER ?? ''
+    this.baseFolder = (baseFolder ?? process.env.NEXT_PUBLIC_CLOUDINARY_BASE_FOLDER ?? '').trim()
     this.uploadUrl = `https://api.cloudinary.com/v1_1/${this.cloudName}/upload`
   }
 
