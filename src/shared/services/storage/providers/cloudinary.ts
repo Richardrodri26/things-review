@@ -21,10 +21,10 @@ export class CloudinaryStorageProvider implements IStorageProvider {
   private readonly uploadUrl: string
 
   constructor(cloudName?: string, uploadPreset?: string, baseFolder?: string) {
-    this.cloudName = cloudName ?? process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? ''
-    this.uploadPreset = uploadPreset ?? process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? ''
+    this.cloudName = (cloudName ?? process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? '').trim()
+    this.uploadPreset = (uploadPreset ?? process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET ?? '').trim()
     this.baseFolder = (baseFolder ?? process.env.NEXT_PUBLIC_CLOUDINARY_BASE_FOLDER ?? '').trim()
-    this.uploadUrl = `https://api.cloudinary.com/v1_1/${this.cloudName}/upload`
+    this.uploadUrl = `https://api.cloudinary.com/v1_1/${this.cloudName}/auto/upload`
   }
 
   private resolveFolder(folder?: string): string | undefined {
