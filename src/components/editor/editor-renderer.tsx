@@ -44,12 +44,12 @@ function BlockRenderer({ block }: BlockRendererProps) {
       const { text, level } = data as HeaderData
       const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
       const sizeClass = {
-        1: 'text-3xl font-bold mt-10 mb-4 first:mt-0',
-        2: 'text-2xl font-bold mt-8 mb-3 first:mt-0',
-        3: 'text-xl font-semibold mt-6 mb-2 first:mt-0',
-        4: 'text-lg font-semibold mt-4 mb-1.5 first:mt-0',
-        5: 'text-base font-semibold mt-3 mb-1 first:mt-0',
-        6: 'text-sm font-semibold mt-2 mb-1 uppercase tracking-wide text-muted-foreground first:mt-0',
+        1: 'text-4xl font-bold mt-12 mb-5 first:mt-0 tracking-tight',
+        2: 'text-2xl font-bold mt-10 mb-3 first:mt-0',
+        3: 'text-xl font-semibold mt-7 mb-2 first:mt-0',
+        4: 'text-sm font-semibold mt-5 mb-2 first:mt-0 uppercase tracking-widest text-muted-foreground',
+        5: 'text-xs font-semibold mt-4 mb-1 first:mt-0 uppercase tracking-widest text-muted-foreground',
+        6: 'text-xs font-semibold mt-3 mb-1 first:mt-0 uppercase tracking-widest text-muted-foreground',
       }[level] ?? 'text-xl font-semibold'
       return (
         <Tag
@@ -179,18 +179,19 @@ function BlockRenderer({ block }: BlockRendererProps) {
           {items.map((item, i) => (
             <li key={i} className="flex items-start gap-2">
               <span
+                aria-hidden="true"
                 className={cn(
-                  'mt-0.5 size-4 shrink-0 rounded border flex items-center justify-center text-xs',
+                  'mt-0.5 size-4 shrink-0 rounded border flex items-center justify-center text-xs pointer-events-none cursor-default select-none',
                   item.checked
                     ? 'border-primary bg-primary text-primary-foreground'
-                    : 'border-muted-foreground',
+                    : 'border-muted-foreground/60',
                 )}
               >
                 {item.checked && '✓'}
               </span>
               <span
                 className={cn(
-                  'text-sm',
+                  'text-[17px] leading-[1.75] text-foreground',
                   item.checked && 'line-through text-muted-foreground',
                 )}
                 dangerouslySetInnerHTML={{ __html: item.text }}
